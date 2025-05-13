@@ -1,0 +1,27 @@
+{
+  "name": "my-map-planner",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/danov6/my-map-planner.git",
+  "author": "danov6 <glvaldez@callutheran.edu>",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/cors": "^2.8.18",
+    "@types/express": "^5.0.1",
+    "@types/leaflet": "^1.9.17",
+    "@types/node": "^22.15.17",
+    "@types/react": "^19.1.4",
+    "@types/react-dom": "^19.1.4",
+    "parcel": "^2.15.0",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "leaflet": "^1.9.4",
+    "mongoose": "^8.14.2",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-leaflet": "^5.0.0"
+  }
+}
