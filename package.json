@@ -12,7 +12,9 @@
     "@types/node": "^22.15.17",
     "@types/react": "^19.1.4",
     "@types/react-dom": "^19.1.4",
+    "concurrently": "^9.1.2",
     "parcel": "^2.15.0",
+    "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
   },
   "dependencies": {
@@ -23,5 +25,11 @@
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-leaflet": "^5.0.0"
+  },
+  "scripts": {
+    "start": "parcel public/index.html",
+    "build": "parcel build public/index.html",
+    "server": "ts-node src/server/index.ts",
+    "dev": "concurrently \"yarn start\" \"yarn server\""
   }
 }
