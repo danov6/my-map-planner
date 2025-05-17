@@ -3,6 +3,7 @@ import MapComponent from './components/MapComponent';
 import BlogList from './components/BlogList';
 import { AppContext } from './context/AppContext';
 import { BlogPost } from '../shared/types';
+import './styles/global.css';  // Add this import
 
 const App: React.FC = () => {
   const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
@@ -16,9 +17,10 @@ const App: React.FC = () => {
   
   const fetchBlogsForCountry = async (countryCode: string) => {
     try {
-      const response = await fetch(`/api/blogs/country/${countryCode}`);
-      const data = await response.json();
-      setBlogs(data);
+      //const response = await fetch(`/api/blogs/country/${countryCode}`);
+      //const data = await response.json();
+      //setBlogs(data);
+      console.log('Giordano', countryCode);
     } catch (error) {
       console.error('Error fetching blogs:', error);
     }
