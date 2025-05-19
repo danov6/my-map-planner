@@ -7,8 +7,18 @@ interface AppContextType {
   setSelectedCountry: (country: string | null) => void;
 }
 
-export const AppContext = createContext<AppContextType>({
+export const AppContext = createContext<{
+  selectedCountry: { name: string } | null;
+  setSelectedCountry: (country: { name: string; code: string }) => void;
+  blogs: {
+    id: string;
+    imageUrl?: string;
+    title: string;
+    publishDate: string;
+    content: string;
+  }[];
+}>({
   selectedCountry: null,
-  blogs: [],
   setSelectedCountry: () => {},
+  blogs: []
 });

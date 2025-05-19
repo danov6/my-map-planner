@@ -1,13 +1,13 @@
-import express from 'express';
+import express, { Request, Response, Router } from 'express';
 import { BlogPost } from '../../shared/types';
 import BlogModel from '../models/BlogModel';
 
-const router = express.Router();
+const router: Router = express.Router();
 
 // GET all blog posts
-router.get('/', async (req, res) => {
+router.get('/', async (req: Request, res: Response) => {
   try {
-    const blogs = await BlogModel.find();
+    const blogs: BlogPost[] = await BlogModel.find();
     res.json(blogs);
   } catch (err) {
     res.status(500).json({ error: 'Failed to fetch blog posts' });
@@ -15,9 +15,9 @@ router.get('/', async (req, res) => {
 });
 
 // GET blog posts by country code
-router.get('/country/:countryCode', async (req, res) => {
+router.get('/country/:countryCode', async (req: Request, res: Response) => {
   try {
-    const blogs = await BlogModel.find({ countryCode: req.params.countryCode });
+    const blogs: BlogPost[] = await BlogModel.find({ countryCode: req.params.countryCode });
     res.json(blogs);
   } catch (err) {
     res.status(500).json({ error: 'Failed to fetch blog posts for country' });
@@ -25,9 +25,9 @@ router.get('/country/:countryCode', async (req, res) => {
 });
 
 // GET single blog post
-router.get('/:id', async (req, res) => {
+router.get('/:id', async (req: Request, res: Response) => {
   try {
-    const blog = await BlogModel.findById(req.params.id);
+    const blog: BlogPost | null = await BlogModel.findById(req.params.id);
     if (!blog) {
       return res.status(404).json({ error: 'Blog post not found' });
     }
@@ -38,10 +38,10 @@ router.get('/:id', async (req, res) => {
 });
 
 // POST new blog post
-router.post('/', async (req, res) => {
+router.post('/', async (req: Request, res: Response) => {
   try {
     const newBlog = new BlogModel(req.body);
-    const savedBlog = await newBlog.save();
+    const savedBlog: BlogPost = await newBlog.save();
     res.status(201).json(savedBlog);
   } catch (err) {
     res.status(500).json({ error: 'Failed to create blog post' });
@@ -49,9 +49,9 @@ router.post('/', async (req, res) => {
 });
 
 // PUT update blog post
-router.put('/:id', async (req, res) => {
+router.put('/:id', async (req: Request, res: Response) => {
   try {
-    const updatedBlog = await BlogModel.findByIdAndUpdate(
+    const updatedBlog: BlogPost | null = await BlogModel.findByIdAndUpdate(
       req.params.id,
       req.body,
       { new: true }
@@ -66,9 +66,9 @@ router.put('/:id', async (req, res) => {
 });
 
 // DELETE blog post
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', async (req: Request, res: Response) => {
   try {
-    const deletedBlog = await BlogModel.findByIdAndDelete(req.params.id);
+    const deletedBlog: BlogPost | null = await BlogModel.findByIdAndDelete(req.params.id);
     if (!deletedBlog) {
       return res.status(404).json({ error: 'Blog post not found' });
     }
