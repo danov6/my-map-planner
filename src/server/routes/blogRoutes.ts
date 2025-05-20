@@ -4,6 +4,57 @@ import BlogModel from '../models/BlogModel';
 
 const router: Router = express.Router();
 
+// Mock data for testing
+const mockBlogs: Record<string, BlogPost[]> = {
+  'USA': [
+    {
+      id: '1',
+      title: 'My Trip to New York',
+      content: 'Exploring the Big Apple was amazing...',
+      countryCode: 'USA',
+      author: 'John Doe',
+      imageUrl: 'https://images.unsplash.com/photo-1485871981521-5b1fd3805eee',
+      createdAt: new Date('2024-01-15')
+    },
+    {
+      id: '2',
+      title: 'California Dreams',
+      content: 'The west coast has the best beaches...',
+      countryCode: 'US',
+      author: 'Jane Smith',
+      imageUrl: 'https://images.unsplash.com/photo-1501594907352-04cda38ebc29',
+      createdAt: new Date('2024-02-20')
+    }
+  ],
+  'FRA': [
+    {
+      id: '3',
+      title: 'Paris in Spring',
+      content: 'The Eiffel Tower is even more beautiful...',
+      countryCode: 'FRA',
+      author: 'Alice Wilson',
+      imageUrl: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34',
+      createdAt: new Date('2024-03-10')
+    }
+  ],
+  // Add more countries as needed
+};
+
+// Update the country route to return mock data
+router.get('/country/:countryCode', async (req: Request, res: Response) => {
+  try {
+    const { countryCode } = req.params;
+    res.setHeader('Content-Type', 'application/json');
+    
+    // Return mock data for the country or empty array if none exists
+    const blogs = mockBlogs[countryCode.toUpperCase()] || [];
+    res.json(blogs);
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Failed to fetch blogs' });
+  }
+});
+
 // GET all blog posts
 router.get('/', async (req: Request, res: Response) => {
   try {

@@ -6,23 +6,26 @@ import { BlogPost } from '../shared/types';
 import './styles/global.css';  // Add this import
 
 const App: React.FC = () => {
-  const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
+  const [selectedCountry, setSelectedCountry] = useState<{ countryCode: string, name: string } | null>(null);
   const [blogs, setBlogs] = useState<BlogPost[]>([]);
   
   useEffect(() => {
     if (selectedCountry) {
-      fetchBlogsForCountry(selectedCountry);
+      const countryCode = selectedCountry.countryCode;
+      if(countryCode){
+        fetchBlogsForCountry(countryCode);
+      }
     }
   }, [selectedCountry]);
   
   const fetchBlogsForCountry = async (countryCode: string) => {
     try {
-      //const response = await fetch(`/api/blogs/country/${countryCode}`);
-      //const data = await response.json();
-      //setBlogs(data);
-      console.log('Giordano', countryCode);
+      const response = await fetch(`http://localhost:53195/api/blogs/country/${countryCode}`);
+      const data = await response.json();
+      console.log('Giordano', data)
+      setBlogs(data);
     } catch (error) {
-      console.error('Error fetching blogs:', error);
+      //console.error('Error fetching blogs:', error);
     }
   };
   

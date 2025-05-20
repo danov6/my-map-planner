@@ -5,7 +5,6 @@ const BlogList: React.FC = () => {
   const { selectedCountry, blogs }: { selectedCountry: { name: string } | null; blogs: { id: string; imageUrl?: string; title: string; publishDate: string; content: string }[] } = useContext(AppContext);
 
   if (!selectedCountry || blogs.length === 0) {
-    console.log(selectedCountry)
     const missingTxt = selectedCountry?.name ? 'No blogs available for ' + selectedCountry.name : 'No blogs available for this country';
     return (
       <div className="blog-list-container">

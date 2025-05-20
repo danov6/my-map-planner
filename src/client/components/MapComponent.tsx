@@ -7,18 +7,6 @@ import 'leaflet/dist/leaflet.css';
 import countriesGeoJSON from '../../../public/assets/countries.geo.json';
 import { GeoJsonObject } from 'geojson';
 
-interface GeoJSONFeature {
-  type: string;
-  properties: {
-    name: string;
-    ISO_A2: string;
-  };
-  geometry: {
-    type: string;
-    coordinates: number[][][];
-  };
-}
-
 interface TooltipState {
   name: string;
   x: number;
@@ -97,8 +85,8 @@ const MapComponent: React.FC = () => {
     const layer = event.target;
     if (country?.properties) {
       setSelectedCountry({
-        name: country.properties.name,
-        code: country.properties.ISO_A2
+        name: country.properties['name'],
+        countryCode: country.properties['ISO3166-1-Alpha-3']
       });
 
       // Get bounds of the clicked country and adjust zoom

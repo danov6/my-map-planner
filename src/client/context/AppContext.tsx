@@ -8,8 +8,8 @@ interface AppContextType {
 }
 
 export const AppContext = createContext<{
-  selectedCountry: { name: string } | null;
-  setSelectedCountry: (country: { name: string; code: string }) => void;
+  selectedCountry: { name: string, countryCode: string } | null;
+  setSelectedCountry: (country: { name: string; countryCode: string }) => void;
   blogs: {
     id: string;
     imageUrl?: string;

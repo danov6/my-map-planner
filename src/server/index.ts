@@ -4,11 +4,26 @@ import mongoose from 'mongoose';
 import blogRoutes from './routes/blogRoutes';
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 53195;
 
 // Middleware
-app.use(cors());
+// Configure middleware
+app.use(cors({
+    origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type']
+  }));
 app.use(express.json());
+
+// Disable caching middleware
+app.use((req, res, next) => {
+    res.set({
+      'Cache-Control': 'no-store',
+      'Pragma': 'no-cache',
+      'Expires': '0'
+    });
+    next();
+  });
 
 // MongoDB Connection
 mongoose.connect('mongodb://localhost:27017/map-planner')
