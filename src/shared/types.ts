@@ -6,6 +6,7 @@ export interface BlogPost {
   imageUrl?: string;
   countryCode: string;
   createdAt: Date;
+  publishDate: string;
 }
   
 export interface CountryData {

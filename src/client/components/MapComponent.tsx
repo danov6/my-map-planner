@@ -1,4 +1,4 @@
-import React, { useContext, useState, useCallback, useMemo } from 'react';
+import React, { useContext, useState, useCallback, useMemo, useEffect } from 'react';
 import { MapContainer, TileLayer, GeoJSON, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import { Feature, Geometry } from 'geojson';
@@ -16,7 +16,7 @@ interface TooltipState {
 const MapController: React.FC<{ bounds?: number[][] }> = ({ bounds }) => {
   const map = useMap();
   
-  React.useEffect(() => {
+  useEffect(() => {
     if (bounds) {
       map.fitBounds(bounds as [number, number][]);
     }
@@ -26,7 +26,7 @@ const MapController: React.FC<{ bounds?: number[][] }> = ({ bounds }) => {
 };
 
 const MapComponent: React.FC = () => {
-  const { setSelectedCountry } = useContext(AppContext);
+  const { selectedCountry, setSelectedCountry, isModalOpen, setIsModalOpen } = useContext(AppContext);
   const [tooltip, setTooltip] = useState<TooltipState | null>(null);
   const [hoveredCountry, setHoveredCountry] = useState<string | null>(null);
   const [selectedBounds, setSelectedBounds] = useState<number[][]>();
@@ -93,6 +93,7 @@ const MapComponent: React.FC = () => {
       const bounds = layer.getBounds();
       const adjustedBounds = bounds.pad(0.1); // Add 10% padding
       setSelectedBounds(adjustedBounds);
+      setIsModalOpen(true);
     }
   }, [setSelectedCountry]);
 
@@ -121,7 +122,7 @@ const MapComponent: React.FC = () => {
   return (
     <div className="map-container">
       <MapContainer {...mapConfig}>
-      {selectedBounds && <MapController bounds={selectedBounds} />}
+        {selectedBounds && <MapController bounds={selectedBounds} />}
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -136,7 +137,6 @@ const MapComponent: React.FC = () => {
           onEachFeature={onEachFeature}
         />
       </MapContainer>
-      
       {tooltip && (
         <div className="country-tooltip" style={tooltipStyle}>
           {tooltip.name}
