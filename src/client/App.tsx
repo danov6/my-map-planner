@@ -3,6 +3,7 @@ import { TravelOption } from './context/AppContext';
 import MapComponent from './components/MapComponent';
 import Modal from './components/Modal';
 import BlogList from './components/BlogList';
+import Navbar from './components/Navbar';
 import { AppContext } from './context/AppContext';
 import { BlogPost } from '../shared/types';
 import './styles/global.css';
@@ -46,14 +47,12 @@ const App: React.FC = () => {
     }}>
       <div className="app-container">
         <header>
-          <h1>Travel Blog Explorer</h1>
-          <br/>
-          <h3>Select a country to get started</h3>
+          <Navbar />
         </header>
         <main>
+          <h3>Select a country to get started</h3>
           <div>
             <MapComponent />
-            {/* {selectedCountry && <BlogList />} */}
           </div>
         </main>
         <Modal

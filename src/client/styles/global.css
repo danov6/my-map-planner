@@ -14,13 +14,12 @@ body {
 }
 
 .app-container {
+  padding-top: 64px;
   min-height: 100vh;
 }
 
 header {
   background-color: var(--header-bg);
-  padding: 1rem;
-  border-bottom: 1px solid var(--border-color);
 }
 
 header h1 {
