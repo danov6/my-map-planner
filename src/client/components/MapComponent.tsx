@@ -7,6 +7,23 @@ import 'leaflet/dist/leaflet.css';
 import countriesGeoJSON from '../../../public/assets/countries.geo.json';
 import { GeoJsonObject } from 'geojson';
 
+const COUNTRY_BLACKLIST = [
+  'ATA', // Antarctica
+  'GRL', // Greenland
+  'HMD', // Heard Island and McDonald Islands
+  'WLF', // Wallis and Futuna
+  'ESH', // Western Sahara
+  'TKL', // Tokelau
+  'UMI', // United States Minor Outlying Islands
+  'VGB', // British Virgin Islands
+  'VIR', // United States Virgin Islands
+  'CXR', // Christmas Island
+  'CCK', // Cocos (Keeling) Islands
+  'NFK', // Norfolk Island
+  'ATF', // French Southern and Antarctic Lands
+];
+
+
 interface TooltipState {
   name: string;
   x: number;
@@ -36,13 +53,13 @@ const MapComponent: React.FC = () => {
     fillColor: '#4a90e2',
     weight: 1,
     opacity: 1,
-    color: '#666', // White borders
+    color: '#666',
     fillOpacity: 0.3,
     strokeWidth: 1,
     strokeOpacity: 1,
-    smoothFactor: 2, // Increase smoothing for better performance
+    smoothFactor: 2,
     interactive: true,
-    renderer: new L.Canvas(), // Force canvas rendering
+    renderer: new L.Canvas(),
     pane: 'overlayPane'
   }), []);
 
@@ -50,8 +67,8 @@ const MapComponent: React.FC = () => {
   const mapConfig = useMemo(() => ({
     center: [20, 0] as [number, number],
     zoom: 2,
-    maxZoom: 6, // Increased to allow closer zoom on click
-    minZoom: 2, // Prevent zooming out too far
+    maxZoom: 6,
+    minZoom: 2,
     style: { height: '500px', width: '100%' },
     zoomControl: true,
     zoomAnimation: true,
@@ -81,17 +98,23 @@ const MapComponent: React.FC = () => {
 
   // Memoize click handler
   const handleCountryClick = useCallback((event: any) => {
-    const country = event.target.feature;
+    const countryName = event.target.feature.properties['name'];
+    const countryCode = event.target.feature.properties['ISO3166-1-Alpha-3'];
     const layer = event.target;
-    if (country?.properties) {
+
+    if(COUNTRY_BLACKLIST.includes(countryCode)) {
+      return;
+    }
+
+    if (countryName && countryCode) {
       setSelectedCountry({
-        name: country.properties['name'],
-        countryCode: country.properties['ISO3166-1-Alpha-3']
+        name: countryName,
+        countryCode
       });
 
       // Get bounds of the clicked country and adjust zoom
       const bounds = layer.getBounds();
-      const adjustedBounds = bounds.pad(0.1); // Add 10% padding
+      const adjustedBounds = bounds.pad(0.1);
       setSelectedBounds(adjustedBounds);
       setIsModalOpen(true);
     }

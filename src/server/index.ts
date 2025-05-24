@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import blogRoutes from './routes/blogRoutes';
+import path from 'path';
 
 const app = express();
 const PORT = process.env.PORT || 53195;
@@ -14,6 +15,10 @@ app.use(cors({
     allowedHeaders: ['Content-Type']
   }));
 app.use(express.json());
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../../public/index.html'));
+});
 
 // Disable caching middleware
 app.use((req, res, next) => {

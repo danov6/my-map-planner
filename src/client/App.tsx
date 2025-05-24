@@ -9,64 +9,90 @@ import { BlogPost } from '../shared/types';
 import './styles/global.css';
 import './styles/modal.css';
 
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import Guide from './components/Guide';
+
 const App: React.FC = () => {
   const [selectedCountry, setSelectedCountry] = useState<{ countryCode: string, name: string } | null>(null);
   const [blogs, setBlogs] = useState<BlogPost[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedOptions, setSelectedOptions] = useState<TravelOption[]>([]);
-  
-  useEffect(() => {
-    if (selectedCountry) {
-      const countryCode = selectedCountry.countryCode;
-      if(countryCode){
-        //fetchBlogsForCountry(countryCode);
+
+  const formatQueryString = (options: TravelOption[]) => {
+    return options.map(option => `option=${encodeURIComponent(option.id)}`).join('&');
+  };
+
+  const parseQueryString = () => {
+    const queryParams = new URLSearchParams(window.location.search);
+    const options: TravelOption[] = [];
+    
+    queryParams.forEach((value, key) => {
+      if (key === 'option') {
+        options.push({
+          id: decodeURIComponent(value),
+          text: '' // You might want to map these IDs to their text values
+        });
       }
-    }
-  }, [selectedCountry]);
-  
-  const fetchBlogsForCountry = async (countryCode: string) => {
-    try {
-      const response = await fetch(`http://localhost:53195/api/blogs/country/${countryCode}`);
-      const data = await response.json();
-      console.log('Giordano', data)
-      setBlogs(data);
-    } catch (error) {
-      //console.error('Error fetching blogs:', error);
+    });
+
+    if (options.length > 0) {
+      console.log('Giordano', options);
+      setSelectedOptions(options);
     }
   };
+
+  useEffect(() => {
+    parseQueryString();
+  }, []);
+
+  useEffect(() => {
+    if (selectedOptions?.length > 0) {
+      console.log('Giordano', formatQueryString(selectedOptions));
+    }
+  }, [selectedOptions]);
   
   return (
-    <AppContext.Provider value={{ 
-      selectedCountry, 
-      blogs, 
-      setSelectedCountry,
-      isModalOpen,
-      setIsModalOpen,
-      selectedOptions,
-      setSelectedOptions
-    }}>
-      <div className="app-container">
-        <header>
-          <Navbar />
-        </header>
-        <main>
-          <h3>Select a country to get started</h3>
+    <Router>
+      <AppContext.Provider value={{ 
+        selectedCountry, 
+        blogs, 
+        setSelectedCountry,
+        isModalOpen,
+        setIsModalOpen,
+        selectedOptions,
+        setSelectedOptions
+      }}>
+        <div className="app-container">
+          <header>
+            <Navbar />
+          </header>
+          <main>
+          <Routes>
+              <Route path="/" element={
+                <>
+                  <h3>Select a country to get started</h3>
+                  <div>
+                    <MapComponent />
+                  </div>
+                </>
+              } />
+              <Route path="/guide" element={<Guide />} />
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </main>
+          <Modal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          title={selectedCountry?.name || 'Country Details'}
+        >
           <div>
-            <MapComponent />
+            <h3>{selectedCountry?.name}</h3>
+            {/* Add more content here */}
           </div>
-        </main>
-        <Modal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        title={selectedCountry?.name || 'Country Details'}
-      >
-        <div>
-          <h3>{selectedCountry?.name}</h3>
-          {/* Add more content here */}
+        </Modal>
         </div>
-      </Modal>
-      </div>
-    </AppContext.Provider>
+      </AppContext.Provider>
+    </Router>
   );
 };
 
