@@ -23,6 +23,17 @@ const COUNTRY_BLACKLIST = [
   'ATF', // French Southern and Antarctic Lands
 ];
 
+const HIGHLIGHTED_COUNTRIES = [
+  'USA', // United States
+  'FRA', // France
+  'GBR', // United Kingdom
+  'ESP', // Spain
+  'ITA', // Italy
+  'DEU', // Germany
+  'JPN', // Japan
+  'AUS', // Australia
+];
+
 
 interface TooltipState {
   name: string;
@@ -90,11 +101,21 @@ const MapComponent: React.FC = () => {
   }), [tooltip?.x, tooltip?.y]);
 
   // Memoize style generator function
-  const getCountryStyle = useCallback((feature: Feature<Geometry, any> | undefined) => ({
+  const getCountryStyle = useCallback((feature: Feature<Geometry, any> | undefined) => {
+  const countryCode = feature?.properties['ISO3166-1-Alpha-3'];
+  const isHighlighted = HIGHLIGHTED_COUNTRIES.includes(countryCode);
+  
+  return {
     ...baseCountryStyle,
-    fillOpacity: hoveredCountry === feature?.properties?.name ? 0.7 : 0.3,
+    fillColor: isHighlighted ? '#7db0e4' : '#4a90e2',
+    fillOpacity: hoveredCountry === feature?.properties?.name 
+      ? 0.7 
+      : isHighlighted 
+        ? 0.4 
+        : 0.3,
     weight: hoveredCountry === feature?.properties?.name ? 2 : 1
-  }), [hoveredCountry, baseCountryStyle]);
+  };
+}, [hoveredCountry, baseCountryStyle]);
 
   // Memoize click handler
   const handleCountryClick = useCallback((event: any) => {
