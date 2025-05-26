@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { TravelOption } from './context/AppContext';
-import MapComponent from './components/MapComponent';
 import Modal from './components/Modal';
 import BlogList from './components/BlogList';
 import Navbar from './components/Navbar';
@@ -10,7 +9,8 @@ import './styles/global.css';
 import './styles/modal.css';
 
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import Guide from './components/Guide';
+import GuidePage from './pages/GuidePage';
+import HomePage from './pages/HomePage';
 
 const App: React.FC = () => {
   const [selectedCountry, setSelectedCountry] = useState<{ countryCode: string, name: string } | null>(null);
@@ -36,7 +36,6 @@ const App: React.FC = () => {
     });
 
     if (options.length > 0) {
-      console.log('Giordano', options);
       setSelectedOptions(options);
     }
   };
@@ -47,7 +46,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     if (selectedOptions?.length > 0) {
-      console.log('Giordano', formatQueryString(selectedOptions));
+      //console.log('Giordano', formatQueryString(selectedOptions));
     }
   }, [selectedOptions]);
   
@@ -63,33 +62,19 @@ const App: React.FC = () => {
         setSelectedOptions
       }}>
         <div className="app-container">
-          <header>
-            <Navbar />
-          </header>
+          <Navbar />
           <main>
-          <Routes>
-              <Route path="/" element={
-                <>
-                  <h3>Select a country to get started</h3>
-                  <div>
-                    <MapComponent />
-                  </div>
-                </>
-              } />
-              <Route path="/guide" element={<Guide />} />
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/guide" element={<GuidePage />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </main>
           <Modal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          title={selectedCountry?.name || 'Country Details'}
-        >
-          <div>
-            <h3>{selectedCountry?.name}</h3>
-            {/* Add more content here */}
-          </div>
-        </Modal>
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+            title={selectedCountry?.name || 'Country Details'}
+          />
         </div>
       </AppContext.Provider>
     </Router>

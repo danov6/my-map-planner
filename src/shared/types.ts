@@ -8,6 +8,11 @@ export interface BlogPost {
   createdAt: Date;
   publishDate: string;
 }
+
+export interface Guide {
+  header: string;
+  content: string;
+}
   
 export interface CountryData {
   code: string;

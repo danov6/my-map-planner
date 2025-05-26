@@ -22,18 +22,10 @@ const COUNTRY_BLACKLIST = [
   'NFK', // Norfolk Island
   'ATF', // French Southern and Antarctic Lands
 ];
-
-const HIGHLIGHTED_COUNTRIES = [
-  'USA', // United States
-  'FRA', // France
-  'GBR', // United Kingdom
-  'ESP', // Spain
-  'ITA', // Italy
-  'DEU', // Germany
-  'JPN', // Japan
-  'AUS', // Australia
-];
-
+const COUNTRY_COLORS = {
+  BLACKLIST: '#7a848d', // Lighter blue for blacklisted countries
+  WHITELIST: '#4a90e2' // Default color for other countries
+}
 
 interface TooltipState {
   name: string;
@@ -103,11 +95,11 @@ const MapComponent: React.FC = () => {
   // Memoize style generator function
   const getCountryStyle = useCallback((feature: Feature<Geometry, any> | undefined) => {
   const countryCode = feature?.properties['ISO3166-1-Alpha-3'];
-  const isHighlighted = HIGHLIGHTED_COUNTRIES.includes(countryCode);
+  const isHighlighted = COUNTRY_BLACKLIST.includes(countryCode);
   
   return {
     ...baseCountryStyle,
-    fillColor: isHighlighted ? '#7db0e4' : '#4a90e2',
+    fillColor: isHighlighted ? COUNTRY_COLORS.BLACKLIST : COUNTRY_COLORS.WHITELIST,
     fillOpacity: hoveredCountry === feature?.properties?.name 
       ? 0.7 
       : isHighlighted 

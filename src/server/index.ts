@@ -2,6 +2,7 @@ import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import blogRoutes from './routes/blogRoutes.js';
+import guideRoutes from './routes/guideRoutes.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
@@ -46,6 +47,7 @@ mongoose.connect(MONGODB_URI)
 
 // API Routes
 app.use('/api/blogs', blogRoutes);
+app.use('/api/guides', guideRoutes);
 
 // Health check route
 app.get('/health', (req, res) => {

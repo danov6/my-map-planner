@@ -2,8 +2,9 @@ import React, { useContext } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import './../styles/guide.css';
 import { AppContext } from '../context/AppContext';
+import MapComponent from './../components/MapComponent';
 
-const Guide: React.FC = () => {
+const GuidePage: React.FC = () => {
   const { selectedCountry } = useContext(AppContext);
   const location = useLocation();
   const navigate = useNavigate();
@@ -14,18 +15,13 @@ const Guide: React.FC = () => {
   };
 
   return (
-    <div className="guide-container">
-      <button 
-        className="back-button"
-        onClick={handleBack}
-        aria-label="Back to map"
-      >
-        ← Back to Map
-      </button>
-      <h1>Travel Guide for {selectedCountry ? selectedCountry.name : 'Unknown Country'}</h1>
-      {/* Add your guide content here */}
-    </div>
+    <>
+        <h3>Select a country to get started</h3>
+        <div>
+        <MapComponent />
+        </div>
+    </>
   );
 };
 
-export default Guide;
+export default GuidePage;

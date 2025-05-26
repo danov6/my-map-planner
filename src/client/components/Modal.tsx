@@ -16,9 +16,9 @@ const travelOptions = [
 
 const recommendationOptions = [
   { id: 'tourist', text: 'Tourist Attractions' },
-  { id: 'food', text: 'Food/Beverage' },
+  { id: 'food', text: 'Food/Beverage Ideas' },
   { id: 'adventure', text: 'Adventure Activities' },
-  { id: 'budget', text: 'Budget Friendly' }
+  { id: 'budget', text: 'Budget Friendly Options' }
 ];
 
 const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title }) => {
@@ -87,7 +87,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title }) => {
               </div>
               <div className="modal-content">
                   <h3 className="modal-subheader">
-                      {currentPage === 1 ? 'Select all that apply' : 'What kind of experiences interest you?'}
+                      {currentPage === 1 ? 'Select all that apply' : 'What should we include in your guide?'}
                   </h3>
                   
                   <div className="option-buttons">
