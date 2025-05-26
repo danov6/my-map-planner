@@ -1,6 +1,6 @@
 import express, { Request, Response, Router } from 'express';
 import { BlogPost } from '../../shared/types';
-import BlogModel from '../models/BlogModel';
+import BlogModel from '../models/BlogModel.js';
 
 const router: Router = express.Router();
 
@@ -14,7 +14,8 @@ const mockBlogs: Record<string, BlogPost[]> = {
       countryCode: 'USA',
       author: 'John Doe',
       imageUrl: 'https://images.unsplash.com/photo-1485871981521-5b1fd3805eee',
-      createdAt: new Date('2024-01-15')
+      createdAt: new Date('2024-01-15'),
+      publishDate: '2024-01-20'
     },
     {
       id: '2',
@@ -23,7 +24,8 @@ const mockBlogs: Record<string, BlogPost[]> = {
       countryCode: 'US',
       author: 'Jane Smith',
       imageUrl: 'https://images.unsplash.com/photo-1501594907352-04cda38ebc29',
-      createdAt: new Date('2024-02-20')
+      createdAt: new Date('2024-02-20'),
+      publishDate: '2024-02-25'
     }
   ],
   'FRA': [
@@ -34,7 +36,8 @@ const mockBlogs: Record<string, BlogPost[]> = {
       countryCode: 'FRA',
       author: 'Alice Wilson',
       imageUrl: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34',
-      createdAt: new Date('2024-03-10')
+      createdAt: new Date('2024-03-10'),
+      publishDate: '2024-03-15'
     }
   ],
   // Add more countries as needed
@@ -76,17 +79,17 @@ router.get('/country/:countryCode', async (req: Request, res: Response) => {
 });
 
 // GET single blog post
-router.get('/:id', async (req: Request, res: Response) => {
-  try {
-    const blog: BlogPost | null = await BlogModel.findById(req.params.id);
-    if (!blog) {
-      return res.status(404).json({ error: 'Blog post not found' });
-    }
-    res.json(blog);
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to fetch blog post' });
-  }
-});
+// router.get('/:id', async (req: Request<{ id: string }>, res: Response) => {
+//   try {
+//     const blog: BlogPost | null = await BlogModel.findById(req.params.id);
+//     if (!blog) {
+//       return res.status(404).json({ error: 'Blog post not found' });
+//     }
+//     res.json(blog);
+//   } catch (err) {
+//     res.status(500).json({ error: 'Failed to fetch blog post' });
+//   }
+// });
 
 // POST new blog post
 router.post('/', async (req: Request, res: Response) => {
@@ -100,33 +103,20 @@ router.post('/', async (req: Request, res: Response) => {
 });
 
 // PUT update blog post
-router.put('/:id', async (req: Request, res: Response) => {
-  try {
-    const updatedBlog: BlogPost | null = await BlogModel.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true }
-    );
-    if (!updatedBlog) {
-      return res.status(404).json({ error: 'Blog post not found' });
-    }
-    res.json(updatedBlog);
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to update blog post' });
-  }
-});
-
-// DELETE blog post
-router.delete('/:id', async (req: Request, res: Response) => {
-  try {
-    const deletedBlog: BlogPost | null = await BlogModel.findByIdAndDelete(req.params.id);
-    if (!deletedBlog) {
-      return res.status(404).json({ error: 'Blog post not found' });
-    }
-    res.json({ message: 'Blog post deleted successfully' });
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to delete blog post' });
-  }
-});
+// router.put('/:id', async (req: Request, res: Response) => {
+//   try {
+//     const updatedBlog: BlogPost | null = await BlogModel.findByIdAndUpdate(
+//       req.params.id,
+//       req.body,
+//       { new: true }
+//     );
+//     if (!updatedBlog) {
+//       return res.status(404).json({ error: 'Blog post not found' });
+//     }
+//     res.json(updatedBlog);
+//   } catch (err) {
+//     res.status(500).json({ error: 'Failed to update blog post' });
+//   }
+// });
 
 export default router;

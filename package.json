@@ -4,6 +4,7 @@
   "repository": "https://github.com/danov6/my-map-planner.git",
   "author": "danov6 <glvaldez@callutheran.edu>",
   "license": "MIT",
+  "type": "module",
   "devDependencies": {
     "@types/cors": "^2.8.18",
     "@types/express": "^5.0.2",
@@ -28,6 +29,7 @@
     "express": "^5.1.0",
     "leaflet": "^1.9.4",
     "mongoose": "^8.15.0",
+    "openai": "^4.103.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-leaflet": "^5.0.0",
@@ -36,7 +38,7 @@
   "scripts": {
     "start": "parcel public/index.html",
     "build": "parcel build public/index.html",
-    "server": "ts-node src/server/index.ts",
+    "server": "node --loader ts-node/esm src/server/index.ts",
     "dev": "concurrently \"yarn start\" \"yarn server\"",
     "lint": "eslint . --ext .ts,.tsx",
     "lint:fix": "eslint . --ext .ts,.tsx --fix"

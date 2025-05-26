@@ -3,6 +3,7 @@ import { BlogPost } from '../../shared/types';
 
 // Create interface for the document
 interface BlogDocument extends Omit<BlogPost, '_id'>, Document {
+  id: string; // Explicitly redefine the 'id' property to resolve conflict
   createdAt: Date;
   updatedAt: Date;
   author: string; // Add the missing 'author' field
