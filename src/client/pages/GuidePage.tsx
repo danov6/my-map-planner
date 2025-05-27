@@ -1,53 +1,70 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import './../styles/guide.css';
 import { AppContext } from '../context/AppContext';
-import { isFloat32Array } from 'node:util/types';
 
 const GuidePage: React.FC = () => {
-  const { selectedCountry, selectedOptions } = useContext(AppContext);
+  const { 
+    selectedCountry, 
+    selectedOptions, 
+    guide, 
+    setGuide 
+  } = useContext(AppContext);
   const location = useLocation();
   const navigate = useNavigate();
   const queryParams = new URLSearchParams(location.search);
+  const [hasFetchedGuide, setHasFetchedGuideDate] = useState(false);
 
   useEffect(() => {
-    const fetchGuide = async () => {
-      // Redirect if required data is missing
-      if (!selectedCountry?.countryCode || !selectedOptions?.length) {
-        navigate('/');
-        return;
-      }
+    // const fetchGuide = async () => {
+    //   // Redirect if required data is missing
+    //   if (hasFetchedGuide || !selectedCountry?.countryCode || !selectedOptions?.length) {
+    //     navigate('/');
+    //     return;
+    //   }
 
-      try {
-        const response = await fetch('http://localhost:53195/api/guides', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            countryCode: selectedCountry.countryCode,
-            selectedOptions: selectedOptions.map(opt => opt.id)
-          })
-        });
+    //   try {
+    //     const { countryCode, name: countryName } = selectedCountry;
+    //     const response = await fetch('http://localhost:53195/api/guides', {
+    //       method: 'POST',
+    //       headers: {
+    //         'Content-Type': 'application/json',
+    //       },
+    //       credentials: 'include',
+    //       mode: 'cors',
+    //       body: JSON.stringify({
+    //         countryName,
+    //         countryCode,
+    //         selectedOptions: selectedOptions.map(opt => opt.id)
+    //       })
+    //     });
 
-        if (!response.ok) {
-          throw new Error('Failed to fetch guide');
-        }
+    //     if (!response.ok) {
+    //       throw new Error('Failed to fetch guide');
+    //     }
 
-        const data = await response.json();
-        // Handle the response data here
-        console.log('Guide data:', data);
-      } catch (error) {
-        console.error('Error fetching guide:', error);
-        navigate('/');
-      }
-    };
-    if(selectedCountry && selectedOptions && selectedOptions.length > 0) {
-      fetchGuide();
-    }
+    //     const data = await response.json();
+    //     setGuide(data);
+    //     setHasFetchedGuideDate(true);
+    //   } catch (error) {
+    //     console.log('Error fetching guide:', error);
+    //     navigate('/');
+    //   }
+    // };
+    // if(selectedCountry && selectedOptions && selectedOptions.length > 0) {
+    //   fetchGuide();
+    // }
   }, [selectedCountry, selectedOptions, navigate]);
 
+  useEffect(() => {
+    fetch('http://localhost:53195/test-cors', {
+      mode: 'cors',
+      credentials: 'include'
+  }).then(r => r.json()).then(console.log)
+  }, [])
+
   const handleBack = () => {
+    setGuide(null);
     navigate('/');
   };
 
@@ -60,8 +77,12 @@ const GuidePage: React.FC = () => {
       >
         ← Back to Map
       </button>
-      <h1>Travel Guide for {selectedCountry ? selectedCountry.name : 'Unknown Country'}</h1>
-      {/* Add your guide content here */}
+      <h1>{guide?.[0]?.header || `Travel Guide for ${selectedCountry?.name || 'Unknown Country'}`}</h1>
+      {guide?.[0]?.content && (
+        <div className="guide-content">
+          {guide[0].content}
+        </div>
+      )}
     </div>
   );
 };

@@ -38,7 +38,7 @@
   "scripts": {
     "start": "parcel public/index.html",
     "build": "parcel build public/index.html",
-    "server": "node --loader ts-node/esm src/server/index.ts",
+    "server": "nodemon --loader ts-node/esm src/server/index.ts",
     "dev": "concurrently \"yarn start\" \"yarn server\"",
     "lint": "eslint . --ext .ts,.tsx",
     "lint:fix": "eslint . --ext .ts,.tsx --fix"

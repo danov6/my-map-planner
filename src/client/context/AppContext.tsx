@@ -6,7 +6,14 @@ export interface TravelOption {
   text: string;
 }
 
+export interface Guide {
+  header: string;
+  content: string;
+}
+
 export const AppContext = createContext<{
+  guide: Guide[] | null;
+  setGuide: (guide: Guide[] | null) => void;
   selectedCountry: { name: string, countryCode: string } | null;
   setSelectedCountry: (country: { name: string; countryCode: string }) => void;
   isModalOpen: boolean;
@@ -21,6 +28,8 @@ export const AppContext = createContext<{
   selectedOptions: TravelOption[];
   setSelectedOptions: (options: TravelOption[]) => void;
 }>({
+  guide: null,
+  setGuide: () => {},
   selectedCountry: null,
   setSelectedCountry: () => {},
   isModalOpen: false,

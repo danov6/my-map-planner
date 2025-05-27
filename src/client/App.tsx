@@ -17,6 +17,7 @@ const App: React.FC = () => {
   const [blogs, setBlogs] = useState<BlogPost[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedOptions, setSelectedOptions] = useState<TravelOption[]>([]);
+  const [guide, setGuide] = useState<{ header: string, content: string }[] | null>(null);
 
   const formatQueryString = (options: TravelOption[]) => {
     return options.map(option => `option=${encodeURIComponent(option.id)}`).join('&');
@@ -53,6 +54,8 @@ const App: React.FC = () => {
   return (
     <Router>
       <AppContext.Provider value={{ 
+        guide,
+        setGuide,
         selectedCountry, 
         blogs, 
         setSelectedCountry,

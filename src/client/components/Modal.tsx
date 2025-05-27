@@ -59,10 +59,10 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title }) => {
       
       // Navigate to guide page with selected options
       navigate(`/guide?${queryString}`);
-      onClose();
+      handleClose();
     };
 
-    const handleCloseButton = () => {
+    const handleClose = () => {
       setCurrentPage(1);
       setSelectedItems(new Set());
       setSelectedExperiences(new Set());
@@ -73,22 +73,22 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title }) => {
 
     return (
       <>
-          <div className="modal-overlay" onClick={handleCloseButton} />
+          <div className="modal-overlay" onClick={handleClose} />
           <div className="modal-container">
               <div className="modal-header">
-                  <h2>{title}</h2>
+                  <h2>Let's curate a travel guide for {title}</h2>
                   <button 
                       className="modal-close"
-                      onClick={handleCloseButton}
+                      onClick={handleClose}
                       aria-label="Close modal"
                   >
                       ×
                   </button>
               </div>
               <div className="modal-content">
-                  <h3 className="modal-subheader">
+                  <h4 className="modal-subheader">
                       {currentPage === 1 ? 'Select all that apply' : 'What should we include in your guide?'}
-                  </h3>
+                  </h4>
                   
                   <div className="option-buttons">
                       {(currentPage === 1 ? travelOptions : recommendationOptions).map(option => (

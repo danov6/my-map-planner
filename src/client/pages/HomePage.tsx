@@ -1,27 +1,28 @@
-import React, { useContext } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
 import './../styles/guide.css';
-import { AppContext } from '../context/AppContext';
 import MapComponent from './../components/MapComponent';
+import Spinner from './../components/Spinner';
 
-const GuidePage: React.FC = () => {
-  const { selectedCountry } = useContext(AppContext);
-  const location = useLocation();
-  const navigate = useNavigate();
-  const queryParams = new URLSearchParams(location.search);
+const HomePage: React.FC = () => {
+  const [isLoading, setIsLoading] = useState(true);
 
-  const handleBack = () => {
-    navigate('/');
-  };
+  useEffect(() => {
+    // Simulate map loading time
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    });
+
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <>
-        <h3>Select a country to get started</h3>
-        <div>
-        <MapComponent />
-        </div>
+      <h3>Select a country to get started</h3>
+      <div>
+        {isLoading ? <Spinner /> : <MapComponent />}
+      </div>
     </>
   );
 };
 
-export default GuidePage;
+export default HomePage;
