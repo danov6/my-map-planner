@@ -16,52 +16,45 @@ const GuidePage: React.FC = () => {
   const [hasFetchedGuide, setHasFetchedGuideDate] = useState(false);
 
   useEffect(() => {
-    // const fetchGuide = async () => {
-    //   // Redirect if required data is missing
-    //   if (hasFetchedGuide || !selectedCountry?.countryCode || !selectedOptions?.length) {
-    //     navigate('/');
-    //     return;
-    //   }
+    const fetchGuide = async () => {
+      // Redirect if required data is missing
+      if (hasFetchedGuide || !selectedCountry?.countryCode || !selectedOptions?.length) {
+        navigate('/');
+        return;
+      }
 
-    //   try {
-    //     const { countryCode, name: countryName } = selectedCountry;
-    //     const response = await fetch('http://localhost:53195/api/guides', {
-    //       method: 'POST',
-    //       headers: {
-    //         'Content-Type': 'application/json',
-    //       },
-    //       credentials: 'include',
-    //       mode: 'cors',
-    //       body: JSON.stringify({
-    //         countryName,
-    //         countryCode,
-    //         selectedOptions: selectedOptions.map(opt => opt.id)
-    //       })
-    //     });
+      try {
+        const { countryCode, name: countryName } = selectedCountry;
+        const response = await fetch('http://localhost:53195/api/guides', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+          mode: 'cors',
+          body: JSON.stringify({
+            countryName,
+            countryCode,
+            selectedOptions: selectedOptions.map(opt => opt.id)
+          })
+        });
 
-    //     if (!response.ok) {
-    //       throw new Error('Failed to fetch guide');
-    //     }
+        if (!response.ok) {
+          throw new Error('Failed to fetch guide');
+        }
 
-    //     const data = await response.json();
-    //     setGuide(data);
-    //     setHasFetchedGuideDate(true);
-    //   } catch (error) {
-    //     console.log('Error fetching guide:', error);
-    //     navigate('/');
-    //   }
-    // };
-    // if(selectedCountry && selectedOptions && selectedOptions.length > 0) {
-    //   fetchGuide();
-    // }
+        const data = await response.json();
+        setGuide(data);
+        setHasFetchedGuideDate(true);
+      } catch (error) {
+        console.log('Error fetching guide:', error);
+        navigate('/');
+      }
+    };
+    if(selectedCountry && selectedOptions && selectedOptions.length > 0) {
+      fetchGuide();
+    }
   }, [selectedCountry, selectedOptions, navigate]);
-
-  useEffect(() => {
-    fetch('http://localhost:53195/test-cors', {
-      mode: 'cors',
-      credentials: 'include'
-  }).then(r => r.json()).then(console.log)
-  }, [])
 
   const handleBack = () => {
     setGuide(null);

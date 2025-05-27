@@ -30,23 +30,14 @@ app.use((err: ErrorWithStack, req: Request, res: Response, next: NextFunction) =
   res.status(500).json({ error: 'Something went wrong!' });
 });
 
-// app.use(cors({
-//   origin: CLIENT_URL,
-//   methods: ['GET', 'POST', 'PUT', 'DELETE'],
-//   allowedHeaders: ['Content-Type', 'Authorization'],
-//   exposedHeaders: ['Content-Range', 'X-Content-Range'],
-//   credentials: true,
-//   maxAge: 86400
-// }));
-
-app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", CLIENT_URL);
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
-  );
-  next();
-});
+app.use(cors({
+  origin: CLIENT_URL,
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  exposedHeaders: ['Content-Range', 'X-Content-Range'],
+  credentials: true,
+  maxAge: 86400
+}));
 
 app.use(express.json());
 
