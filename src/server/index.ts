@@ -2,6 +2,7 @@ import express, { Request, Response, NextFunction } from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
 //import mongoose from 'mongoose';
+import authRoutes from './routes/authRoutes.js';
 import blogRoutes from './routes/blogRoutes.js';
 import guideRoutes from './routes/guideRoutes.js';
 import path from 'path';
@@ -56,6 +57,7 @@ app.use((req, res, next) => {
 //   .catch((err) => console.error('MongoDB connection error:', err));
 
 // API Routes
+app.use('/api/auth', authRoutes);
 app.use('/api/blogs', blogRoutes);
 app.use('/api/guides', guideRoutes);
 

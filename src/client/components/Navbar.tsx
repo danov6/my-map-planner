@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link, NavLink } from 'react-router-dom';
 import '../styles/navbar.css';
 
 const Navbar: React.FC = () => {
@@ -7,15 +8,39 @@ const Navbar: React.FC = () => {
       <nav className="navbar">
         <div className="navbar-content">
           <div className="navbar-logo">
-            <img 
-              src="/assets/logo.png" 
-              alt="Travel Blog Explorer Logo" 
-              className="logo"
-            />
+            <Link to="/">
+              <img 
+                src="/assets/logo.png" 
+                alt="Travel Blog Explorer Logo" 
+                className="logo"
+              />
+            </Link>
           </div>
           <div className="navbar-links">
-            <a href="/" className="nav-link">Home</a>
-            <a href="/donate" className="nav-link">Donate</a>
+            <NavLink 
+              to="/" 
+              className={({ isActive }) => 
+                isActive ? "nav-link active" : "nav-link"
+              }
+            >
+              Home
+            </NavLink>
+            <NavLink 
+              to="/donate" 
+              className={({ isActive }) => 
+                isActive ? "nav-link active" : "nav-link"
+              }
+            >
+              Donate
+            </NavLink>
+            <NavLink 
+              to="/login" 
+              className={({ isActive }) => 
+                isActive ? "nav-link active" : "nav-link"
+              }
+            >
+              Login
+            </NavLink>
           </div>
         </div>
       </nav>

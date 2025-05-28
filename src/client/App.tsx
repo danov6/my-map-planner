@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { TravelOption } from './context/AppContext';
 import Modal from './components/Modal';
 import BlogList from './components/BlogList';
@@ -8,9 +9,12 @@ import { BlogPost } from '../shared/types';
 import './styles/global.css';
 import './styles/modal.css';
 
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+//Pages
 import GuidePage from './pages/GuidePage';
 import HomePage from './pages/HomePage';
+import LoginPage from './pages/LoginPage';
+import SignupPage from './pages/SignupPage';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
 
 const App: React.FC = () => {
   const [selectedCountry, setSelectedCountry] = useState<{ countryCode: string, name: string } | null>(null);
@@ -31,7 +35,7 @@ const App: React.FC = () => {
       if (key === 'option') {
         options.push({
           id: decodeURIComponent(value),
-          text: '' // You might want to map these IDs to their text values
+          text: ''
         });
       }
     });
@@ -70,6 +74,9 @@ const App: React.FC = () => {
             <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path="/guide" element={<GuidePage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/signup" element={<SignupPage />} />
+              <Route path="/forgot-password" element={<ForgotPasswordPage />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </main>

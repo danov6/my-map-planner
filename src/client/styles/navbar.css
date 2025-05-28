@@ -47,6 +47,11 @@
   .nav-link:hover {
     background-color: rgba(255, 255, 255, 0.1);
   }
+
+  .nav-link.active {
+    color: #4a90e2;
+    font-weight: bold;
+  }
   
   /* Responsive styles */
   @media (max-width: 768px) {
