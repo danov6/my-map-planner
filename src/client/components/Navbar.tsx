@@ -26,14 +26,6 @@ const Navbar: React.FC = () => {
               Home
             </NavLink>
             <NavLink 
-              to="/donate" 
-              className={({ isActive }) => 
-                isActive ? "nav-link active" : "nav-link"
-              }
-            >
-              Donate
-            </NavLink>
-            <NavLink 
               to="/login" 
               className={({ isActive }) => 
                 isActive ? "nav-link active" : "nav-link"

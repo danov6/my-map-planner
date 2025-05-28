@@ -1,87 +1,82 @@
 import express, { Request, Response, NextFunction } from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
-//import mongoose from 'mongoose';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+import mongoose from 'mongoose';
+
+// Route imports
 import authRoutes from './routes/authRoutes.js';
 import blogRoutes from './routes/blogRoutes.js';
 import guideRoutes from './routes/guideRoutes.js';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-const app = express();
-const PORT = process.env.PORT || 53195;
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/mydatabase';
-const CLIENT_URL = 'http://localhost:1234';
-//const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:1234';
-
-// Configure dotenv
+// Configure environment variables
 dotenv.config();
 
+// Type definitions
 interface ErrorWithStack extends Error {
   stack?: string;
 }
 
-// Middleware
-app.use((err: ErrorWithStack, req: Request, res: Response, next: NextFunction) => {
-  console.error(err.stack);
-  res.status(500).json({ error: 'Something went wrong!' });
-});
+// Constants
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const app = express();
+const PORT = process.env.PORT || 53195;
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/mydatabase';
+const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:1234';
 
-app.use(cors({
+// CORS Configuration
+const corsOptions = {
   origin: CLIENT_URL,
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   exposedHeaders: ['Content-Range', 'X-Content-Range'],
   credentials: true,
   maxAge: 86400
-}));
+};
 
+// Global Middleware
+app.use(cors(corsOptions));
 app.use(express.json());
 
-// Disable caching middleware
+// Cache Control Middleware
 app.use((req, res, next) => {
-    res.set({
-      'Cache-Control': 'no-store',
-      'Pragma': 'no-cache',
-      'Expires': '0'
-    });
-    next();
+  res.set({
+    'Cache-Control': 'no-store',
+    'Pragma': 'no-cache',
+    'Expires': '0'
+  });
+  next();
 });
 
-// mongoose.connect(MONGODB_URI)
-//   .then(() => console.log('Connected to MongoDB'))
-//   .catch((err) => console.error('MongoDB connection error:', err));
+// Database Connection
+mongoose.connect(MONGODB_URI)
+  .then(() => console.log('Connected to MongoDB'))
+  .catch((err) => console.error('MongoDB connection error:', err));
+
 
 // API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/blogs', blogRoutes);
 app.use('/api/guides', guideRoutes);
 
-// Health check route
-app.get('/health', (req, res) => {
+// Health Check Routes
+app.get('/health', (req: Request, res: Response) => {
   res.json({ status: 'ok' });
 });
 
-app.get('/test-cors', (req, res) => {
+app.get('/test-cors', (req: Request, res: Response) => {
   res.json({ message: 'CORS is working' });
 });
 
-// Error handling middleware
-app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
+// Error Handling Middleware
+app.use((err: ErrorWithStack, req: Request, res: Response, next: NextFunction) => {
   console.error(err.stack);
   res.status(500).json({ error: 'Something went wrong!' });
 });
 
-// // Serve static files and handle client-side routing
-// app.get('*', (req, res) => {
-//   res.sendFile(path.join(__dirname, '../../public/index.html'));
-// });
-
-// Start server
+// Server Initialization
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

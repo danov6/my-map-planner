@@ -71,7 +71,7 @@ const ForgotPasswordPage: React.FC = () => {
       <div className="login-box">
         <h2>Reset Password</h2>
         {error && <div className="error-message">{error}</div>}
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} noValidate>
           <div className="form-group">
             <input
               type="email"

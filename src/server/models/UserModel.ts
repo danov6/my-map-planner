@@ -1,34 +1,85 @@
-import mongoose from 'mongoose';
+import mongoose, { Schema, Document } from 'mongoose';
 import bcrypt from 'bcrypt';
 
-const userSchema = new mongoose.Schema({
+// Constants
+const SALT_ROUNDS = 10;
+
+// Interfaces
+export interface IUser extends Document {
+  email: string;
+  password: string;
+  resetToken?: string | null;
+  resetTokenExpiry?: Date | null;
+  comparePassword(candidatePassword: string): Promise<boolean>;
+}
+
+// Schema Definition
+const userSchema = new Schema({
   email: {
     type: String,
-    required: true,
+    required: [true, 'Email is required'],
     unique: true,
     lowercase: true,
+    trim: true,
+    validate: {
+      validator: (email: string) => {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+      },
+      message: 'Invalid email format'
+    }
   },
   password: {
     type: String,
-    required: true,
+    required: [true, 'Password is required'],
+    minlength: [6, 'Password must be at least 6 characters']
   },
-  resetToken: String,
-  resetTokenExpiry: Date,
-}, { timestamps: true });
-
-userSchema.pre('save', async function(next) {
-  if (!this.isModified('password')) return next();
-  
-  const salt = await bcrypt.genSalt(10);
-  this.password = await bcrypt.hash(this.password, salt);
-  next();
+  resetToken: {
+    type: String,
+    default: null
+  },
+  resetTokenExpiry: {
+    type: Date,
+    default: null
+  }
+}, {
+  timestamps: true,
+  toJSON: {
+    transform: (_doc, ret) => {
+      delete ret.password;
+      delete ret.__v;
+      return ret;
+    }
+  }
 });
 
-userSchema.methods.comparePassword = async function (candidatePassword: string): Promise<boolean> {
-  return bcrypt.compare(candidatePassword, this.password);
+// Middleware
+userSchema.pre('save', async function(next) {
+  if (!this.isModified('password')) {
+    return next();
+  }
+  
+  try {
+    const salt = await bcrypt.genSalt(SALT_ROUNDS);
+    this.password = await bcrypt.hash(this.password, salt);
+    next();
+  } catch (error) {
+    next(error as Error);
+  }
+});
+
+// Methods
+userSchema.methods.comparePassword = async function(
+  candidatePassword: string
+): Promise<boolean> {
+  try {
+    return await bcrypt.compare(candidatePassword, this.password);
+  } catch (error) {
+    throw new Error('Password comparison failed');
+  }
 };
 
-userSchema.methods.comparePassword = async function (candidatePassword: string): Promise<boolean> {
-  return bcrypt.compare(candidatePassword, this.password);
-};
-export default mongoose.model('User', userSchema);
+// Model Creation
+const User = mongoose.model<IUser>('User', userSchema);
+
+export default User;
+

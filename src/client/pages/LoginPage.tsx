@@ -36,7 +36,7 @@ const LoginPage: React.FC = () => {
     <div className="login-container">
       <div className="login-box">
         <h2>Login</h2>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} noValidate>
           <div className="form-group">
             <input
               type="email"

@@ -72,7 +72,7 @@ const MapComponent: React.FC = () => {
     zoom: 2,
     maxZoom: 6,
     minZoom: 2,
-    style: { height: '500px', width: '100%' },
+    style: { height: '500px', width: '75%' }, // Changed from 100% to 75%
     zoomControl: true,
     zoomAnimation: true,
     markerZoomAnimation: true
