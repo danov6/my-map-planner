@@ -17,7 +17,7 @@ const HomePage: React.FC = () => {
 
   return (
     <>
-      <h3>Select a country to get started</h3>
+      <h3>Travel Guides 4 U</h3>
       <div>
         {isLoading ? <Spinner /> : <MapComponent />}
       </div>

@@ -92,15 +92,25 @@ router.get('/country/:countryCode', async (req: Request, res: Response) => {
 // });
 
 // POST new blog post
-router.post('/', async (req: Request, res: Response) => {
-  try {
-    const newBlog = new BlogModel(req.body);
-    const savedBlog: BlogPost = await newBlog.save();
-    res.status(201).json(savedBlog);
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to create blog post' });
-  }
-});
+// router.post('/', async (req: Request, res: Response) => {
+//   try {
+//     const newBlog = new BlogModel(req.body);
+//     const savedDoc = await newBlog.save();
+//     const savedBlog: BlogPost = {
+//       id: savedDoc._id.toString(),
+//       title: savedDoc.title,
+//       content: savedDoc.content,
+//       author: savedDoc.author,
+//       imageUrl: savedDoc.imageUrl,
+//       countryCode: savedDoc.countryCode,
+//       createdAt: savedDoc.createdAt,
+//       publishDate: savedDoc.publishDate,
+//     };
+//     res.status(201).json(savedBlog);
+//   } catch (err) {
+//     res.status(500).json({ error: 'Failed to create blog post' });
+//   }
+// });
 
 // PUT update blog post
 // router.put('/:id', async (req: Request, res: Response) => {

@@ -1,11 +1,19 @@
 import mongoose, { Schema, Document } from 'mongoose';
 import bcrypt from 'bcrypt';
+import BlogModel from '../models/BlogModel.js';
 
 // Constants
 const SALT_ROUNDS = 10;
 
 // Interfaces
 export interface IUser extends Document {
+  username?: string;
+  firstName?: string;
+  lastName?: string;
+  profilePicture?: string;
+  bio?: string;
+  favorites?: string[];
+  blogs?: string[];
   email: string;
   password: string;
   resetToken?: string | null;

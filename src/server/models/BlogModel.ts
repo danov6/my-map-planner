@@ -1,13 +1,18 @@
 import mongoose, { Document, Schema } from 'mongoose';
 import { BlogPost } from '../../shared/types';
+import { IUser } from './UserModel';
 
 // Create interface for the document
-interface BlogDocument extends Omit<BlogPost, '_id'>, Document {
+interface BlogDocument {
   id: string; // Explicitly redefine the 'id' property to resolve conflict
   createdAt: Date;
   updatedAt: Date;
-  author: string; // Add the missing 'author' field
+  author: IUser['_id']; // Reference to User model
   imageUrl?: string; // Add the missing 'imageUrl' field
+  votes: number;
+  title: string;
+  content: string;
+  countryCode: string;
 }
 
 const blogSchema = new Schema<BlogDocument>({
@@ -30,9 +35,9 @@ const blogSchema = new Schema<BlogDocument>({
     maxlength: [2, 'Country code must be 2 characters']
   },
   author: {
-    type: String,
-    required: [true, 'Author is required'],
-    trim: true
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+    required: [true, 'Author is required']
   },
   imageUrl: {
     type: String,
@@ -43,6 +48,11 @@ const blogSchema = new Schema<BlogDocument>({
       },
       message: 'Invalid image URL format'
     }
+  },
+  votes: {
+    type: Number,
+    default: 0,
+    min: [0, 'Votes cannot be negative']
   }
 }, {
   timestamps: true, // Automatically manage createdAt and updatedAt
@@ -59,6 +69,7 @@ const blogSchema = new Schema<BlogDocument>({
 // Add indexes for better query performance
 blogSchema.index({ countryCode: 1 });
 blogSchema.index({ createdAt: -1 });
+blogSchema.index({ votes: -1 }); // Add index for votes
 
 const BlogModel = mongoose.model<BlogDocument>('Blog', blogSchema);
 
