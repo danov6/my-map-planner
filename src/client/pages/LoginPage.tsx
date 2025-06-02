@@ -1,41 +1,67 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { loginUser } from '../utils/authApi';
+import { validateEmail, validatePassword } from '../utils/validation';
+import { AppContext } from '../context/AppContext';
 import '../styles/login.css';
 
+export interface LoginResponse {
+  token: string;
+  user: {
+    id: string;
+    name: string;
+    email: string;
+  };
+}
+
 const LoginPage: React.FC = () => {
-  const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const { setIsAuthenticated, setUser } = useContext(AppContext);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
-    const endpoint = isLogin ? '/api/auth/login' : '/api/auth/register';
-    
-    try {
-      const response = await fetch(`http://localhost:53195${endpoint}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({ email, password }),
-      });
+    setError('');
 
-      if (response.ok) {
-        const data = await response.json();
-        localStorage.setItem('token', data.token);
-        navigate('/');
-      }
-    } catch (error) {
-      console.error('Auth error:', error);
+    if (!email || !password) {
+      setError('Please fill in all fields');
+      return;
     }
-  };
+
+    if (!validateEmail(email)) {
+      setError('Please enter a valid email address');
+      return;
+    }
+
+    if (!validatePassword(password)) {
+      setError('Password must be at least 6 characters');
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const data = await loginUser({ email, password });
+      localStorage.setItem('token', data.token);
+      setIsAuthenticated(true);
+      console.log('User data:', data.user);
+      setUser(data.user);
+      navigate('/profile');
+    } catch (error) {
+      setError(error instanceof Error ? error.message : 'Login failed');
+    } finally {
+      setIsLoading(false);
+    }
+  }, [email, password, navigate, setIsAuthenticated, setUser]);
 
   return (
     <div className="login-container">
       <div className="login-box">
         <h2>Login</h2>
+        {error && <div className="error-message">{error}</div>}
         <form onSubmit={handleSubmit} noValidate>
           <div className="form-group">
             <input
@@ -66,8 +92,9 @@ const LoginPage: React.FC = () => {
             <button 
               type="submit" 
               className="auth-button primary"
+              disabled={isLoading}
             >
-              Login
+              {isLoading ? 'Logging in...' : 'Login'}
             </button>
           </div>
         </form>

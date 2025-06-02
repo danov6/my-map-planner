@@ -1,7 +1,27 @@
 import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
-import User from '../models/UserModel';
+import User from '../models/UserModel.js';
 import { sendResetEmail } from '../services/emailService.js';
+import { Schema } from 'mongoose';
+import { AnyCnameRecord } from 'dns';
+import { AnyError } from 'mongodb';
+
+const UserSchema: Schema = new Schema({
+  email: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
+  firstName: { type: String },
+  lastName: { type: String },
+  profilePicture: { type: String },
+  bio: { type: String },
+  favorites: [{ type: String }],
+  blogs: [{ type: String }],
+  resetToken: { type: String },
+  resetTokenExpiry: { type: Date },
+}, { timestamps: true }); // Added timestamps to include createdAt and updatedAt
+
+interface AuthRequest extends Request {
+  user?: { userId: string };
+}
 
 export const login = async (req: Request | any, res: Response | any) => {
   try {
@@ -9,6 +29,7 @@ export const login = async (req: Request | any, res: Response | any) => {
     const user = await User.findOne({ email });
 
     if (!user || !(await user.comparePassword(password))) {
+      console.log('Invalid login attempt:', { email });
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
@@ -17,8 +38,13 @@ export const login = async (req: Request | any, res: Response | any) => {
       process.env.JWT_SECRET || 'your-secret-key',
       { expiresIn: '24h' }
     );
-
-    res.json({ token });
+    console.log('User logged in successfully:', { email });
+    res.json({ token, user: {
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      profilePicture: user.profilePicture,
+    } });
   } catch (error) {
     res.status(500).json({ error: 'Login failed' });
   }
@@ -42,7 +68,7 @@ export const signup = async (req: Request | any, res: Response | any) => {
     // Create new user
     const newUser = new User({
       email: email.toLowerCase(),
-      password, // Password will be hashed by the pre-save middleware
+      password,
     });
 
     await newUser.save();
@@ -54,9 +80,16 @@ export const signup = async (req: Request | any, res: Response | any) => {
       { expiresIn: '24h' }
     );
 
+    console.log('User registered successfully:', { email });
     res.status(201).json({
       token,
-      message: 'Registration successful'
+      message: 'Registration successful',
+      user: {
+        email: newUser.email,
+        firstName: newUser.firstName,
+        lastName: newUser.lastName,
+        profilePicture: newUser.profilePicture,
+      },
     });
   } catch (error) {
     console.error('Registration error:', error);
@@ -91,6 +124,7 @@ export const forgotPassword = async (req: Request | any, res: Response | any) =>
     // Send reset email
     try {
       await sendResetEmail(email, resetToken);
+      console.log('Password reset email sent:', { email });
       res.json({ message: 'If an account exists, you will receive an email with reset instructions.' });
     } catch (emailError) {
       console.error('Email service error:', emailError);
@@ -99,10 +133,40 @@ export const forgotPassword = async (req: Request | any, res: Response | any) =>
       user.resetTokenExpiry = undefined;
       await user.save();
       
+      console.error('Failed to send reset email:', { email });
       res.status(500).json({ error: 'Failed to send reset email' });
     }
   } catch (error) {
-    console.error('Password reset error:', error);
+    console.log('Password reset error:', error);
     res.status(500).json({ error: 'An error occurred' });
+  }
+};
+
+export const getProfile = async (req: AuthRequest | any, res: Response | any) => {
+  try {
+    const userId = req.user?.userId;
+    
+    if (!userId) {
+      return res.status(401).json({ error: 'User ID not found in token' });
+    }
+
+    const user = await User.findById(userId).select('-password -resetToken -resetTokenExpiry');
+    
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    res.json({
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      profilePicture: user.profilePicture,
+      bio: user.bio,
+      favorites: user.favorites,
+      blogs: user.blogs,
+    });
+  } catch (error) {
+    console.error('Profile fetch error:', error);
+    res.status(500).json({ error: 'Failed to fetch profile' });
   }
 };

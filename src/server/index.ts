@@ -22,7 +22,7 @@ interface ErrorWithStack extends Error {
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const app = express();
-const PORT = process.env.PORT || 53195;
+const PORT = process.env.SERVER_PORT || 53195;
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/mydatabase';
 const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:1234';
 
@@ -64,6 +64,18 @@ app.use('/api/guides', guideRoutes);
 // Health Check Routes
 app.get('/health', (req: Request, res: Response) => {
   res.json({ status: 'ok' });
+});
+
+app.get('/health/db', async (req: Request, res: Response) => {
+  try {
+    const dbState = mongoose.connection.readyState;
+    res.json({
+      status: dbState === 1 ? 'connected' : 'disconnected',
+      database: 'MongoDB'
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Database health check failed' });
+  }
 });
 
 app.get('/test-cors', (req: Request, res: Response) => {

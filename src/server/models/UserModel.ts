@@ -48,7 +48,13 @@ const userSchema = new Schema({
   resetTokenExpiry: {
     type: Date,
     default: null
-  }
+  },
+  firstName: { type: String },
+  lastName: { type: String },
+  profilePicture: { type: String },
+  bio: { type: String },
+  favorites: [{ type: Schema.Types.ObjectId, ref: 'Blog' }],
+  blogs: [{ type: Schema.Types.ObjectId, ref: 'Blog' }]
 }, {
   timestamps: true,
   toJSON: {

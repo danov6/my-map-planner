@@ -1,15 +1,36 @@
 import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses";
+import fs from 'fs/promises';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const ses = new SESClient({
-  region: process.env.AWS_REGION || 'us-east-1',
+  region: process.env.AWS_REGION || 'us-east-2',
   credentials: {
     accessKeyId: process.env.AWS_ACCESS_KEY_ID || '',
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || ''
   }
 });
 
+const loadTemplate = async (templateName: string, replacements: Record<string, string>) => {
+  const templatePath = path.join(__dirname, '../templates', `${templateName}.html`);
+  let template = await fs.readFile(templatePath, 'utf-8');
+  
+  Object.entries(replacements).forEach(([key, value]) => {
+    template = template.replace(`{{${key}}}`, value);
+  });
+  
+  return template;
+};
+
 export const sendResetEmail = async (email: string, resetToken: string) => {
   const resetLink = `${process.env.CLIENT_URL}/reset-password?token=${resetToken}`;
+  
+  const htmlContent = await loadTemplate('reset-password', {
+    resetLink
+  });
   
   const params = {
     Source: process.env.AWS_SES_FROM_EMAIL,
@@ -22,19 +43,7 @@ export const sendResetEmail = async (email: string, resetToken: string) => {
       },
       Body: {
         Html: {
-          Data: `
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-              <h2>Password Reset Request</h2>
-              <p>You requested to reset your password. Click the link below to set a new password:</p>
-              <p style="margin: 20px 0;">
-                <a href="${resetLink}" style="background-color: #4a90e2; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px;">
-                  Reset Password
-                </a>
-              </p>
-              <p>If you didn't request this, please ignore this email.</p>
-              <p>This link will expire in 1 hour for security reasons.</p>
-            </div>
-          `,
+          Data: htmlContent,
         },
       },
     },

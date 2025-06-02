@@ -1,8 +1,18 @@
-import React from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import React, { useContext } from 'react';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import '../styles/navbar.css';
+import { AppContext } from '../context/AppContext';
 
 const Navbar: React.FC = () => {
+  const { isAuthenticated, user, logout } = useContext(AppContext);
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
+
+  console.log('Is authenticated:', isAuthenticated);
   return (
     <header>
       <nav className="navbar">
@@ -25,14 +35,25 @@ const Navbar: React.FC = () => {
             >
               Home
             </NavLink>
-            <NavLink 
-              to="/login" 
-              className={({ isActive }) => 
-                isActive ? "nav-link active" : "nav-link"
-              }
-            >
-              Login
-            </NavLink>
+            {isAuthenticated ? (
+              <>
+                <Link to="/profile" className="nav-link">
+                  {user?.firstName || 'Profile'}
+                </Link>
+                <button onClick={handleLogout} className="nav-link">
+                  Logout
+                </button>
+              </>
+            ) : (
+              <NavLink 
+                to="/login" 
+                className={({ isActive }) => 
+                  isActive ? "nav-link active" : "nav-link"
+                }
+              >
+                Login
+              </NavLink>
+            )}
           </div>
         </div>
       </nav>

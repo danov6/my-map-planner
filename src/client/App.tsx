@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { TravelOption } from './context/AppContext';
 import Modal from './components/Modal';
@@ -8,6 +8,7 @@ import { AppContext } from './context/AppContext';
 import { BlogPost } from '../shared/types';
 import './styles/global.css';
 import './styles/modal.css';
+import ProfilePage from './pages/ProfilePage';
 
 //Pages
 import GuidePage from './pages/GuidePage';
@@ -22,6 +23,14 @@ const App: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedOptions, setSelectedOptions] = useState<TravelOption[]>([]);
   const [guide, setGuide] = useState<{ header: string, content: string }[] | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState<{
+    id?: string;
+    email: string;
+    firstName?: string;
+    lastName?: string;
+    profilePicture?: string;
+  } | null>(null);
 
   const formatQueryString = (options: TravelOption[]) => {
     return options.map(option => `option=${encodeURIComponent(option.id)}`).join('&');
@@ -45,6 +54,12 @@ const App: React.FC = () => {
     }
   };
 
+  const logout = useCallback(() => {
+    localStorage.removeItem('token');
+    setIsAuthenticated(false);
+    setUser(null);
+  }, []);
+
   useEffect(() => {
     parseQueryString();
   }, []);
@@ -54,6 +69,14 @@ const App: React.FC = () => {
       //console.log('Giordano', formatQueryString(selectedOptions));
     }
   }, [selectedOptions]);
+
+  useEffect(() => {
+    // Check for token on mount
+    const token = localStorage.getItem('token');
+    if (token) {
+      setIsAuthenticated(true);
+    }
+  }, []);
   
   return (
     <Router>
@@ -66,7 +89,12 @@ const App: React.FC = () => {
         isModalOpen,
         setIsModalOpen,
         selectedOptions,
-        setSelectedOptions
+        setSelectedOptions,
+        isAuthenticated,
+        setIsAuthenticated,
+        user,
+        setUser,
+        logout
       }}>
         <div className="app-container">
           <Navbar />
@@ -77,6 +105,7 @@ const App: React.FC = () => {
               <Route path="/login" element={<LoginPage />} />
               <Route path="/signup" element={<SignupPage />} />
               <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+              <Route path="/profile" element={<ProfilePage />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </main>

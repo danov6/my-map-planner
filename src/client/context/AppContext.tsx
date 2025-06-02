@@ -1,4 +1,4 @@
-import React, { createContext } from 'react';
+import React, { createContext, useState, useEffect } from 'react';
 import { BlogPost } from '../../shared/types';
 
 export interface TravelOption {
@@ -11,7 +11,15 @@ export interface Guide {
   content: string;
 }
 
-export const AppContext = createContext<{
+interface User {
+  id?: string;
+  email: string;
+  firstName?: string;
+  lastName?: string;
+  profilePicture?: string;
+}
+
+interface AppContextType {
   guide: Guide[] | null;
   setGuide: (guide: Guide[] | null) => void;
   selectedCountry: { name: string, countryCode: string } | null;
@@ -27,14 +35,82 @@ export const AppContext = createContext<{
   }[];
   selectedOptions: TravelOption[];
   setSelectedOptions: (options: TravelOption[]) => void;
-}>({
-  guide: null,
-  setGuide: () => {},
-  selectedCountry: null,
-  setSelectedCountry: () => {},
-  isModalOpen: false,
-  setIsModalOpen: () => {},
-  blogs: [],
-  selectedOptions: [],
-  setSelectedOptions: () => {},
-});
+  isAuthenticated: boolean;
+  setIsAuthenticated: (value: boolean) => void;
+  user: User | null;
+  setUser: (user: User | null) => void;
+  logout: () => void;
+}
+
+export const AppContext = createContext<AppContextType>({} as AppContextType);
+
+export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [guide, setGuide] = useState<Guide[] | null>(null);
+  const [selectedCountry, setSelectedCountry] = useState<{ name: string, countryCode: string } | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [blogs, setBlogs] = useState<{
+    id: string;
+    imageUrl?: string;
+    title: string;
+    publishDate: string;
+    content: string;
+  }[]>([]);
+  const [selectedOptions, setSelectedOptions] = useState<TravelOption[]>([]);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      setIsAuthenticated(true);
+      fetchUserProfile(token).catch(() => {
+        logout();
+      });
+    }
+  }, []);
+
+  const logout = () => {
+    localStorage.removeItem('token');
+    setIsAuthenticated(false);
+    setUser(null);
+  };
+
+  const fetchUserProfile = async (token: string) => {
+    try {
+      const response = await fetch('http://localhost:53195/api/auth/profile', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+        credentials: 'include'
+      });
+
+      if (!response.ok) throw new Error('Failed to fetch profile');
+
+      const userData = await response.json();
+      setUser(userData);
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  return (
+    <AppContext.Provider value={{
+      guide,
+      setGuide,
+      selectedCountry,
+      setSelectedCountry,
+      isModalOpen,
+      setIsModalOpen,
+      blogs,
+      selectedOptions,
+      setSelectedOptions,
+      isAuthenticated,
+      setIsAuthenticated,
+      user,
+      setUser,
+      logout
+    }}>
+      {children}
+    </AppContext.Provider>
+  );
+};

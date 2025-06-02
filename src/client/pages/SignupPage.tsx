@@ -1,5 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { registerUser } from '../utils/authApi';
+import { validateEmail, validatePassword } from '../utils/validation';
+import { AppContext } from '../context/AppContext';
 import '../styles/login.css';
 
 const SignupPage: React.FC = () => {
@@ -7,54 +10,54 @@ const SignupPage: React.FC = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const { setIsAuthenticated, setUser } = useContext(AppContext);
 
-  const validateEmail = (email: string) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
+  const validateForm = useCallback((): string | null => {
+    if (!email || !password || !confirmPassword) {
+      return 'Please fill in all fields';
+    }
+    if (!validateEmail(email)) {
+      return 'Please enter a valid email address';
+    }
+    if (!validatePassword(password)) {
+      return 'Password must be at least 6 characters long';
+    }
+    if (password !== confirmPassword) {
+      return 'Passwords do not match';
+    }
+    return null;
+  }, [email, password, confirmPassword]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
-    if (!validateEmail(email)) {
-      setError('Please enter a valid email address');
+    const validationError = validateForm();
+    if (validationError) {
+      setError(validationError);
       return;
     }
 
-    if (password !== confirmPassword) {
-      setError('Passwords do not match');
-      return;
-    }
-
-    if (password.length < 6) {
-      setError('Password must be at least 6 characters long');
-      return;
-    }
+    setIsLoading(true);
 
     try {
-      const response = await fetch('http://localhost:53195/api/auth/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({ email, password }),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
+      const data = await registerUser({ email, password });
+      
+      // Defer token storage and navigation to next tick
+      setTimeout(() => {
         localStorage.setItem('token', data.token);
-        navigate('/');
-      } else {
-        const data = await response.json();
-        setError(data.error || 'Registration failed');
-      }
+        setIsAuthenticated(true);
+        setUser(data.user);
+        navigate('/profile');
+      }, 0);
     } catch (error) {
-      setError('An error occurred during registration');
+      setError(error instanceof Error ? error.message : 'Registration failed');
+    } finally {
+      setIsLoading(false);
     }
-  };
+  }, [email, password, validateForm, navigate, setIsAuthenticated, setUser]);
 
   return (
     <div className="login-container">
@@ -94,14 +97,16 @@ const SignupPage: React.FC = () => {
               type="button" 
               className="auth-button secondary"
               onClick={() => navigate('/login')}
+              disabled={isLoading}
             >
               Back to Login
             </button>
             <button 
               type="submit" 
               className="auth-button primary"
+              disabled={isLoading}
             >
-              Sign Up
+              {isLoading ? 'Creating Account...' : 'Sign Up'}
             </button>
           </div>
         </form>

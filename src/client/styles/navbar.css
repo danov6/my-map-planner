@@ -42,6 +42,7 @@
     padding: 8px 12px;
     border-radius: 4px;
     transition: background-color 0.2s;
+    background-color: transparent;
   }
   
   .nav-link:hover {
@@ -51,6 +52,14 @@
   .nav-link.active {
     color: #4a90e2;
     font-weight: bold;
+  }
+
+  button.nav-link {
+    background-color: transparent;
+    border: none;
+    color: #ffffff;
+    font-size: 16px;
+    cursor: pointer;
   }
   
   /* Responsive styles */

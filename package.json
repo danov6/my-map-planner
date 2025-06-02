@@ -33,6 +33,7 @@
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
     "leaflet": "^1.9.4",
+    "mongodb": "^6.16.0",
     "mongoose": "^8.15.0",
     "openai": "^4.103.0",
     "react": "^19.1.0",
