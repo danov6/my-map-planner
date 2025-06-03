@@ -59,38 +59,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [user, setUser] = useState<User | null>(null);
 
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      setIsAuthenticated(true);
-      fetchUserProfile(token).catch(() => {
-        logout();
-      });
-    }
-  }, []);
-
   const logout = () => {
     localStorage.removeItem('token');
     setIsAuthenticated(false);
     setUser(null);
-  };
-
-  const fetchUserProfile = async (token: string) => {
-    try {
-      const response = await fetch('http://localhost:53195/api/auth/profile', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-        credentials: 'include'
-      });
-
-      if (!response.ok) throw new Error('Failed to fetch profile');
-
-      const userData = await response.json();
-      setUser(userData);
-    } catch (error) {
-      throw error;
-    }
   };
 
   return (

@@ -53,7 +53,7 @@ router.get('/country/:countryCode', async (req: Request, res: Response) => {
     const blogs = mockBlogs[countryCode.toUpperCase()] || [];
     res.json(blogs);
   } catch (error) {
-    console.error('Error:', error);
+    console.log('Error:', error);
     res.status(500).json({ error: 'Failed to fetch blogs' });
   }
 });

@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { loginUser } from '../utils/authApi';
+import { loginUser } from '../services/auth';
 import { validateEmail, validatePassword } from '../utils/validation';
 import { AppContext } from '../context/AppContext';
 import '../styles/login.css';

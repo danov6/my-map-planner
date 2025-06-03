@@ -106,7 +106,7 @@ const App: React.FC = () => {
               <Route path="/signup" element={<SignupPage />} />
               <Route path="/forgot-password" element={<ForgotPasswordPage />} />
               <Route path="/profile" element={<ProfilePage />} />
-              <Route path="*" element={<Navigate to="/" replace />} />
+              {/* <Route path="*" element={<Navigate to="/" replace />} /> */}
             </Routes>
           </main>
           <Modal

@@ -18,15 +18,9 @@ interface LoginResponse {
   };
 }
 
-interface AuthResponse {
-  token: string;
-  error?: string;
-}
-
 const API_URL = process.env.SERVER_URL || 'http://localhost:53195';
 
 export const loginUser = async (credentials: LoginCredentials): Promise<LoginResponse> => {
-    console.log('Attempting to log in with credentials:', credentials);
   const response = await fetch(`${API_URL}/api/auth/login`, {
     method: 'POST',
     headers: {
@@ -39,7 +33,6 @@ export const loginUser = async (credentials: LoginCredentials): Promise<LoginRes
   const data = await response.json();
 
   if (!response.ok) {
-    console.error('Login failed:', data.error || 'Unknown error');
     throw new Error(data.error || 'Login failed');
   }
 

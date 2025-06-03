@@ -19,3 +19,12 @@ export interface CountryData {
   name: string;
   continent: string;
 }
+
+export interface UserProfile {
+  email: string;
+  firstName?: string;
+  lastName?: string;
+  profilePicture?: string;
+  blogs?: string[];
+  favorites?: string[];
+}

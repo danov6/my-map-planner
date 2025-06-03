@@ -53,7 +53,7 @@ export const sendResetEmail = async (email: string, resetToken: string) => {
     const command = new SendEmailCommand(params);
     await ses.send(command);
   } catch (error) {
-    console.error('Failed to send email:', error);
+    console.log('Failed to send email:', error);
     throw new Error('Failed to send password reset email');
   }
 };

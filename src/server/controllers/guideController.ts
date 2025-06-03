@@ -27,7 +27,7 @@ export const createGuide = async (req: Request | any, res: Response | any) => {
       content,
     });
   } catch (err) {
-    console.error('Guide generation error:', err);
+    console.log('Guide generation error:', err);
     res.status(500).json({ 
       error: 'Failed to generate guide',
       details: err instanceof Error ? err.message : 'Unknown error'

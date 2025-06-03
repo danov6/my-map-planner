@@ -898,7 +898,7 @@
   dependencies:
     "@parcel/plugin" "2.15.0"
 
-"@parcel/plugin@2.15.0":
+"@parcel/plugin@^2.0.0-beta.1", "@parcel/plugin@2.15.0":
   version "2.15.0"
   resolved "https://registry.npmjs.org/@parcel/plugin/-/plugin-2.15.0.tgz"
   integrity sha512-OT+W5t70+VZbcg2P30QahF4YjRu+9ywG5NSMj0SYvS6PCZa+IAYB9589KuavcAp+Tq2FV7MgYtrBKPh9b0VAtg==
@@ -3948,6 +3948,13 @@ p-locate@^5.0.0:
   integrity sha512-LaNjtRWUBY++zB5nE/NwcaoMylSPk+S+ZHNB1TzdbMJMny6dynpAGt7X/tl/QYq3TIeE6nxHppbo2LGymrG5Pw==
   dependencies:
     p-limit "^3.0.2"
+
+parcel-reporter-static-files-copy@^1.5.3:
+  version "1.5.3"
+  resolved "https://registry.npmjs.org/parcel-reporter-static-files-copy/-/parcel-reporter-static-files-copy-1.5.3.tgz"
+  integrity sha512-Ukq2SyJYn3GFIPCLamXuQ+2t+0j54llujjOUoRjtmVvfsuGnJDEpMznADeIoKuQDvy0jpxtWzWkQvxqI/j+U4A==
+  dependencies:
+    "@parcel/plugin" "^2.0.0-beta.1"
 
 parcel@^2.15.0:
   version "2.15.0"

@@ -3,21 +3,6 @@ import jwt from 'jsonwebtoken';
 import User from '../models/UserModel.js';
 import { sendResetEmail } from '../services/emailService.js';
 import { Schema } from 'mongoose';
-import { AnyCnameRecord } from 'dns';
-import { AnyError } from 'mongodb';
-
-const UserSchema: Schema = new Schema({
-  email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
-  firstName: { type: String },
-  lastName: { type: String },
-  profilePicture: { type: String },
-  bio: { type: String },
-  favorites: [{ type: String }],
-  blogs: [{ type: String }],
-  resetToken: { type: String },
-  resetTokenExpiry: { type: Date },
-}, { timestamps: true }); // Added timestamps to include createdAt and updatedAt
 
 interface AuthRequest extends Request {
   user?: { userId: string };
@@ -92,7 +77,7 @@ export const signup = async (req: Request | any, res: Response | any) => {
       },
     });
   } catch (error) {
-    console.error('Registration error:', error);
+    console.log('Registration error:', error);
     res.status(500).json({ error: 'Registration failed' });
   }
 };
@@ -127,13 +112,13 @@ export const forgotPassword = async (req: Request | any, res: Response | any) =>
       console.log('Password reset email sent:', { email });
       res.json({ message: 'If an account exists, you will receive an email with reset instructions.' });
     } catch (emailError) {
-      console.error('Email service error:', emailError);
+      console.log('Email service error:', emailError);
       // Reset the token if email fails
       user.resetToken = undefined;
       user.resetTokenExpiry = undefined;
       await user.save();
       
-      console.error('Failed to send reset email:', { email });
+      console.log('Failed to send reset email:', { email });
       res.status(500).json({ error: 'Failed to send reset email' });
     }
   } catch (error) {
@@ -156,6 +141,7 @@ export const getProfile = async (req: AuthRequest | any, res: Response | any) =>
       return res.status(404).json({ error: 'User not found' });
     }
 
+    console.log('Profile fetched successfully:', { user });
     res.json({
       email: user.email,
       firstName: user.firstName,
@@ -166,7 +152,7 @@ export const getProfile = async (req: AuthRequest | any, res: Response | any) =>
       blogs: user.blogs,
     });
   } catch (error) {
-    console.error('Profile fetch error:', error);
+    console.log('Profile fetch error:', error);
     res.status(500).json({ error: 'Failed to fetch profile' });
   }
 };
