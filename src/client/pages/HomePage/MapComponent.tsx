@@ -2,9 +2,9 @@ import React, { useContext, useState, useCallback, useMemo, useEffect } from 're
 import { MapContainer, TileLayer, GeoJSON, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import { Feature, Geometry } from 'geojson';
-import { AppContext } from '../context/AppContext';
+import { AppContext } from './../../context/AppContext';
 import 'leaflet/dist/leaflet.css';
-import countriesGeoJSON from '../../../public/assets/countries.geo.json';
+import countriesGeoJSON from './../../../../public/assets/countries.geo.json';
 import { GeoJsonObject } from 'geojson';
 
 const COUNTRY_BLACKLIST = [

@@ -51,7 +51,10 @@ const userSchema = new Schema({
   },
   firstName: { type: String },
   lastName: { type: String },
-  profilePicture: { type: String },
+  profilePicture: {
+    type: String,
+    default: null
+  },
   bio: { type: String },
   favorites: [{ type: Schema.Types.ObjectId, ref: 'Blog' }],
   blogs: [{ type: Schema.Types.ObjectId, ref: 'Blog' }]

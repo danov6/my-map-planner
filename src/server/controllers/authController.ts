@@ -29,6 +29,9 @@ export const login = async (req: Request | any, res: Response | any) => {
       firstName: user.firstName,
       lastName: user.lastName,
       profilePicture: user.profilePicture,
+      bio: user.bio,
+      favorites: user.favorites,
+      blogs: user.blogs,
     } });
   } catch (error) {
     res.status(500).json({ error: 'Login failed' });

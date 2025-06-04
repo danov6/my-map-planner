@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react';
-import { BlogPost } from '../../shared/types';
+import { UserProfile } from '../../shared/types';
 
 export interface TravelOption {
   id: string;
@@ -9,14 +9,6 @@ export interface TravelOption {
 export interface Guide {
   header: string;
   content: string;
-}
-
-interface User {
-  id?: string;
-  email: string;
-  firstName?: string;
-  lastName?: string;
-  profilePicture?: string;
 }
 
 interface AppContextType {
@@ -37,8 +29,8 @@ interface AppContextType {
   setSelectedOptions: (options: TravelOption[]) => void;
   isAuthenticated: boolean;
   setIsAuthenticated: (value: boolean) => void;
-  user: User | null;
-  setUser: (user: User | null) => void;
+  user: UserProfile | null;
+  setUser: (user: UserProfile | null) => void;
   logout: () => void;
 }
 
@@ -57,7 +49,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   }[]>([]);
   const [selectedOptions, setSelectedOptions] = useState<TravelOption[]>([]);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<UserProfile | null>(null);
 
   const logout = () => {
     localStorage.removeItem('token');

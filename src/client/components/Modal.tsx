@@ -49,7 +49,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title }) => {
     };
 
     const handleFinalSubmit = () => {
-      const selectedOpts = travelOptions.filter(opt => selectedItems.has(opt.id));
+      const selectedOpts = recommendationOptions.filter(opt => selectedItems.has(opt.id));
       setSelectedOptions(selectedOpts);
       
       // Create query string from selected options

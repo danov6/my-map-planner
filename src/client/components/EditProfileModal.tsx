@@ -15,10 +15,11 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
   user,
   onUpdate,
 }) => {
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     firstName: user?.firstName || "",
     lastName: user?.lastName || "",
+    bio: user?.bio || "",
   });
 
   useEffect(() => {
@@ -26,24 +27,19 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
       setFormData({
         firstName: user.firstName || "",
         lastName: user.lastName || "",
+        bio: user.bio || "",
       });
     }
   }, [user]);
 
-  const isValidData = () => {
-    return (
-      formData.firstName?.trim() !== "" && formData.lastName?.trim() !== ""
-    );
-  };
-
   const hasChanges = () => {
-    if (!isValidData()) return false;
+    const firstNameChanged =
+      formData.firstName.trim() !== (user.firstName || "").trim();
+    const lastNameChanged =
+      formData.lastName.trim() !== (user.lastName || "").trim();
+    const bioChanged = formData.bio.trim() !== (user.bio || "").trim();
 
-    return Object.keys(formData).some((key) => {
-      const formValue = formData[key as keyof typeof formData]?.trim() || "";
-      const userValue = (user[key as keyof UserProfile] || "").trim();
-      return formValue !== userValue;
-    });
+    return firstNameChanged || lastNameChanged || bioChanged;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -53,7 +49,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
       await onUpdate(formData);
       onClose();
     } catch (error) {
-      console.error("Failed to update profile:", error);
+      console.log("Failed to update profile:", error);
     } finally {
       setIsLoading(false);
     }
@@ -76,20 +72,6 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
           </button>
         </div>
         <form onSubmit={handleSubmit} className="modal-body">
-          {/* <div className="form-group">
-            <label>Profile Picture URL</label>
-            <input
-              type="text"
-              value={formData.profilePicture}
-              onChange={(e) =>
-                setFormData((prev) => ({
-                  ...prev,
-                  profilePicture: e.target.value,
-                }))
-              }
-              placeholder="Profile picture URL"
-            />
-          </div> */}
           <div className="form-group">
             <label>First Name</label>
             <input
@@ -112,6 +94,17 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
               placeholder="Last name"
             />
           </div>
+          <div className="form-group">
+            <label>Bio</label>
+            <textarea
+              value={formData.bio}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, bio: e.target.value }))
+              }
+              placeholder="Tell us a little about yourself..."
+              maxLength={500}
+            />
+          </div>
           <div className="modal-actions">
             <button
               type="button"
@@ -124,7 +117,6 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
               type="submit"
               className="modal-button primary"
               disabled={!hasChanges() || isLoading}
-              title={!isValidData() ? "Please fill in required fields" : ""}
             >
               {isLoading ? "Updating..." : "Update Profile"}
             </button>

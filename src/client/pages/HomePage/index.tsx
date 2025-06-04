@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import './../styles/guide.css';
-import MapComponent from './../components/MapComponent';
-import Spinner from './../components/Spinner';
+import './../../styles/guide.css';
+import MapComponent from './MapComponent';
+import Spinner from './../../components/Spinner';
 
 const HomePage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);

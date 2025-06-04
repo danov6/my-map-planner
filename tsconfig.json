@@ -10,6 +10,7 @@
     "strict": true,
     "resolveJsonModule": true,
     "baseUrl": ".",
+    "jsx": "react-jsx",
     "paths": {
       "*": ["src/*"]
     }

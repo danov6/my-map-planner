@@ -117,11 +117,12 @@
     top: 100%;
     right: 0;
     width: 220px;
-    background: white;
+    background-color: var(--bg-color);
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     margin-top: 8px;
     z-index: 1000;
+    border: 1px solid #ccc;
   }
 
   .profile-dropdown-header {
@@ -129,6 +130,7 @@
     display: flex;
     align-items: center;
     gap: 12px;
+    background-color: var(--bg-color);
   }
 
   .profile-dropdown-avatar {
@@ -136,6 +138,7 @@
     height: 40px;
     border-radius: 50%;
     object-fit: cover;
+    background-color: var(--bg-color);
   }
 
   .profile-dropdown-email {
@@ -143,11 +146,12 @@
     color: #666;
     overflow: hidden;
     text-overflow: ellipsis;
+    background-color: var(--bg-color);
   }
 
   .profile-dropdown-divider {
     height: 1px;
-    background: #eee;
+    background-color: var(--bg-color);
     margin: 8px 0;
   }
 
@@ -156,19 +160,19 @@
     align-items: center;
     gap: 12px;
     padding: 1rem;
-    color: #333;
+    color: #eee;
     text-decoration: none;
     transition: background-color 0.2s;
     cursor: pointer;
     border: none;
-    background: none;
+    background-color: var(--bg-color);
     width: 100%;
     text-align: left;
     font-size: 14px;
   }
 
   .profile-dropdown-item:hover {
-    background-color: #f5f5f5;
+    background-color: #666;
   }
 
   .profile-dropdown-item i {

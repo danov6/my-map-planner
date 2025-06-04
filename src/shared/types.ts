@@ -24,7 +24,9 @@ export interface UserProfile {
   email: string;
   firstName?: string;
   lastName?: string;
+  bio?: string;
   profilePicture?: string;
   blogs?: string[];
-  favorites?: string[];
+  favorites?: BlogPost[];
+  categories?: string[];
 }

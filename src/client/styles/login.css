@@ -28,7 +28,8 @@
   width: 100%;
 }
 
-.form-group input {
+.form-group input,
+.form-group textarea {
   width: 100%;
   box-sizing: border-box;
   padding: 0.75rem;
@@ -39,7 +40,8 @@
   font-size: 1rem;
 }
 
-.form-group input:focus {
+.form-group input:focus,
+.form-group textarea:focus {
   outline: none;
   border-color: #4a90e2;
 }

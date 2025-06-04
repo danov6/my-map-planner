@@ -19,6 +19,7 @@ export const verifyToken = async (req: AuthRequest | any, res: Response | any, n
     req.user = decoded as IUser;
     next();
   } catch (error) {
+    console.error('Token verification failed:', error);
     res.status(401).json({ error: 'Invalid token' });
   }
 };

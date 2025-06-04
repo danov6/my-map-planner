@@ -27,15 +27,8 @@ export async function fetchUserProfile(): Promise<UserProfile> {
   return response.json();
 }
 
-interface UpdateProfileData {
-  firstName?: string;
-  lastName?: string;
-  profilePicture?: string;
-  email?: string;
-}
-
 export async function updateUserProfile(
-  profileData: UpdateProfileData
+  profileData: UserProfile
 ): Promise<UserProfile> {
   const token = localStorage.getItem("token");
 
@@ -43,7 +36,7 @@ export async function updateUserProfile(
     throw new Error("No authentication token found");
   }
 
-  const response = await fetch(`${API_URL}/api/profile/update`, {
+  const response = await fetch(`${API_URL}/api/users/profile/update`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -63,3 +56,22 @@ export async function updateUserProfile(
 
   return response.json();
 }
+export const uploadProfilePicture = async (file: File): Promise<any> => {
+  const token = localStorage.getItem("token");
+  const formData = new FormData();
+  formData.append("image", file);
+
+  const response = await fetch(`${API_URL}/api/users/profile-picture`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`, // Make sure this matches verifyToken expectations
+    },
+    body: formData,
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to upload profile picture");
+  }
+
+  return response.json();
+};
