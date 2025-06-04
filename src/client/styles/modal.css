@@ -23,25 +23,25 @@
   }
 
   .option-buttons {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    margin: 2rem 0;
-    width: 50%;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    padding: 1rem;
   }
 
   .option-button {
     display: flex;
     align-items: center;
+    gap: 0.5rem;
+    padding: 1rem;
+    /* border: 1px solid #e0e0e0; */
+    border-radius: 8px;
     background-color: #1a1a1a;
     border: 1px solid #333;
     color: #ffffff;
-    padding: 1rem 1.25rem;
-    border-radius: 6px;
     cursor: pointer;
-    text-align: left;
-    width: 100%;
     transition: all 0.2s ease;
+    width: 100%;
   }
 
   .option-button:hover {
@@ -117,4 +117,14 @@
     flex: 1;
     margin: 0 15px 0 -15px;
     text-wrap: wrap;
+  }
+
+  .option-icon {
+    width: 24px;
+    height: 24px;
+    color: #666;
+  }
+
+  .option-button.selected .option-icon {
+    color: #2196f3;
   }
