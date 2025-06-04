@@ -1,10 +1,8 @@
 import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses";
 import fs from 'fs/promises';
 import path from 'path';
-import { fileURLToPath } from 'url';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const templateDir = path.join(__dirname, '../templates');
 
 const ses = new SESClient({
   region: process.env.AWS_REGION || 'us-east-2',
@@ -15,7 +13,7 @@ const ses = new SESClient({
 });
 
 const loadTemplate = async (templateName: string, replacements: Record<string, string>) => {
-  const templatePath = path.join(__dirname, '../templates', `${templateName}.html`);
+  const templatePath = path.join(templateDir, `${templateName}.html`);
   let template = await fs.readFile(templatePath, 'utf-8');
   
   Object.entries(replacements).forEach(([key, value]) => {

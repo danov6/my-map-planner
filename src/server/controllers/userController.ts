@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import User from "../models/UserModel.js";
+import User from "../models/UserModel";
 
 interface AuthRequest extends Request {
   user?: { userId: string };

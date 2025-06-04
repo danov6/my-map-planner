@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
-import User from '../models/UserModel.js';
-import { sendResetEmail } from '../services/emailService.js';
+import User from '../models/UserModel';
+import { sendResetEmail } from '../services/emailService';
 import { Schema } from 'mongoose';
 
 interface AuthRequest extends Request {

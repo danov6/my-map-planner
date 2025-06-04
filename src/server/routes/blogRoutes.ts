@@ -1,6 +1,6 @@
 import express, { Request, Response, Router } from 'express';
 import { BlogPost } from '../../shared/types';
-import BlogModel from '../models/BlogModel.js';
+import BlogModel from '../models/BlogModel';
 
 const router: Router = express.Router();
 

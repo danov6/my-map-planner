@@ -1,15 +1,13 @@
 import express, { Request, Response, NextFunction } from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
 import mongoose from 'mongoose';
 
 // Route imports
-import authRoutes from './routes/authRoutes.js';
-import blogRoutes from './routes/blogRoutes.js';
-import guideRoutes from './routes/guideRoutes.js';
-import userRoutes from './routes/userRoutes.js';
+import authRoutes from './routes/authRoutes';
+import blogRoutes from './routes/blogRoutes';
+import guideRoutes from './routes/guideRoutes';
+import userRoutes from './routes/userRoutes';
 
 // Configure environment variables
 dotenv.config();
@@ -20,11 +18,9 @@ interface ErrorWithStack extends Error {
 }
 
 // Constants
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 const app = express();
 const PORT = process.env.SERVER_PORT || 53195;
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/mydatabase';
+const MONGODB_URI = process.env.MONGODB_URI_PROD || 'mongodb://localhost:27017/mydatabase';
 const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:1234';
 
 // CORS Configuration
@@ -55,7 +51,6 @@ app.use((req, res, next) => {
 mongoose.connect(MONGODB_URI)
   .then(() => console.log('Connected to MongoDB'))
   .catch((err) => console.error('MongoDB connection error:', err));
-
 
 // API Routes
 app.use('/api/auth', authRoutes);

@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { generateTravelGuide } from '../services/openai.js';
+//import { generateTravelGuide } from '../services/openai';
 import { GuideRequest } from '../types/guide';
 
 export const createGuide = async (req: Request | any, res: Response | any) => {
@@ -20,11 +20,11 @@ export const createGuide = async (req: Request | any, res: Response | any) => {
       });
     }
 
-    const content = await generateTravelGuide(countryName, selectedOptions);
+    //const content = await generateTravelGuide(countryName, selectedOptions);
     
     res.status(200).json({
       header: `Travel Guide for ${countryName}`,
-      content,
+      // content,
     });
   } catch (err) {
     console.log('Guide generation error:', err);

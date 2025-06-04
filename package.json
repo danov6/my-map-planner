@@ -4,15 +4,16 @@
   "repository": "https://github.com/danov6/my-map-planner.git",
   "author": "danov6 <glvaldez@callutheran.edu>",
   "license": "MIT",
-  "type": "module",
+  "type": "commonjs",
   "devDependencies": {
+    "@parcel/resolver-default": "^2.15.2",
     "@types/bcrypt": "^5.0.2",
     "@types/cors": "^2.8.18",
     "@types/express": "^5.0.2",
     "@types/jsonwebtoken": "^9.0.9",
     "@types/leaflet": "^1.9.17",
     "@types/mongoose": "^5.11.97",
-    "@types/node": "^22.15.19",
+    "@types/node": "^22.15.29",
     "@types/react": "^19.1.4",
     "@types/react-dom": "^19.1.4",
     "@typescript-eslint/eslint-plugin": "^8.32.1",
@@ -24,6 +25,7 @@
     "nodemon": "^3.1.10",
     "parcel": "^2.15.0",
     "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "^5.8.3"
   },
   "dependencies": {
@@ -44,7 +46,7 @@
   "scripts": {
     "start": "parcel public/index.html",
     "build": "parcel build public/index.html",
-    "server": "nodemon --loader ts-node/esm src/server/index.ts",
+    "server": "ts-node src/server/index.ts",
     "dev": "concurrently \"yarn start\" \"yarn server\"",
     "lint": "eslint . --ext .ts,.tsx",
     "lint:fix": "eslint . --ext .ts,.tsx --fix"
