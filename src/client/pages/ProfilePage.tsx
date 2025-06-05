@@ -1,13 +1,16 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
 import { AppContext } from '../context/AppContext';
 import EditProfileModal from '../components/EditProfileModal';
-import { updateUserProfile, uploadProfilePicture } from '../services/users';
+import { 
+  updateUserProfile, 
+  uploadProfilePicture, 
+} from '../services/users';
 import { FaPen } from 'react-icons/fa';
 import '../styles/profile.css';
 
 const ProfilePage: React.FC = () => {
   const { user, setUser } = useContext(AppContext);
-  const [error, setError] = useState<string>('');
+  const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -53,7 +56,6 @@ const ProfilePage: React.FC = () => {
 
   const handleUpdateProfile = async (updatedData: Partial<typeof user>) => {
     try {
-      // Merge updatedData with the existing user to ensure all required fields are present
       const mergedData = { ...user, ...updatedData };
       const updatedUser = await updateUserProfile(mergedData);
       setUser(updatedUser);
@@ -73,7 +75,7 @@ const ProfilePage: React.FC = () => {
             {user.profilePicture ? (
               <>
                 <img 
-                  src={user.profilePicture} 
+                  src={user.profilePicture || '/placeholder.png'} 
                   alt="Profile" 
                   className="profile-picture"
                 />

@@ -25,12 +25,18 @@ export const getProfile = async (
       return res.status(404).json({ error: "User not found" });
     }
 
+    // Get signed URL if profile picture exists
+    let profilePictureUrl = null;
+    if (user.profilePicture) {
+      profilePictureUrl = await getSignedImageUrl(user.profilePicture);
+    }
+
     console.log("Profile fetched successfully:", { user });
     res.json({
       email: user.email,
       firstName: user.firstName,
       lastName: user.lastName,
-      profilePicture: user.profilePicture,
+      profilePicture: profilePictureUrl || user.profilePicture,
       bio: user.bio,
       favorites: user.favorites,
       blogs: user.blogs,
@@ -122,5 +128,21 @@ export const uploadProfilePicture = async (req: Request | any, res: Response | a
   } catch (error) {
     console.error('[ userController ] Profile picture upload error:', error);
     res.status(500).json({ error: 'Failed to upload profile picture' });
+  }
+};
+
+export const getSignedUrl = async (req: Request | any, res: Response | any) => {
+  try {
+    const { key } = req.query;
+    
+    if (!key || typeof key !== 'string') {
+      return res.status(400).json({ error: 'Invalid key parameter' });
+    }
+
+    const url = await getSignedImageUrl(key);
+    res.json({ url });
+  } catch (error) {
+    console.error('Error generating signed URL:', error);
+    res.status(500).json({ error: 'Failed to generate image URL' });
   }
 };
