@@ -1,26 +1,6 @@
-interface LoginCredentials {
-  email: string;
-  password: string;
-}
-
-interface SignupCredentials {
-  email: string;
-  password: string;
-}
-
-interface LoginResponse {
-  token: string;
-  user: {
-    email: string;
-    firstName?: string;
-    lastName?: string;
-    profilePicture?: string;
-  };
-}
-
 const API_URL = process.env.SERVER_URL || 'http://localhost:53195';
 
-export const loginUser = async (credentials: LoginCredentials): Promise<LoginResponse> => {
+export const loginUser = async (credentials: any): Promise<any> => {
   const response = await fetch(`${API_URL}/api/auth/login`, {
     method: 'POST',
     headers: {
@@ -39,7 +19,7 @@ export const loginUser = async (credentials: LoginCredentials): Promise<LoginRes
   return data;
 };
 
-export const registerUser = async (credentials: SignupCredentials): Promise<LoginResponse> => {
+export const registerUser = async (credentials: any): Promise<any> => {
   const response = await fetch(`${API_URL}/api/auth/signup`, {
     method: 'POST',
     headers: {

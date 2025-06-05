@@ -4,6 +4,7 @@ import MapComponent from './MapComponent';
 import Spinner from '../../components/Spinner';
 import { Article } from '../../../shared/types';
 import { FaRegBookmark, FaRegComment, FaEllipsisH, FaRegHeart, FaRegThumbsUp, FaRegEye } from 'react-icons/fa';
+import { TRAVEL_TOPICS } from 'client/constants';
 
 const MOCK_STAFF_PICKS: any = [
   {
@@ -26,7 +27,10 @@ const MOCK_ARTICLES: Article[] = [
     id: '1',
     title: 'How to Learn a Language: The Complete System That Actually Works',
     subtitle: '20 Science-Based Principles and Strategies for Building Fluency — From a Linguist, Language Teacher, and Polyglot',
-    author: 'Viktoria Verde, PhD',
+    author: {
+      email: '',
+      firstName: 'Viktoria'
+    },
     date: 'May 21',
     imageUrl: '/brain-wordcloud.png',
     stats: {
@@ -34,13 +38,17 @@ const MOCK_ARTICLES: Article[] = [
       views: 33000,
       saves: 2
     },
-    topics: ['Language', 'Learning', 'Education', 'Psychology', 'Research'], // Added topics
+    topics: ['Language', 'Learning', 'Education', 'Psychology', 'Research'],
+    content: 'This is a sample content for the article. It discusses various strategies and principles for learning languages effectively.'
   },
   {
     id: '2',
     title: 'How to Learn a Language: The Complete System That Actually Works',
     subtitle: '20 Science-Based Principles and Strategies for Building Fluency — From a Linguist, Language Teacher, and Polyglot',
-    author: 'Viktoria Verde, PhD',
+    author: {
+      email: '',
+      firstName: 'Viktoria'
+    },
     date: 'May 21',
     imageUrl: '/brain-wordcloud.png',
     stats: {
@@ -48,7 +56,8 @@ const MOCK_ARTICLES: Article[] = [
       views: 33000,
       saves: 20
     },
-    topics: ['Language', 'Learning', 'Education', 'Psychology', 'Research'], // Added topics
+    topics: ['Language', 'Learning', 'Education', 'Psychology', 'Research'],
+    content: 'This is a sample content for the article. It discusses various strategies and principles for learning languages effectively.'
   }
 ];
 
@@ -67,7 +76,7 @@ const HomePage: React.FC = () => {
     <div className="home-container">
       <div className="main-content">
         <div className="map-section">
-          <h3>Travel Guides 4 U</h3>
+          <h1>Travel Guides 4 U</h1>
           {isLoading ? <Spinner /> : <MapComponent />}
         </div>
         
@@ -131,9 +140,11 @@ const HomePage: React.FC = () => {
             <section className="recommended-topics">
             <h2>Recommended topics</h2>
             <div className="topics-list">
-                <button className="topic-tag">Travel</button>
-                <button className="topic-tag">Adventure</button>
-                <button className="topic-tag">Culture</button>
+              {TRAVEL_TOPICS.map((topic, index) => (
+                <button key={index} className="topic-tag">
+                  {topic}
+                </button>
+              ))}
             </div>
             <button className="see-more-topics">See more topics</button>
             </section>

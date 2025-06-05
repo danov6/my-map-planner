@@ -115,7 +115,7 @@ border-left: 1px solid #e0e0e0;
 
 .see-full-list,
 .see-more-topics {
-  color: #1a8917;
+  color: #4a90e2;
   background: none;
   border: none;
   padding: 0;
@@ -246,8 +246,7 @@ border-left: 1px solid #e0e0e0;
   }
 
   .article-image {
-    width: 100%;
-    max-height: 16rem;
+    display: none;
   }
 }
 

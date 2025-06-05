@@ -19,7 +19,7 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({ user, onLogout, isOpen }) => 
           alt="Profile" 
           className="profile-dropdown-avatar"
         />
-        <span className="profile-dropdown-email">{user?.email}</span>
+        <span className="profile-dropdown-email">{user?.firstName || user?.email}</span>
       </div>
       <div className="profile-dropdown-divider" />
       <Link to="/profile" className="profile-dropdown-item">

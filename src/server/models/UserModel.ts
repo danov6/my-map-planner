@@ -1,6 +1,6 @@
 import mongoose, { Schema, Document } from 'mongoose';
 import bcrypt from 'bcrypt';
-import BlogModel from '../models/BlogModel';
+import BlogModel from './ArticleModel';
 
 // Constants
 const SALT_ROUNDS = 10;

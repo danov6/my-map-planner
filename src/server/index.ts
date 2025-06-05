@@ -5,8 +5,7 @@ import mongoose from 'mongoose';
 
 // Route imports
 import authRoutes from './routes/authRoutes';
-import blogRoutes from './routes/blogRoutes';
-import guideRoutes from './routes/guideRoutes';
+import articleRoutes from './routes/articleRoutes';
 import userRoutes from './routes/userRoutes';
 
 // Configure environment variables
@@ -54,8 +53,7 @@ mongoose.connect(MONGODB_URI)
 
 // API Routes
 app.use('/api/auth', authRoutes);
-app.use('/api/blogs', blogRoutes);
-app.use('/api/guides', guideRoutes);
+app.use('/api/articles', articleRoutes);
 app.use('/api/users', userRoutes);
 
 // Health Check Routes

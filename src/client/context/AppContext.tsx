@@ -18,13 +18,6 @@ interface AppContextType {
   setSelectedCountry: (country: { name: string; countryCode: string }) => void;
   isModalOpen: boolean;
   setIsModalOpen: (isOpen: boolean) => void;
-  blogs: {
-    id: string;
-    imageUrl?: string;
-    title: string;
-    publishDate: string;
-    content: string;
-  }[];
   selectedOptions: TravelOption[];
   setSelectedOptions: (options: TravelOption[]) => void;
   isAuthenticated: boolean;
@@ -65,7 +58,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setSelectedCountry,
       isModalOpen,
       setIsModalOpen,
-      blogs,
       selectedOptions,
       setSelectedOptions,
       isAuthenticated,

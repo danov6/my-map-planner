@@ -41,9 +41,10 @@ export interface Article {
   id: string;
   title: string;
   subtitle: string;
-  author: string;
+  author: UserProfile;
   date: string;
   imageUrl: string;
   stats: ArticleStats;
-  topics: string[]; // Added topics field
+  topics: string[];
+  content: string;
 }
