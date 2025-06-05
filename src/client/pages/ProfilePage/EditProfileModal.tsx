@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { UserProfile } from "../../shared/types";
-import "../styles/modal.css";
+import { UserProfile } from "../../../shared/types";
+import "../../styles/modal.css";
 
 interface EditProfileModalProps {
   isOpen: boolean;

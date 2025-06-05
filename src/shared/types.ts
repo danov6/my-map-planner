@@ -30,3 +30,20 @@ export interface UserProfile {
   favorites?: BlogPost[];
   categories?: string[];
 }
+
+export interface ArticleStats {
+    likes: number;
+    views: number;
+    saves: number;
+}
+
+export interface Article {
+  id: string;
+  title: string;
+  subtitle: string;
+  author: string;
+  date: string;
+  imageUrl: string;
+  stats: ArticleStats;
+  topics: string[]; // Added topics field
+}

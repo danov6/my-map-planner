@@ -15,7 +15,7 @@ export const uploadToS3 = async (file: Express.Multer.File): Promise<string> => 
   const fileName = `profile-pictures/${uuidv4()}.${fileExtension}`;
 
   const command = new PutObjectCommand({
-    Bucket: process.env.AWS_BUCKET_NAME!,
+    Bucket: process.env.AWS_BUCKET_NAME! || 'travelblogassets',
     Key: fileName,
     Body: file.buffer,
     ContentType: file.mimetype,

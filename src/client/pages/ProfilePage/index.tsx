@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
-import { AppContext } from '../context/AppContext';
-import EditProfileModal from '../components/EditProfileModal';
+import { AppContext } from '../../context/AppContext';
+import EditProfileModal from './EditProfileModal';
 import { 
   updateUserProfile, 
   uploadProfilePicture, 
-} from '../services/users';
+} from '../../services/users';
 import { FaPen } from 'react-icons/fa';
-import '../styles/profile.css';
+import './styles.css';
 
 const ProfilePage: React.FC = () => {
   const { user, setUser } = useContext(AppContext);
@@ -72,27 +72,20 @@ const ProfilePage: React.FC = () => {
             className="profile-picture-container"
             onClick={handleImageClick}
           >
-            {user.profilePicture ? (
-              <>
-                <img 
-                  src={user.profilePicture || '/placeholder.png'} 
-                  alt="Profile" 
-                  className="profile-picture"
-                />
-                <div className="profile-picture-overlay">
-                  <span>Upload Image</span>
-                </div>
-              </>
+            {isLoading ? (
+              <div className="profile-picture-placeholder">
+                {user?.firstName?.[0]}{user?.lastName?.[0]}
+              </div>
             ) : (
-              <>
-                <div className="profile-picture-placeholder">
-                  {user.firstName?.[0]}{user.lastName?.[0]}
-                </div>
-                <div className="profile-picture-overlay">
-                  <span>Upload Image</span>
-                </div>
-              </>
+              <img 
+                src={user?.profilePicture || '/default-avatar.png'} 
+                alt="Profile" 
+                className="profile-picture"
+              />
             )}
+            <div className="profile-picture-overlay">
+              <span>Upload Image</span>
+            </div>
             <input
               type="file"
               ref={fileInputRef}

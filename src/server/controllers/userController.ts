@@ -25,18 +25,12 @@ export const getProfile = async (
       return res.status(404).json({ error: "User not found" });
     }
 
-    // Get signed URL if profile picture exists
-    let profilePictureUrl = null;
-    if (user.profilePicture) {
-      profilePictureUrl = await getSignedImageUrl(user.profilePicture);
-    }
-
     console.log("Profile fetched successfully:", { user });
     res.json({
       email: user.email,
       firstName: user.firstName,
       lastName: user.lastName,
-      profilePicture: profilePictureUrl || user.profilePicture,
+      profilePicture: user.profilePicture,
       bio: user.bio,
       favorites: user.favorites,
       blogs: user.blogs,

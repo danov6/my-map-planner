@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import User from '../models/UserModel';
-import { sendResetEmail } from '../services/emailService';
-import { Schema } from 'mongoose';
+import { sendResetEmail } from '../services/sesService';
+import { getSignedImageUrl } from '../services/s3Service';
 
 interface AuthRequest extends Request {
   user?: { userId: string };
@@ -23,12 +23,19 @@ export const login = async (req: Request | any, res: Response | any) => {
       process.env.JWT_SECRET || 'your-secret-key',
       { expiresIn: '24h' }
     );
+
+    const s3Key = user.profilePicture && user.profilePicture !== '' ? user.profilePicture : '';
+    let imageUrl = '';
+    if(user.profilePicture && user.profilePicture !== '') {
+        imageUrl = await getSignedImageUrl(s3Key);
+    }
+
     console.log('User logged in successfully:', { email });
     res.json({ token, user: {
       email: user.email,
       firstName: user.firstName,
       lastName: user.lastName,
-      profilePicture: user.profilePicture,
+      profilePicture: imageUrl,
       bio: user.bio,
       favorites: user.favorites,
       blogs: user.blogs,

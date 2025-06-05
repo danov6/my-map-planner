@@ -6,26 +6,7 @@ import { AppContext } from './../../context/AppContext';
 import 'leaflet/dist/leaflet.css';
 import countriesGeoJSON from './../../../../public/assets/countries.geo.json';
 import { GeoJsonObject } from 'geojson';
-
-const COUNTRY_BLACKLIST = [
-  'ATA', // Antarctica
-  'GRL', // Greenland
-  'HMD', // Heard Island and McDonald Islands
-  'WLF', // Wallis and Futuna
-  'ESH', // Western Sahara
-  'TKL', // Tokelau
-  'UMI', // United States Minor Outlying Islands
-  'VGB', // British Virgin Islands
-  'VIR', // United States Virgin Islands
-  'CXR', // Christmas Island
-  'CCK', // Cocos (Keeling) Islands
-  'NFK', // Norfolk Island
-  'ATF', // French Southern and Antarctic Lands
-];
-const COUNTRY_COLORS = {
-  BLACKLIST: '#7a848d', // Lighter blue for blacklisted countries
-  WHITELIST: '#4a90e2' // Default color for other countries
-}
+import { COUNTRY_BLACKLIST, COUNTRY_COLORS } from '../../constants';
 
 interface TooltipState {
   name: string;
@@ -72,7 +53,7 @@ const MapComponent: React.FC = () => {
     zoom: 2,
     maxZoom: 6,
     minZoom: 2,
-    style: { height: '500px', width: '75%' }, // Changed from 100% to 75%
+    style: { height: '500px', width: '100%' },
     zoomControl: true,
     zoomAnimation: true,
     markerZoomAnimation: true
