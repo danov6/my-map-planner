@@ -1,5 +1,6 @@
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState } from 'react';
 import { UserProfile } from '../../shared/types';
+import { Article } from '../../shared/types';
 
 export interface TravelOption {
   id: string;
@@ -25,6 +26,8 @@ interface AppContextType {
   user: UserProfile | null;
   setUser: (user: UserProfile | null) => void;
   logout: () => void;
+  articles: Article[] | null;
+  setArticles: (articles: Article[]) => void;
 }
 
 export const AppContext = createContext<AppContextType>({} as AppContextType);
@@ -33,13 +36,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [guide, setGuide] = useState<Guide[] | null>(null);
   const [selectedCountry, setSelectedCountry] = useState<{ name: string, countryCode: string } | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [blogs, setBlogs] = useState<{
-    id: string;
-    imageUrl?: string;
-    title: string;
-    publishDate: string;
-    content: string;
-  }[]>([]);
+  const [articles, setArticles] = useState<Article[]>([]);
   const [selectedOptions, setSelectedOptions] = useState<TravelOption[]>([]);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [user, setUser] = useState<UserProfile | null>(null);
@@ -64,7 +61,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setIsAuthenticated,
       user,
       setUser,
-      logout
+      logout,
+      articles,
+      setArticles,
     }}>
       {children}
     </AppContext.Provider>

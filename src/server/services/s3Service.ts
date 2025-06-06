@@ -31,10 +31,21 @@ export const uploadToS3 = async (file: Express.Multer.File): Promise<string> => 
 };
 
 export const getSignedImageUrl = async (key: string): Promise<string> => {
-  const command = new GetObjectCommand({
-    Bucket: process.env.AWS_BUCKET_NAME,
-    Key: key,
-  });
+  try {
+    const command = new GetObjectCommand({
+      Bucket: process.env.AWS_BUCKET_NAME!,
+      Key: key,
+    });
 
-  return getSignedUrl(s3Client, command, { expiresIn: 3600 });
+    console.log('[ s3Service ] Generating signed URL for:', {
+      bucket: process.env.AWS_BUCKET_NAME,
+      key,
+      region: process.env.AWS_REGION
+    });
+
+    return await getSignedUrl(s3Client, command, { expiresIn: 3600 });
+  } catch (error) {
+    console.error('[ s3Service ] Failed to generate signed URL:', error);
+    throw new Error('Failed to generate image URL');
+  }
 };

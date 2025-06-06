@@ -14,23 +14,31 @@ export const login = async (req: Request | any, res: Response | any) => {
     const user = await User.findOne({ email });
 
     if (!user || !(await user.comparePassword(password))) {
-      console.log('Invalid login attempt:', { email });
+      console.log('[ authController ] Invalid login attempt:', { email });
       return res.status(401).json({ error: 'Invalid credentials' });
     }
+    console.log('[ authController ] User found:', { email });
 
     const token = jwt.sign(
       { userId: user._id },
       process.env.JWT_SECRET || 'your-secret-key',
       { expiresIn: '24h' }
     );
+    console.log('[ authController ] JWT Token: ', token);
 
     const s3Key = user.profilePicture && user.profilePicture !== '' ? user.profilePicture : '';
     let imageUrl = '';
-    if(user.profilePicture && user.profilePicture !== '') {
+    
+    if (s3Key) {
+      try {
         imageUrl = await getSignedImageUrl(s3Key);
+        console.log('[ authController ] Profile picture URL generated:', { imageUrl });
+      } catch (s3Error) {
+        console.error('[ authController ] S3 signed URL generation failed:', s3Error);
+        imageUrl = '';
+      }
     }
 
-    console.log('User logged in successfully:', { email });
     res.json({ token, user: {
       email: user.email,
       firstName: user.firstName,
@@ -41,6 +49,7 @@ export const login = async (req: Request | any, res: Response | any) => {
       blogs: user.blogs,
     } });
   } catch (error) {
+    console.log('[ authController ] Login error:', error);
     res.status(500).json({ error: 'Login failed' });
   }
 };
@@ -51,12 +60,14 @@ export const signup = async (req: Request | any, res: Response | any) => {
 
     // Validate input
     if (!email || !password) {
+      console.log('[ authController ] Signup validation error:', { email });
       return res.status(400).json({ error: 'Email and password are required' });
     }
 
     // Check if user already exists
     const existingUser = await User.findOne({ email: email.toLowerCase() });
     if (existingUser) {
+      console.log('[ authController ] Signup error: Email already registered:', { email });
       return res.status(400).json({ error: 'Email already registered' });
     }
 
@@ -75,7 +86,7 @@ export const signup = async (req: Request | any, res: Response | any) => {
       { expiresIn: '24h' }
     );
 
-    console.log('User registered successfully:', { email });
+    console.log('[ authController ] User registered successfully:', { email });
     res.status(201).json({
       token,
       message: 'Registration successful',

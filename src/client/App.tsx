@@ -7,6 +7,7 @@ import { AppContext } from './context/AppContext';
 import './styles/global.css';
 import './styles/modal.css';
 import ProfilePage from './pages/ProfilePage';
+import { Article } from 'shared/types';
 
 //Pages
 import GuidePage from './pages/GuidePage';
@@ -22,6 +23,7 @@ const App: React.FC = () => {
   const [selectedOptions, setSelectedOptions] = useState<TravelOption[]>([]);
   const [guide, setGuide] = useState<{ header: string, content: string }[] | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [articles, setArticles] = useState<Article[]>([]); // Adjust type as needed
   const [user, setUser] = useState<{
     id?: string;
     email: string;
@@ -57,6 +59,8 @@ const App: React.FC = () => {
         setSelectedOptions,
         isAuthenticated,
         setIsAuthenticated,
+        setArticles,
+        articles,
         user,
         setUser,
         logout
