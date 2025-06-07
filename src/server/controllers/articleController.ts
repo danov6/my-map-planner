@@ -123,3 +123,66 @@ export const getArticles = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const createArticle = async (req: Request | any, res: Response | any) => {
+  try {
+    if (!req.user) {
+      console.error('[ articleController ] User not authenticated');
+      return res.status(401).json({ error: 'Authentication required' });
+    }
+
+    const {
+      title,
+      subtitle,
+      content,
+      imageUrl,
+      country,
+      categories,
+      topics
+    } = req.body;
+
+    // Validate required fields
+    if (!title || !content) {
+      return res.status(400).json({ 
+        error: 'Missing required fields',
+        details: 'Title and content are required' 
+      });
+    }
+
+    const newArticle = new Article({
+      title,
+      subtitle,
+      content,
+      imageUrl,
+      author: req.user._id,
+      country,
+      categories: categories || [],
+      topics: topics || [],
+      date: new Date(),
+      stats: {
+        likes: 0,
+        views: 0,
+        saves: 0
+      }
+    });
+
+    await newArticle.save();
+
+    const populatedArticle = await Article.findById(newArticle._id)
+      .populate('author', 'firstName lastName profilePicture')
+      .select('-__v');
+
+    console.log('[ articleController ] Article created successfully:', { 
+      articleId: newArticle._id,
+      author: req.user._id 
+    });
+
+    res.status(201).json(populatedArticle);
+  } catch (error) {
+    console.error('[ articleController ] Error creating article:', error);
+    res.status(500).json({ 
+      error: 'Failed to create article',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+};

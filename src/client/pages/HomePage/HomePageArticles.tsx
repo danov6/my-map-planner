@@ -24,7 +24,7 @@ const HomePageArticles: React.FC<any> = () => {
             <h2 className="article-title">{article.title}</h2>
             <p className="article-subtitle">{article.subtitle}</p>
             <div className="article-meta">
-              <span className="article-date">{article.date}</span>
+              <span className="article-date">{article.date as any}</span>
               <span className="article-stats">
                 <FaRegThumbsUp className="icon" />
                 <span className="views">{article.stats.views}</span>

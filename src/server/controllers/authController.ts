@@ -98,7 +98,7 @@ export const signup = async (req: Request | any, res: Response | any) => {
       },
     });
   } catch (error) {
-    console.log('Registration error:', error);
+    console.log('[ authController ] Registration error:', error);
     res.status(500).json({ error: 'Registration failed' });
   }
 };

@@ -1,6 +1,6 @@
 const API_URL = process.env.SERVER_URL || 'http://localhost:53195';
 
-export const loginUser = async (credentials: any): Promise<any> => {
+export const loginUser = async (credentials: any) => {
   const response = await fetch(`${API_URL}/api/auth/login`, {
     method: 'POST',
     headers: {
@@ -19,7 +19,7 @@ export const loginUser = async (credentials: any): Promise<any> => {
   return data;
 };
 
-export const registerUser = async (credentials: any): Promise<any> => {
+export const registerUser = async (credentials: any) => {
   const response = await fetch(`${API_URL}/api/auth/signup`, {
     method: 'POST',
     headers: {

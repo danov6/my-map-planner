@@ -7,6 +7,7 @@ import mongoose from 'mongoose';
 import authRoutes from './routes/authRoutes';
 import articleRoutes from './routes/articleRoutes';
 import userRoutes from './routes/userRoutes';
+import mediaRoutes from './routes/mediaRoutes';
 
 // Configure environment variables
 dotenv.config();
@@ -55,6 +56,7 @@ mongoose.connect(MONGODB_URI)
 app.use('/api/auth', authRoutes);
 app.use('/api/articles', articleRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/media', mediaRoutes);
 
 // Health Check Routes
 app.get('/health', (req: Request, res: Response) => {

@@ -1,5 +1,3 @@
-import { Article } from '../../shared/types';
-
 const API_URL = process.env.SERVER_URL || 'http://localhost:53195';
 
 export const fetchArticle = async (articleId: string) => {
@@ -15,18 +13,7 @@ export const fetchArticle = async (articleId: string) => {
   return response.json();
 };
 
-interface PaginatedResponse {
-  articles: Article[];
-  pagination: {
-    currentPage: number;
-    totalPages: number;
-    totalArticles: number;
-    hasNextPage: boolean;
-    hasPreviousPage: boolean;
-  };
-}
-
-export const fetchArticles = async (page: number = 1, countryCode: string | null): Promise<PaginatedResponse> => {
+export const fetchArticles = async (page: number = 1, countryCode: string | null) => {
   const params = page ? `page=${page}` : '' + (countryCode ? `&country=${countryCode}` : '');
   const response = await fetch(`${process.env.SERVER_URL}/api/articles?${params}`, {
     headers: {

@@ -58,7 +58,7 @@ const ArticlePage: React.FC = () => {
             <div className="author-details">
               <span className="author-name">{article.author.firstName}</span>
               <div className="read-time-info">
-                <span>{article.date}</span>
+                <span>{article.date as any}</span>
               </div>
             </div>
           </div>

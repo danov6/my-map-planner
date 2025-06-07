@@ -1,5 +1,5 @@
-import mongoose, { Document, Schema } from 'mongoose';
-import { Article, ArticleStats } from '../../shared/types';
+import mongoose, { Schema } from 'mongoose';
+import { Article } from '../../shared/types';
 import { IUser } from './UserModel';
 
 const articleSchema = new Schema<Article>({
@@ -24,6 +24,10 @@ const articleSchema = new Schema<Article>({
     ref: 'User',
     required: [true, 'Author is required']
   },
+  date: {
+    type: Date,
+    default: Date.now
+  },
   imageUrl: {
     type: String,
     trim: true,
@@ -34,13 +38,22 @@ const articleSchema = new Schema<Article>({
       message: 'Invalid image URL format'
     }
   },
+  countryCode: {
+    type: String,
+    index: true
+  },
+  categories: [{
+    type: String,
+    index: true
+  }],
+  topics: [String],
   stats: {
     likes: {
       type: Number,
       default: 0,
       min: [0, 'Likes cannot be negative']
     },
-    views: {   
+    views: {
       type: Number,
       default: 0,
       min: [0, 'Views cannot be negative']
@@ -48,7 +61,7 @@ const articleSchema = new Schema<Article>({
     saves: {
       type: Number,
       default: 0,
-      min: [0, 'Saves cannot be negative']    
+      min: [0, 'Saves cannot be negative']
     }
   },
 });

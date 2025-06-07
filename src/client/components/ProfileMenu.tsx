@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { FaPencilAlt, FaPersonBooth, FaDoorOpen, FaUsers, FaRegEdit, FaRegUser } from 'react-icons/fa';
 import { UserProfile } from '../../shared/types';
 
 interface ProfileMenuProps {
@@ -23,16 +24,17 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({ user, onLogout, isOpen }) => 
       </div>
       <div className="profile-dropdown-divider" />
       <Link to="/profile" className="profile-dropdown-item">
-        <i className="fas fa-user"></i>
-        Profile
+        <FaRegUser /> Profile
+      </Link>
+      <Link to="/create" className="profile-dropdown-item">
+        <FaRegEdit /> Create Article
       </Link>
       {/* <Link to="/premium" className="profile-dropdown-item">
         <i className="fas fa-crown"></i>
         Upgrade to Premium
       </Link> */}
       <button onClick={onLogout} className="profile-dropdown-item">
-        <i className="fas fa-sign-out-alt"></i>
-        Sign out
+        <FaDoorOpen /> Sign out
       </button>
     </div>
   );

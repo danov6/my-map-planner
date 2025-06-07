@@ -38,10 +38,11 @@ export interface Article {
   title: string;
   subtitle: string;
   author: UserProfile;
-  date: string;
+  date: Date;
   imageUrl: string;
   stats: ArticleStats;
   topics: string[];
   content: string;
   countryCode?: string;
+  categories?: string[];
 }

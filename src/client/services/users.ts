@@ -2,7 +2,7 @@ import { UserProfile } from "../../shared/types";
 
 const API_URL = process.env.API_URL || "http://localhost:53195";
 
-export async function fetchUserProfile(): Promise<UserProfile> {
+export const fetchUserProfile = async () => {
   const token = localStorage.getItem("token");
 
   if (!token) {
@@ -25,11 +25,9 @@ export async function fetchUserProfile(): Promise<UserProfile> {
   }
 
   return response.json();
-}
+};
 
-export async function updateUserProfile(
-  profileData: UserProfile
-): Promise<UserProfile> {
+export const updateUserProfile = async (profileData: UserProfile) => {
   const token = localStorage.getItem("token");
 
   if (!token) {
@@ -55,7 +53,8 @@ export async function updateUserProfile(
   }
 
   return response.json();
-}
+};
+
 export const uploadProfilePicture = async (file: File): Promise<any> => {
   const token = localStorage.getItem("token");
   const formData = new FormData();
