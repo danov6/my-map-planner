@@ -24,6 +24,7 @@ export interface UserProfile {
   blogs?: string[];
   favorites?: BlogPost[];
   categories?: string[];
+  countries?: string[];
 }
 
 export interface ArticleStats {
@@ -42,4 +43,5 @@ export interface Article {
   stats: ArticleStats;
   topics: string[];
   content: string;
+  countryCode?: string;
 }

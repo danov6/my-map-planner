@@ -54,9 +54,9 @@ export const getArticle = async (req: Request | any, res: Response | any) => {
 
     // console.log('Article fetched successfully:', { articleId });
     // res.json(article);
-    res.json(MOCK_ARTICLES[0]); // For testing purposes, returning the first mock article
+    res.json(MOCK_ARTICLES[0]);
   } catch (error) {
-    console.error('Error fetching article:', error);
+    console.error('[ articleController ] Error fetching article:', error);
     res.status(500).json({ error: 'Failed to fetch article' });
   }
 };
@@ -66,31 +66,57 @@ export const getArticles = async (req: Request, res: Response) => {
     const page = parseInt(req.query.page as string) || 1;
     const limit = 10;
     const skip = (page - 1) * limit;
+    
+    const country = req.query.country as string;
+    const categories = Array.isArray(req.query.category) 
+      ? req.query.category
+      : req.query.category 
+        ? [req.query.category]
+        : [];
 
-    // const articles = await Article.find()
-    //   .populate('author', 'firstName lastName profilePicture')
-    //   .select('-__v')
-    //   .sort({ date: -1 }) // Sort by newest first
-    //   .skip(skip)
-    //   .limit(limit);
+    const filter: any = {};
+    if (country) {
+      filter.country = country;
+    }
+    if (categories.length > 0) {
+      filter.categories = { $in: categories };
+    }
 
-    const totalArticles = await Article.countDocuments();
+    const articles = await Article.find(filter)
+      .populate('author', 'firstName lastName profilePicture')
+      .select('-__v')
+      .sort({ date: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    const totalArticles = await Article.countDocuments(filter);
     const totalPages = Math.ceil(totalArticles / limit);
 
-    console.log('Articles fetched successfully:', { page, totalPages });
+    console.log('[ articleController ] Articles fetched successfully:', { 
+      page, 
+      totalPages,
+      filters: {
+        country,
+        categories
+      }
+    });
     
     res.json({
-      articles: MOCK_ARTICLES,
+      articles, //MOCK_ARTICLES, // Replace with articles when using real data
       pagination: {
         currentPage: page,
         totalPages,
         totalArticles,
         hasNextPage: page < totalPages,
         hasPreviousPage: page > 1
+      },
+      filters: {
+        country,
+        categories
       }
     });
   } catch (error) {
-    console.error('Error fetching articles:', error);
+    console.error('[ articleController ] Error fetching articles:', error);
     res.status(500).json({ 
       error: 'Failed to fetch articles',
       details: error instanceof Error ? error.message : 'Unknown error'

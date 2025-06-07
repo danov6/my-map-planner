@@ -4,6 +4,6 @@ import { getArticle, getArticles } from '../controllers/articleController';
 const router = express.Router();
 
 router.get('/', getArticles);
-router.get('/:articleId', getArticle);
+router.get('/article', getArticle);
 
 export default router;

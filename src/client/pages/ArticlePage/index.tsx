@@ -45,53 +45,44 @@ const ArticlePage: React.FC = () => {
   return (
     <div className="article-page">
       <article className="article-container">
-        <header className="article-header">
-          <h1>{article.title}</h1>
-          {article.subtitle && <h2>{article.subtitle}</h2>}
-          
-          <div className="article-meta">
-            <div className="author-info">
-              <img 
-                src={article.author.profilePicture || '/default-avatar.png'} 
-                alt={article.author.firstName || 'Author'}
-                className="author-avatar"
-              />
-              <div>
-                <div className="author-name">{article.author.firstName}</div>
-                <div className="article-date">{article.date}</div>
+        <h1 className="article-title">{article.title}</h1>
+        <p className="article-subtitle">{article.subtitle}</p>
+        
+        <div className="article-header-meta">
+          <div className="author-info">
+            <img 
+              src={article.author.profilePicture || '/default-avatar.png'} 
+              alt={article.author.firstName || 'Author'}
+              className="author-avatar"
+            />
+            <div className="author-details">
+              <span className="author-name">{article.author.firstName}</span>
+              <div className="read-time-info">
+                <span>{article.date}</span>
               </div>
             </div>
-            
-            <div className="article-actions">
-              <button className="action-button">
-                <FaRegHeart /> <span>{article.stats.likes}</span>
-              </button>
-              <button className="action-button">
-                <FaRegBookmark />
-              </button>
-            </div>
           </div>
-        </header>
+
+          <div className="article-stats">
+            <FaRegHeart /> <span>{article.stats.likes}</span>
+            <FaRegBookmark />
+          </div>
+        </div>
 
         {article.imageUrl && (
           <div className="article-hero-image">
             <img src={article.imageUrl} alt={article.title} />
+            {/* {article.imageCredit && (
+              <span className="image-credit">{article.imageCredit}</span>
+            )} */}
           </div>
         )}
 
         <div className="article-content">
           {article.content.split('\n').map((paragraph, index) => (
-            <p key={index} className="article-paragraph">{paragraph}</p>
+            <p key={index}>{paragraph}</p>
           ))}
         </div>
-
-        <footer className="article-footer">
-          <div className="article-topics">
-            {article.topics?.map((topic, index) => (
-              <span key={index} className="topic-tag">{topic}</span>
-            ))}
-          </div>
-        </footer>
       </article>
     </div>
   );

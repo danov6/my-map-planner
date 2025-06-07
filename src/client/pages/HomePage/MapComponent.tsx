@@ -110,7 +110,7 @@ const MapComponent: React.FC = () => {
       const bounds = layer.getBounds();
       const adjustedBounds = bounds.pad(0.1);
       setSelectedBounds(adjustedBounds);
-      setIsModalOpen(true);
+      //setIsModalOpen(true);
     }
   }, [setSelectedCountry]);
 
