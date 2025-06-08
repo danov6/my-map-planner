@@ -26,7 +26,7 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({ user, onLogout, isOpen }) => 
       <Link to="/profile" className="profile-dropdown-item">
         <FaRegUser /> Profile
       </Link>
-      <Link to="/create" className="profile-dropdown-item">
+      <Link to="/articles/create" className="profile-dropdown-item">
         <FaRegEdit /> Create Article
       </Link>
       {/* <Link to="/premium" className="profile-dropdown-item">

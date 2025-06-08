@@ -28,6 +28,7 @@ export const getProfile = async (
 
     console.log("Profile fetched successfully:", { user });
     res.json({
+      _id: user._id,
       email: user.email,
       firstName: user.firstName,
       lastName: user.lastName,

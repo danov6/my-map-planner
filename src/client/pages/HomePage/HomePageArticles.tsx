@@ -9,7 +9,7 @@ const HomePageArticles: React.FC<any> = () => {
   const navigate = useNavigate();
 
   const handleArticleClick = (articleId: string) => {
-    navigate(`/article?id=${articleId}`);
+    navigate(`/articles/${articleId}`);
   };
 
   console.log('Articles:', articles);

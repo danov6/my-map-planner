@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { format } from 'timeago.js';
 import { AppContext } from '../../context/AppContext';
 import { Article } from '../../../shared/types';
@@ -10,9 +10,9 @@ import DOMPurify from 'dompurify';
 import './styles.css';
 
 const ViewArticlePage: React.FC = () => {
+  const { id } = useParams();
   const navigate = useNavigate();
   const { isAuthenticated, user } = useContext(AppContext);
-  const [searchParams] = useSearchParams();
   const [article, setArticle] = useState<Article | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -50,15 +50,14 @@ const ViewArticlePage: React.FC = () => {
   }, [user, article]);
 
   useEffect(() => {
-    const articleId = searchParams.get('id');
-    if (!articleId) {
+    if (!id) {
       navigate('/');
       return;
     }
 
     const loadArticle = async () => {
       try {
-        const data = await fetchArticle(articleId);
+        const data = await fetchArticle(id);
         setArticle(data);
       } catch (err) {
         if (err instanceof Error && err.message === 'NOT_FOUND') {
@@ -72,7 +71,7 @@ const ViewArticlePage: React.FC = () => {
     };
 
     loadArticle();
-  }, [searchParams, navigate]);
+  }, [id, navigate]);
 
   if (isLoading) return <Spinner />;
   if (error) return <div className="error-message">{error}</div>;
@@ -80,7 +79,9 @@ const ViewArticlePage: React.FC = () => {
 
   const sanitizedContent = DOMPurify.sanitize(article.content);
 
-  console.log('is liked:', isLiked);
+  // console.log('is liked:', isLiked);
+  console.log('User ID:', user);
+  console.log('Article Author ID:', article.author._id);
   return (
     <div className="article-page">
       <article className="article-container">
@@ -117,8 +118,17 @@ const ViewArticlePage: React.FC = () => {
             <FaRegEye /> <span>{article.stats.views}</span>
             <FaRegBookmark />
           </div>
-        </div>
 
+          {user?._id === article.author._id && (
+            <button 
+              className="edit-button"
+              onClick={() => navigate(`/articles/${article._id}/edit`)}
+            >
+              Edit Article
+            </button>
+          )}
+        </div>
+        
         {article.headerImageUrl && (
           <div className="article-hero-image">
             <img src={article.headerImageUrl} alt={article.title} />

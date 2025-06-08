@@ -75,3 +75,23 @@ export const toggleArticleLike = async (articleId: string): Promise<{ liked: boo
 
   return response.json();
 };
+
+export const updateArticle = async (articleId: string, formData: any): Promise<Article> => {
+  const token = localStorage.getItem('token');
+  const response = await fetch(`${API_URL}/api/articles/${articleId}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify(formData)
+  });
+
+  if (!response.ok) {
+    if (response.status === 401) throw new Error('UNAUTHORIZED');
+    if (response.status === 403) throw new Error('NOT_AUTHORIZED');
+    throw new Error('Failed to update article');
+  }
+
+  return response.json();
+};

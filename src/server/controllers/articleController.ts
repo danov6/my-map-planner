@@ -210,3 +210,42 @@ export const toggleArticleLike = async (req: Request | any, res: Response | any)
     res.status(500).json({ error: 'Failed to toggle article like' });
   }
 };
+
+export const updateArticle = async (req: Request | any, res: Response | any) => {
+  try {
+    const { id } = req.params;
+    const { title, subtitle, content, headerImageUrl, topics } = req.body;
+    const userId = req.user?.userId;
+
+    const article = await Article.findById(id);
+
+    if (!article) {
+      return res.status(404).json({ error: 'Article not found' });
+    }
+
+    if (article.author.toString() !== userId) {
+      return res.status(403).json({ error: 'Not authorized to edit this article' });
+    }
+
+    const updatedArticle = await Article.findByIdAndUpdate(
+      id,
+      {
+        title,
+        subtitle,
+        content,
+        headerImageUrl,
+        topics,
+        updatedAt: new Date()
+      },
+      { new: true }
+    ).populate('author', 'firstName lastName profilePicture');
+
+    res.json(updatedArticle);
+  } catch (error) {
+    console.error('[ articleController ] Error updating article:', error);
+    res.status(500).json({ 
+      error: 'Failed to update article',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+};

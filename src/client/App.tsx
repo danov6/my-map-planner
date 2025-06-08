@@ -17,6 +17,7 @@ import SignupPage from './pages/SignupPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ViewArticlePage from './pages/ViewArticlePage';
 import CreateArticlePage from './pages/CreateArticlePage';
+import EditArticlePage from './pages/EditArticlePage';
 
 const App: React.FC = () => {
   const [selectedCountry, setSelectedCountry] = useState<{ countryCode: string, name: string } | null>(null);
@@ -26,12 +27,12 @@ const App: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [articles, setArticles] = useState<Article[]>([]); // Adjust type as needed
   const [user, setUser] = useState<{
-    id?: string;
+    _id: string;
     email: string;
     firstName?: string;
     lastName?: string;
     profilePicture?: string;
-  } | null>(null);
+  } | any>(null);
 
   const logout = useCallback(() => {
     localStorage.removeItem('token');
@@ -76,8 +77,12 @@ const App: React.FC = () => {
               <Route path="/signup" element={<SignupPage />} />
               <Route path="/forgot-password" element={<ForgotPasswordPage />} />
               <Route path="/profile" element={<ProfilePage />} />
-              <Route path="/article" element={<ViewArticlePage />} />
-              <Route path="/create" element={<CreateArticlePage />} />
+              <Route path="/articles">
+                <Route index element={<HomePage />} />
+                <Route path="create" element={<CreateArticlePage />} />
+                <Route path=":id" element={<ViewArticlePage />} />
+                <Route path=":id/edit" element={<EditArticlePage />} />
+              </Route>
               {/* <Route path="*" element={<Navigate to="/" replace />} /> */}
             </Routes>
           </main>
