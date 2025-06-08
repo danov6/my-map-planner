@@ -5,8 +5,6 @@ import { AppContext } from '../../context/AppContext';
 import './styles.css';
 import { createArticle } from '../../services/articles';
 import { uploadImage } from '../../services/media';
-import { Article } from '../../../shared/types';
-
 
 const CreateArticlePage: React.FC = () => {
   const editorRef = useRef<any>(null);
@@ -14,6 +12,8 @@ const CreateArticlePage: React.FC = () => {
   const { isAuthenticated } = useContext(AppContext);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     subtitle: '',
@@ -21,8 +21,7 @@ const CreateArticlePage: React.FC = () => {
     content: '',
     topics: []
   });
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [isUploading, setIsUploading] = useState(false);
+
 
   useEffect(() => {
     if (!isAuthenticated) {

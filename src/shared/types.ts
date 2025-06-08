@@ -1,14 +1,3 @@
-export interface BlogPost {
-  id: string;
-  title: string;
-  content: string;
-  author: string;
-  imageUrl?: string;
-  countryCode: string;
-  createdAt: Date;
-  publishDate: string;
-}
-
 export interface CountryData {
   code: string;
   name: string;
@@ -21,10 +10,10 @@ export interface UserProfile {
   lastName?: string;
   bio?: string;
   profilePicture?: string;
-  blogs?: string[];
-  favorites?: BlogPost[];
   categories?: string[];
   countries?: string[];
+  likedArticles?: Article[];
+  savedArticles?: Article[];
 }
 
 export interface ArticleStats {

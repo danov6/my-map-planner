@@ -1,19 +1,53 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { format } from 'timeago.js';
+import { AppContext } from '../../context/AppContext';
 import { Article } from '../../../shared/types';
 import Spinner from '../../components/Spinner';
-import { FaRegBookmark, FaRegEye, FaRegThumbsUp } from 'react-icons/fa';
-import { fetchArticle } from '../../services/articles';
+import { FaRegBookmark, FaRegEye, FaRegThumbsUp, FaThumbsUp } from 'react-icons/fa';
+import { fetchArticle, toggleArticleLike } from '../../services/articles';
 import DOMPurify from 'dompurify';
 import './styles.css';
 
-const ArticlePage: React.FC = () => {
-  const [searchParams] = useSearchParams();
+const ViewArticlePage: React.FC = () => {
   const navigate = useNavigate();
+  const { isAuthenticated, user } = useContext(AppContext);
+  const [searchParams] = useSearchParams();
   const [article, setArticle] = useState<Article | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isLiked, setIsLiked] = useState<boolean>(false);
+
+  const handleLike = async () => {
+    if (!isAuthenticated) {
+      navigate('/login');
+      return;
+    }
+
+    try {
+      const { liked } = await toggleArticleLike(article!._id);
+      setArticle(prev => prev ? {
+        ...prev,
+        stats: {
+          ...prev.stats,
+          likes: prev.stats.likes + (liked ? 1 : -1)
+        }
+      } : null);
+      setIsLiked(liked);
+    } catch (err) {
+      if (err instanceof Error && err.message === 'UNAUTHORIZED') {
+        navigate('/login');
+        return;
+      }
+      setError('Failed to update article like');
+    }
+  };
+
+  useEffect(() => {
+    if (user && article) {
+      setIsLiked(user.likedArticles?.includes(article._id as any) || false);
+    }
+  }, [user, article]);
 
   useEffect(() => {
     const articleId = searchParams.get('id');
@@ -46,6 +80,7 @@ const ArticlePage: React.FC = () => {
 
   const sanitizedContent = DOMPurify.sanitize(article.content);
 
+  console.log('is liked:', isLiked);
   return (
     <div className="article-page">
       <article className="article-container">
@@ -68,7 +103,17 @@ const ArticlePage: React.FC = () => {
           </div>
 
           <div className="article-stats">
-            <FaRegThumbsUp /> <span>{article.stats.likes}</span>
+            <button 
+              onClick={handleLike}
+              className={`like-button ${isLiked ? 'liked' : ''}`}
+            >
+              {isLiked ? (
+                <FaRegThumbsUp className="icon filled" />
+              ) : (
+                <FaThumbsUp className="icon" />
+              )}
+              <span>{article.stats.likes}</span>
+            </button>
             <FaRegEye /> <span>{article.stats.views}</span>
             <FaRegBookmark />
           </div>
@@ -92,4 +137,4 @@ const ArticlePage: React.FC = () => {
   );
 };
 
-export default ArticlePage;
+export default ViewArticlePage;

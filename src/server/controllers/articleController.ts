@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import Article from '../models/ArticleModel';
+import User from '../models/UserModel';
 
 export const getArticle = async (req: Request | any, res: Response | any) => {
   try {
@@ -169,5 +170,43 @@ export const createArticle = async (req: Request | any, res: Response | any) => 
       error: 'Failed to create article',
       details: error instanceof Error ? error.message : 'Unknown error'
     });
+  }
+};
+
+export const toggleArticleLike = async (req: Request | any, res: Response | any) => {
+  try {
+    const { articleId } = req.body;
+    const userId = req.user?.userId;
+
+    if (!userId) {
+      console.error('[ articleController ] User not authenticated');
+      return res.status(401).json({ error: 'Authentication required' });
+    }
+
+    const article = await Article.findById(articleId);
+    if (!article) {
+      console.error('[ articleController ] Article not found:', { articleId });
+      return res.status(404).json({ error: 'Article not found' });
+    }
+
+    const user = await User.findById(userId);
+    const hasLiked = user?.likedArticles?.includes(articleId);
+
+    if (hasLiked) {
+      await Promise.all([
+        Article.findByIdAndUpdate(articleId, { $inc: { 'stats.likes': -1 } }),
+        User.findByIdAndUpdate(userId, { $pull: { likedArticles: articleId } })
+      ]);
+    } else {
+      await Promise.all([
+        Article.findByIdAndUpdate(articleId, { $inc: { 'stats.likes': 1 } }),
+        User.findByIdAndUpdate(userId, { $push: { likedArticles: articleId } })
+      ]);
+    }
+
+    res.json({ liked: !hasLiked });
+  } catch (error) {
+    console.error('[ articleController ] Error toggling article like:', error);
+    res.status(500).json({ error: 'Failed to toggle article like' });
   }
 };

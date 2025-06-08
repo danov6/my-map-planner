@@ -15,7 +15,7 @@ import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
-import ArticlePage from './pages/ArticlePage';
+import ViewArticlePage from './pages/ViewArticlePage';
 import CreateArticlePage from './pages/CreateArticlePage';
 
 const App: React.FC = () => {
@@ -76,7 +76,7 @@ const App: React.FC = () => {
               <Route path="/signup" element={<SignupPage />} />
               <Route path="/forgot-password" element={<ForgotPasswordPage />} />
               <Route path="/profile" element={<ProfilePage />} />
-              <Route path="/article" element={<ArticlePage />} />
+              <Route path="/article" element={<ViewArticlePage />} />
               <Route path="/create" element={<CreateArticlePage />} />
               {/* <Route path="*" element={<Navigate to="/" replace />} /> */}
             </Routes>

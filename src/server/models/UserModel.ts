@@ -13,7 +13,9 @@ export interface IUser extends Document {
   profilePicture?: string;
   bio?: string;
   favorites?: string[];
-  createdArticles?: mongoose.Types.ObjectId[]; // or ArticleModel[] if you want to use the populated type
+  createdArticles?: mongoose.Types.ObjectId[];
+  likedArticles?: mongoose.Types.ObjectId[];
+  savedArticles?: mongoose.Types.ObjectId[];
   email: string;
   password: string;
   resetToken?: string | null;
@@ -56,6 +58,8 @@ const userSchema = new Schema({
     default: null
   },
   bio: { type: String },
+  likedArticles: [{ type: Schema.Types.ObjectId, ref: 'ArticleModel' }],
+  savedArticles: [{ type: Schema.Types.ObjectId, ref: 'ArticleModel' }],
   favorites: [{ type: Schema.Types.ObjectId, ref: 'ArticleModel' }],
   createdArticles: [{ type: Schema.Types.ObjectId, ref: 'ArticleModel' }],
 }, {

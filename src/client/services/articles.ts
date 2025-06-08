@@ -55,3 +55,23 @@ export const createArticle = async (formData: any, content: string): Promise<any
 
   return response.json();
 };
+
+export const toggleArticleLike = async (articleId: string): Promise<{ liked: boolean }> => {
+  const token = localStorage.getItem('token');
+  const response = await fetch(`${API_URL}/api/articles/article/like`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ articleId })
+  });
+
+  if (!response.ok) {
+    console.log('Failed to toggle article like:', response.status, response.statusText);
+    if (response.status === 401) throw new Error('UNAUTHORIZED');
+    throw new Error('Failed to toggle article like');
+  }
+
+  return response.json();
+};
