@@ -74,23 +74,3 @@ export const uploadProfilePicture = async (file: File): Promise<any> => {
 
   return response.json();
 };
-
-export const getProfileImageUrl = async (profilePicture: string): Promise<string> => {
-  try {
-    const response = await fetch(
-      `${process.env.SERVER_URL}/api/users/get-signed-url?key=${profilePicture}`,
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`
-        }
-      }
-    );
-    
-    if (!response.ok) throw new Error('Failed to get image URL');
-    const { url } = await response.json();
-    return url;
-  } catch (error) {
-    console.error('Error getting signed URL:', error);
-    return '';
-  }
-};

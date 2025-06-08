@@ -3,15 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { Editor } from '@tinymce/tinymce-react';
 import { AppContext } from '../../context/AppContext';
 import './styles.css';
+import { createArticle } from '../../services/articles';
+import { uploadImage } from '../../services/media';
+import { Article } from '../../../shared/types';
 
-interface ArticleForm {
-  title: string;
-  subtitle: string;
-  content: string;
-  headerImage?: string;
-  categories: string[];
-  topics: string[];
-}
 
 const CreateArticlePage: React.FC = () => {
   const editorRef = useRef<any>(null);
@@ -19,13 +14,15 @@ const CreateArticlePage: React.FC = () => {
   const { isAuthenticated } = useContext(AppContext);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [formData, setFormData] = useState<ArticleForm>({
+  const [formData, setFormData] = useState({
     title: '',
     subtitle: '',
+    headerImageUrl: '',
     content: '',
-    categories: [],
     topics: []
   });
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -43,34 +40,49 @@ const CreateArticlePage: React.FC = () => {
     const content = editorRef.current.getContent();
     
     try {
-      const response = await fetch('/api/articles', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify({
-          ...formData,
-          content
-        })
-      });
-
-      if (!response.ok) {
-        if (response.status === 401) {
-          navigate('/');
-          return;
-        }
-        throw new Error('Failed to create article');
-      }
-
-      const data = await response.json();
+      const data = await createArticle(formData, content);
       navigate(`/article?id=${data._id}`);
     } catch (err) {
+      if (err instanceof Error && err.message === 'UNAUTHORIZED') {
+        navigate('/');
+        return;
+      }
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
       setIsSubmitting(false);
     }
   };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Create preview
+    const previewUrl = URL.createObjectURL(file);
+    setImagePreview(previewUrl);
+    setIsUploading(true);
+
+    try {
+      const formData = new FormData();
+      formData.append('image', file);
+
+      const { imageUrl } = await uploadImage(formData);
+      setFormData(prev => ({ ...prev, headerImageUrl: imageUrl }));
+    } catch (err) {
+      setError('Failed to upload image');
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  // Clean up preview URL when component unmounts
+  useEffect(() => {
+    return () => {
+      if (imagePreview) {
+        URL.revokeObjectURL(imagePreview);
+      }
+    };
+  }, [imagePreview]);
 
   return (
     <div className="create-article-page">
@@ -97,6 +109,35 @@ const CreateArticlePage: React.FC = () => {
             value={formData.subtitle}
             onChange={e => setFormData(prev => ({ ...prev, subtitle: e.target.value }))}
           />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="headerImage">Header Image</label>
+          <div className="header-image-upload">
+            <input
+              type="file"
+              id="headerImage"
+              accept="image/*"
+              onChange={handleImageUpload}
+              className="header-image-input"
+            />
+            {isUploading && <span className="upload-status">Uploading...</span>}
+          </div>
+          {imagePreview && (
+            <div className="image-preview">
+              <img src={imagePreview} alt="Header preview" />
+              <button
+                type="button"
+                className="remove-image"
+                onClick={() => {
+                  setImagePreview(null);
+                  setFormData(prev => ({ ...prev, headerImageUrl: '' }));
+                }}
+              >
+                Remove Image
+              </button>
+            </div>
+          )}
         </div>
 
         <div className="form-group">

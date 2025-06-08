@@ -32,7 +32,7 @@ const ProfilePage: React.FC = () => {
       const result = await uploadProfilePicture(file);
       setUser((prev) => ({
         ...prev!,
-        profilePicture: result.imageUrl
+        profilePicture: result.headerImageUrl as string
       }));
     } catch (error) {
       console.log('Error uploading profile picture:', error);

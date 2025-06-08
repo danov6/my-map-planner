@@ -28,7 +28,7 @@ const articleSchema = new Schema<Article>({
     type: Date,
     default: Date.now
   },
-  imageUrl: {
+  headerImageUrl: {
     type: String,
     trim: true,
     validate: {
@@ -42,10 +42,6 @@ const articleSchema = new Schema<Article>({
     type: String,
     index: true
   },
-  categories: [{
-    type: String,
-    index: true
-  }],
   topics: [String],
   stats: {
     likes: {
@@ -71,6 +67,6 @@ articleSchema.index({ countryCode: 1 });
 articleSchema.index({ createdAt: -1 });
 articleSchema.index({ votes: -1 }); // Add index for votes
 
-const BlogModel = mongoose.model<Article>('Article', articleSchema);
+const ArticleModel = mongoose.model<Article>('Article', articleSchema);
 
-export default BlogModel;
+export default ArticleModel;

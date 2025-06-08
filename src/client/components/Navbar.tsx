@@ -3,7 +3,6 @@ import { Link, NavLink, useNavigate } from 'react-router-dom';
 import ProfileMenu from './ProfileMenu';
 import '../styles/navbar.css';
 import { AppContext } from '../context/AppContext';
-import { useS3Image } from '../hooks/useS3Image';
 import { fetchUserProfile } from '../services/users';
 
 const Navbar: React.FC = () => {
@@ -12,11 +11,6 @@ const Navbar: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const profileMenuRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
-
-  // const { imageUrl, isLoading: isImageLoading } = useS3Image(user?.profilePicture, {
-  //   refreshInterval: 3000000,
-  //   fallbackUrl: '/default-avatar.png'
-  // });
 
   const getUserData = async () => {
     setIsLoading(true);

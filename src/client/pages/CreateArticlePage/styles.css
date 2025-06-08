@@ -65,3 +65,52 @@ button[type="submit"]:disabled {
 .tox .tox-statusbar {
   border-top: 1px solid #ddd !important;
 }
+
+.header-image-upload {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.upload-status {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.image-preview {
+  position: relative;
+  margin: 1rem 0;
+  max-width: 600px;
+}
+
+.image-preview img {
+  width: 100%;
+  height: auto;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.remove-image {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: rgba(255,255,255,0.9);
+  border: none;
+  padding: 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  color: #d32f2f;
+}
+
+.remove-image:hover {
+  background: rgba(255,255,255,1);
+}
+
+.header-image-input {
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  width: 100%;
+}

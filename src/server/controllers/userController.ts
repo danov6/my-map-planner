@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import User from "../models/UserModel";
-import { uploadToS3, getSignedImageUrl } from '../services/s3Service';
+import { uploadToS3 } from '../services/s3Service';
+import sharp from 'sharp';
 
 interface AuthRequest extends Request {
   user?: { userId: string };
@@ -33,7 +34,7 @@ export const getProfile = async (
       profilePicture: user.profilePicture,
       bio: user.bio,
       favorites: user.favorites,
-      blogs: user.blogs,
+      createdArticles: user.createdArticles,
     });
   } catch (error) {
     console.log("Profile fetch error:", error);
@@ -79,7 +80,7 @@ export const updateProfile = async (
         profilePicture: user.profilePicture,
         bio: user.bio,
         favorites: user.favorites,
-        blogs: user.blogs,
+        createdArticles: user.createdArticles,
     });
   } catch (error) {
     console.log("[ userController ] Profile update error:", error);
@@ -90,6 +91,7 @@ export const updateProfile = async (
 export const uploadProfilePicture = async (req: Request | any, res: Response | any) => {
   try {
     if (!req.file) {
+      console.log('[ userController ] No file uploaded');
       return res.status(400).json({ error: 'No file uploaded' });
     }
 
@@ -99,44 +101,69 @@ export const uploadProfilePicture = async (req: Request | any, res: Response | a
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
-    const s3Key = await uploadToS3(req.file);
+    // Validate file type
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+    if (!allowedTypes.includes(req.file.mimetype)) {
+      console.log('[ userController ] Invalid file type:', req.file.mimetype);
+      return res.status(400).json({ 
+        error: 'Invalid file type. Only JPEG, PNG and WebP images are allowed' 
+      });
+    }
+
+    // Compress and resize image
+    const compressedImageBuffer = await sharp(req.file.buffer)
+      .resize(400, 400, { // Set max dimensions
+        fit: 'inside',
+        withoutEnlargement: true
+      })
+      .jpeg({
+        quality: 80,
+        mozjpeg: true
+      })
+      .toBuffer();
+
+    const originalSize = req.file.size;
+    const compressedSize = compressedImageBuffer.length;
+    const filename = `profiles/${userId}.jpg`; // Always use .jpg since we convert to JPEG
+
+    const s3Key = await uploadToS3({
+      ...req.file,
+      buffer: compressedImageBuffer,
+      mimetype: 'image/jpeg'
+    }, filename);
+    
+    const imageUrl = `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${s3Key}`;
+    const cacheBuster = Date.now();
+    const imageUrlWithCache = `${imageUrl}?v=${cacheBuster}`;
+
     const user = await User.findByIdAndUpdate(
       userId,
-      { profilePicture: s3Key },
+      { profilePicture: imageUrlWithCache },
       { new: true }
     );
 
     if (!user) {
+      console.log('[ userController ] User not found:', { userId });
       return res.status(404).json({ error: 'User not found' });
     }
 
-    const imageUrl = await getSignedImageUrl(s3Key);
+    console.log('[ userController ] Profile picture updated successfully:', {
+      userId,
+      originalSize: `${(originalSize / 1024).toFixed(2)}KB`,
+      compressedSize: `${(compressedSize / 1024).toFixed(2)}KB`,
+      compressionRatio: `${((1 - compressedSize / originalSize) * 100).toFixed(1)}%`,
+      fileType: 'image/jpeg',
+      s3Key,
+      publicUrl: imageUrlWithCache
+    });
+
     res.json({ 
       message: 'Profile picture updated successfully',
-      imageUrl,
-      user: {
-        ...user.toObject(),
-        profilePicture: imageUrl
-      }
+      imageUrl: imageUrlWithCache,
+      user: user.toObject()
     });
   } catch (error) {
     console.error('[ userController ] Profile picture upload error:', error);
     res.status(500).json({ error: 'Failed to upload profile picture' });
-  }
-};
-
-export const getSignedUrl = async (req: Request | any, res: Response | any) => {
-  try {
-    const { key } = req.query;
-    
-    if (!key || typeof key !== 'string') {
-      return res.status(400).json({ error: 'Invalid key parameter' });
-    }
-
-    const url = await getSignedImageUrl(key);
-    res.json({ url });
-  } catch (error) {
-    console.error('Error generating signed URL:', error);
-    res.status(500).json({ error: 'Failed to generate image URL' });
   }
 };

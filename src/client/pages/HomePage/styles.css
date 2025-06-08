@@ -93,6 +93,12 @@ border-left: 1px solid #e0e0e0;
   font-size: 0.875rem;
 }
 
+.article-date {
+  color: #666;
+  font-size: 0.9rem;
+  font-style: italic;
+}
+
 .recommended-topics {
   margin-top: 2rem;
 }

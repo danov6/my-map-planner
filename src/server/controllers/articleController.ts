@@ -1,63 +1,45 @@
 import { Request, Response } from 'express';
 import Article from '../models/ArticleModel';
 
-const MOCK_ARTICLES = [
-  {
-    id: '1',
-    title: 'How to Learn a Language: The Complete System That Actually Works',
-    subtitle: '20 Science-Based Principles and Strategies for Building Fluency — From a Linguist, Language Teacher, and Polyglot',
-    author: {
-      email: '',
-      firstName: 'Viktoria'
-    },
-    date: 'May 21',
-    imageUrl: '/brain-wordcloud.png',
-    stats: {
-      likes: 2800,
-      views: 33000,
-      saves: 2
-    },
-    topics: ['Language', 'Learning', 'Education', 'Psychology', 'Research'],
-    content: 'This is a sample content for the article. It discusses various strategies and principles for learning languages effectively.'
-  },
-  {
-    id: '2',
-    title: 'How to Learn a Language: The Complete System That Actually Works',
-    subtitle: '20 Science-Based Principles and Strategies for Building Fluency — From a Linguist, Language Teacher, and Polyglot',
-    author: {
-      email: '',
-      firstName: 'Viktoria'
-    },
-    date: 'May 21',
-    imageUrl: '/brain-wordcloud.png',
-    stats: {
-      likes: 2800,
-      views: 33000,
-      saves: 20
-    },
-    topics: ['Language', 'Learning', 'Education', 'Psychology', 'Research'],
-    content: 'This is a sample content for the article. It discusses various strategies and principles for learning languages effectively.'
-  }
-];
-
 export const getArticle = async (req: Request | any, res: Response | any) => {
   try {
-    // const { articleId } = req.params;
+    const { id } = req.params;
+    console.log('[ articleController ] Article ID:', id);
 
-    // const article = await Article.findById(articleId)
-    //   .populate('author', 'firstName lastName profilePicture')
-    //   .select('-__v');
+    if (!id) {
+      console.error('[ articleController ] No article ID provided');
+      return res.status(400).json({ error: 'Article ID is required' });
+    }
 
-    // if (!article) {
-    //   return res.status(404).json({ error: 'Article not found' });
-    // }
+    // Find and update the article atomically
+    const article = await Article.findByIdAndUpdate(
+      id,
+      { $inc: { 'stats.views': 1 } }, // Increment views by 1
+      { 
+        new: true, // Return updated document
+        runValidators: true // Run model validations
+      }
+    )
+    .populate('author', 'firstName lastName profilePicture')
+    .select('-__v');
 
-    // console.log('Article fetched successfully:', { articleId });
-    // res.json(article);
-    res.json(MOCK_ARTICLES[0]);
+    if (!article) {
+      console.error('[ articleController ] Article not found:', { id });
+      return res.status(404).json({ error: 'Article not found' });
+    }
+
+    console.log('[ articleController ] Article fetched successfully:', { 
+      id,
+      views: article.stats.views,
+    });
+
+    res.json(article);
   } catch (error) {
     console.error('[ articleController ] Error fetching article:', error);
-    res.status(500).json({ error: 'Failed to fetch article' });
+    res.status(500).json({ 
+      error: 'Failed to fetch article',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    });
   }
 };
 
@@ -68,18 +50,18 @@ export const getArticles = async (req: Request, res: Response) => {
     const skip = (page - 1) * limit;
     
     const country = req.query.country as string;
-    const categories = Array.isArray(req.query.category) 
-      ? req.query.category
-      : req.query.category 
-        ? [req.query.category]
+    const topics = Array.isArray(req.query.topic) 
+      ? req.query.topic
+      : req.query.topic 
+        ? [req.query.topic]
         : [];
 
     const filter: any = {};
     if (country) {
       filter.country = country;
     }
-    if (categories.length > 0) {
-      filter.categories = { $in: categories };
+    if (topics.length > 0) {
+      filter.topics = { $in: topics };
     }
 
     const articles = await Article.find(filter)
@@ -97,7 +79,7 @@ export const getArticles = async (req: Request, res: Response) => {
       totalPages,
       filters: {
         country,
-        categories
+        topics
       }
     });
     
@@ -112,7 +94,7 @@ export const getArticles = async (req: Request, res: Response) => {
       },
       filters: {
         country,
-        categories
+        topics
       }
     });
   } catch (error) {
@@ -135,9 +117,8 @@ export const createArticle = async (req: Request | any, res: Response | any) => 
       title,
       subtitle,
       content,
-      imageUrl,
+      headerImageUrl,
       country,
-      categories,
       topics
     } = req.body;
 
@@ -149,15 +130,19 @@ export const createArticle = async (req: Request | any, res: Response | any) => 
       });
     }
 
+    const randomTopics = [
+      'Hotels and Accommodation',
+      'Travel Tips',
+    ];
+
     const newArticle = new Article({
       title,
       subtitle,
       content,
-      imageUrl,
-      author: req.user._id,
-      country,
-      categories: categories || [],
-      topics: topics || [],
+      headerImageUrl,
+      author: req.user.userId,
+      country: 'USA',
+      topics: randomTopics || [],
       date: new Date(),
       stats: {
         likes: 0,
@@ -174,7 +159,7 @@ export const createArticle = async (req: Request | any, res: Response | any) => 
 
     console.log('[ articleController ] Article created successfully:', { 
       articleId: newArticle._id,
-      author: req.user._id 
+      author: req.user.userId 
     });
 
     res.status(201).json(populatedArticle);

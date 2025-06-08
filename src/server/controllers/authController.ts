@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import User from '../models/UserModel';
 import { sendResetEmail } from '../services/sesService';
-import { getSignedImageUrl } from '../services/s3Service';
 
 interface AuthRequest extends Request {
   user?: { userId: string };
@@ -21,32 +20,18 @@ export const login = async (req: Request | any, res: Response | any) => {
 
     const token = jwt.sign(
       { userId: user._id },
-      process.env.JWT_SECRET || 'your-secret-key',
+      process.env.JWT_SECRET as string,
       { expiresIn: '24h' }
     );
     console.log('[ authController ] JWT Token: ', token);
-
-    const s3Key = user.profilePicture && user.profilePicture !== '' ? user.profilePicture : '';
-    let imageUrl = '';
-    
-    if (s3Key) {
-      try {
-        imageUrl = await getSignedImageUrl(s3Key);
-        console.log('[ authController ] Profile picture URL generated:', { imageUrl });
-      } catch (s3Error) {
-        console.error('[ authController ] S3 signed URL generation failed:', s3Error);
-        imageUrl = '';
-      }
-    }
 
     res.json({ token, user: {
       email: user.email,
       firstName: user.firstName,
       lastName: user.lastName,
-      profilePicture: imageUrl,
+      profilePicture: user.profilePicture,
       bio: user.bio,
       favorites: user.favorites,
-      blogs: user.blogs,
     } });
   } catch (error) {
     console.log('[ authController ] Login error:', error);
@@ -58,20 +43,17 @@ export const signup = async (req: Request | any, res: Response | any) => {
   try {
     const { email, password } = req.body;
 
-    // Validate input
     if (!email || !password) {
       console.log('[ authController ] Signup validation error:', { email });
       return res.status(400).json({ error: 'Email and password are required' });
     }
 
-    // Check if user already exists
     const existingUser = await User.findOne({ email: email.toLowerCase() });
     if (existingUser) {
       console.log('[ authController ] Signup error: Email already registered:', { email });
       return res.status(400).json({ error: 'Email already registered' });
     }
 
-    // Create new user
     const newUser = new User({
       email: email.toLowerCase(),
       password,
@@ -79,10 +61,9 @@ export const signup = async (req: Request | any, res: Response | any) => {
 
     await newUser.save();
 
-    // Generate JWT
     const token = jwt.sign(
       { userId: newUser._id },
-      process.env.JWT_SECRET || 'your-secret-key',
+      process.env.JWT_SECRET as string,
       { expiresIn: '24h' }
     );
 
@@ -107,34 +88,29 @@ export const forgotPassword = async (req: Request | any, res: Response | any) =>
   try {
     const { email } = req.body;
 
-    // Find user without revealing if account exists
     const user = await User.findOne({ email: email.toLowerCase() });
 
     if (!user) {
-      // Return success even if user doesn't exist (security best practice)
+      console.log('[ authController ] Forgot password: No user found:', { email });
       return res.json({ message: 'If an account exists, you will receive an email with reset instructions.' });
     }
 
-    // Generate reset token
     const resetToken = jwt.sign(
       { userId: user._id },
-      process.env.JWT_SECRET || 'your-secret-key',
+      process.env.JWT_SECRET as string,
       { expiresIn: '1h' }
     );
 
-    // Save reset token and expiry to user
     user.resetToken = resetToken;
     user.resetTokenExpiry = new Date(Date.now() + 3600000); // 1 hour
     await user.save();
 
-    // Send reset email
     try {
       await sendResetEmail(email, resetToken);
       console.log('Password reset email sent:', { email });
       res.json({ message: 'If an account exists, you will receive an email with reset instructions.' });
     } catch (emailError) {
       console.log('Email service error:', emailError);
-      // Reset the token if email fails
       user.resetToken = undefined;
       user.resetTokenExpiry = undefined;
       await user.save();
@@ -170,7 +146,7 @@ export const getProfile = async (req: AuthRequest | any, res: Response | any) =>
       profilePicture: user.profilePicture,
       bio: user.bio,
       favorites: user.favorites,
-      blogs: user.blogs,
+      createdArticles: user.createdArticles,
     });
   } catch (error) {
     console.log('Profile fetch error:', error);

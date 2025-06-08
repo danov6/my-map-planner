@@ -1,5 +1,6 @@
 import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { format } from 'timeago.js';
 import { AppContext } from '../../context/AppContext';
 import { FaRegBookmark, FaRegThumbsUp, FaRegEye } from 'react-icons/fa';
 
@@ -11,23 +12,26 @@ const HomePageArticles: React.FC<any> = () => {
     navigate(`/article?id=${articleId}`);
   };
 
+  console.log('Articles:', articles);
   return (
     <div className="articles-section">
       {(articles || []).map(article => (
         <article 
-          key={article.id} 
+          key={article._id} 
           className="featured-article"
-          onClick={() => handleArticleClick(article.id)}
+          onClick={() => handleArticleClick(article._id)}
           style={{ cursor: 'pointer' }}
         >
           <div className="article-content">
             <h2 className="article-title">{article.title}</h2>
             <p className="article-subtitle">{article.subtitle}</p>
             <div className="article-meta">
-              <span className="article-date">{article.date as any}</span>
+              <span className="article-date">
+                {format(new Date(article.date))}
+              </span>
               <span className="article-stats">
                 <FaRegThumbsUp className="icon" />
-                <span className="views">{article.stats.views}</span>
+                <span className="views">{article.stats.likes}</span>
                 <FaRegEye className="icon" />
                 <span className="comments">{article.stats.views}</span>
               </span>
@@ -46,7 +50,7 @@ const HomePageArticles: React.FC<any> = () => {
             </div>
           </div>
           <div className="article-image">
-            <img src={article.imageUrl} alt={article.title} />
+            <img src={article.headerImageUrl} alt={article.title} />
           </div>
         </article>
       ))}

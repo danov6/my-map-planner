@@ -1,6 +1,6 @@
 import mongoose, { Schema, Document } from 'mongoose';
 import bcrypt from 'bcrypt';
-import BlogModel from './ArticleModel';
+import ArticleModel from './ArticleModel';
 
 // Constants
 const SALT_ROUNDS = 10;
@@ -13,7 +13,7 @@ export interface IUser extends Document {
   profilePicture?: string;
   bio?: string;
   favorites?: string[];
-  blogs?: string[];
+  createdArticles?: mongoose.Types.ObjectId[]; // or ArticleModel[] if you want to use the populated type
   email: string;
   password: string;
   resetToken?: string | null;
@@ -56,8 +56,8 @@ const userSchema = new Schema({
     default: null
   },
   bio: { type: String },
-  favorites: [{ type: Schema.Types.ObjectId, ref: 'Blog' }],
-  blogs: [{ type: Schema.Types.ObjectId, ref: 'Blog' }]
+  favorites: [{ type: Schema.Types.ObjectId, ref: 'ArticleModel' }],
+  createdArticles: [{ type: Schema.Types.ObjectId, ref: 'ArticleModel' }],
 }, {
   timestamps: true,
   toJSON: {

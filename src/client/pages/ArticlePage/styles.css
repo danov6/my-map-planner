@@ -83,8 +83,13 @@
 }
 
 .read-time-info {
-  color: rgb(117, 117, 117);
-  font-size: 14px;
+  color: #666;
+  font-size: 0.9rem;
+  margin-top: 0.25rem;
+}
+
+.read-time-info span {
+  margin-right: 1rem;
 }
 
 .separator {
@@ -179,4 +184,36 @@
   border-radius: 100px;
   font-size: 0.875rem;
   color: #6b6b6b;
+}
+
+.article-page .article-content {
+  max-width: 800px;
+  margin: 2rem auto;
+  line-height: 1.6;
+}
+
+.article-page .article-content h1,
+.article-page .article-content h2,
+.article-page .article-content h3 {
+  margin: 1.5rem 0 1rem;
+}
+
+.article-page .article-content p {
+  margin-bottom: 1rem;
+}
+
+.article-page .article-content img {
+  max-width: 100%;
+  height: auto;
+  margin: 1.5rem 0;
+  border-radius: 4px;
+}
+
+.article-page .article-content a {
+  color: #0066cc;
+  text-decoration: none;
+}
+
+.article-page .article-content a:hover {
+  text-decoration: underline;
 }

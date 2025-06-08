@@ -34,15 +34,14 @@ export interface ArticleStats {
 }
 
 export interface Article {
-  id: string;
+  _id: string;
   title: string;
   subtitle: string;
   author: UserProfile;
   date: Date;
-  imageUrl: string;
+  headerImageUrl: string;
   stats: ArticleStats;
   topics: string[];
   content: string;
   countryCode?: string;
-  categories?: string[];
 }
