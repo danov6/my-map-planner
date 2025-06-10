@@ -56,7 +56,7 @@ export const createArticle = async (formData: any, content: string): Promise<any
   return response.json();
 };
 
-export const toggleArticleLike = async (articleId: string): Promise<{ liked: boolean }> => {
+export const toggleArticleLike = async (articleId: string): Promise<{ liked: boolean, favoriteTopics: string[] }> => {
   const token = localStorage.getItem('token');
   const response = await fetch(`${API_URL}/api/articles/article/like`, {
     method: 'POST',

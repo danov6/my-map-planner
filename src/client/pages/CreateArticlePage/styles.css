@@ -1,7 +1,10 @@
+
 .create-article-page {
+  background: #1a1a1a;
+  border-radius: 6px;
   max-width: 800px;
-  margin: 2rem auto;
-  padding: 0 1rem;
+  margin: 64px auto;
+  padding: 3% 2%;
 }
 
 .create-article-page h1 {
@@ -133,7 +136,8 @@ button[type="submit"]:disabled {
   width: 100%;
 }
 
-.country-suggestions {
+.country-suggestions,
+.topic-suggestions {
   position: absolute;
   top: 100%;
   left: 0;
@@ -151,11 +155,51 @@ button[type="submit"]:disabled {
   list-style: none;
 }
 
-.country-suggestions li {
+.country-suggestions li,
+.topic-suggestions li {
   padding: 8px 12px;
   cursor: pointer;
 }
 
-.country-suggestions li:hover {
+.country-suggestions li:hover,
+.topic-suggestions li:hover {
   background-color: #ddd;
+}
+
+.topics-input-container {
+  position: relative;
+  width: 100%;
+}
+
+.selected-topics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.topic-tag {
+  color: #000000;
+  background: #e8f0fe;
+  border-radius: 20px;
+  align-items: center;
+  padding: 0.6em;
+  font-size: 14px;
+  display: inline-flex
+}
+
+.remove-topic {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  padding: 2px;
+  margin-right: 4px;
+  cursor: pointer;
+  color: #5f6368;
+}
+
+.remove-topic:hover {
+  color: #d93025;
 }

@@ -20,6 +20,7 @@ const RightNavbar: React.FC<RightNavbarProps> = ({
   staffPicks = [], 
   favoriteTopics = [] 
 }) => {
+  const topics = TRAVEL_TOPICS?.splice(0, 10) || [];
   return (
     <aside className="right-navbar">
       <div className="right-navbar-content">
@@ -47,7 +48,7 @@ const RightNavbar: React.FC<RightNavbarProps> = ({
             <section className="recommended-topics">
               <h2>Recommended topics</h2>
               <div className="topics-list">
-                {TRAVEL_TOPICS.map((topic, index) => (
+                {topics.map((topic, index) => (
                   <button key={index} className="topic-tag">
                     {topic}
                   </button>

@@ -2,41 +2,42 @@ import React, { useState, useContext, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Editor } from '@tinymce/tinymce-react';
 import { AppContext } from '../../context/AppContext';
+import { COUNTRY_LIST, TRAVEL_TOPICS } from '../../constants';
+import { FaTimes } from 'react-icons/fa';
 import './styles.css';
 import { createArticle } from '../../services/articles';
 import { uploadImage } from '../../services/media';
-import { COUNTRY_LIST } from '../../constants';
 
 const CreateArticlePage: React.FC = () => {
   const editorRef = useRef<any>(null);
   const navigate = useNavigate();
-  const { isAuthenticated } = useContext(AppContext);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
-  const [formData, setFormData] = useState({
+  const [countrySuggestions, setCountrySuggestions] = useState<Array<{ name: string; countryCode: string }>>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [topicInput, setTopicInput] = useState('');
+  const [topicSuggestions, setTopicSuggestions] = useState<string[]>([]);
+  const [showTopicSuggestions, setShowTopicSuggestions] = useState(false);
+  const [formData, setFormData] = useState<any>({
     title: '',
     subtitle: '',
     headerImageUrl: '',
     content: '',
     topics: [],
-    country: ''
+    country: '',
+    displayCountry: '',
   });
-
-  // Add new state for autocomplete suggestions
-  const [countrySuggestions, setCountrySuggestions] = useState<Array<{ name: string; countryCode: string }>>([]);
-  const [showSuggestions, setShowSuggestions] = useState(false);
-
-  useEffect(() => {
-    if (!isAuthenticated) {
-      navigate('/');
-    }
-  }, [isAuthenticated, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editorRef.current) return;
+
+    if (!formData.country) {
+      setError('Please select a valid country from the suggestions');
+      return;
+    }
 
     setIsSubmitting(true);
     setError(null);
@@ -44,8 +45,9 @@ const CreateArticlePage: React.FC = () => {
     const content = editorRef.current.getContent();
     
     try {
-      const data = await createArticle(formData, content);
-      navigate(`/articles/${data._id}`)
+      const { displayCountry, ...submitData } = formData;
+      const data = await createArticle(submitData, content);
+      navigate(`/articles/${data._id}`);
     } catch (err) {
       if (err instanceof Error && err.message === 'UNAUTHORIZED') {
         navigate('/');
@@ -79,7 +81,6 @@ const CreateArticlePage: React.FC = () => {
     }
   };
 
-  // Clean up preview URL when component unmounts
   useEffect(() => {
     return () => {
       if (imagePreview) {
@@ -121,10 +122,10 @@ const CreateArticlePage: React.FC = () => {
             <input
               type="text"
               id="country"
-              value={formData.country}
+              value={formData.displayCountry}
               onChange={e => {
                 const input = e.target.value;
-                setFormData(prev => ({ ...prev, country: input }));
+                setFormData(prev => ({ ...prev, displayCountry: input, country: '' }));
                 
                 // Filter country suggestions
                 const filtered = COUNTRY_LIST.filter(country =>
@@ -134,12 +135,11 @@ const CreateArticlePage: React.FC = () => {
                 setShowSuggestions(input.length > 0);
               }}
               onFocus={() => {
-                if (formData.country) {
+                if (formData.displayCountry) {
                   setShowSuggestions(true);
                 }
               }}
               onBlur={() => {
-                // Delay hiding suggestions to allow clicking them
                 setTimeout(() => setShowSuggestions(false), 200);
               }}
               required
@@ -150,7 +150,11 @@ const CreateArticlePage: React.FC = () => {
                   <li
                     key={country.countryCode}
                     onClick={() => {
-                      setFormData(prev => ({ ...prev, country: country.countryCode }));
+                      setFormData(prev => ({ 
+                        ...prev, 
+                        country: country.countryCode,
+                        displayCountry: country.name 
+                      }));
                       setShowSuggestions(false);
                     }}
                   >
@@ -192,6 +196,79 @@ const CreateArticlePage: React.FC = () => {
         </div>
 
         <div className="form-group">
+          <label htmlFor="topics">Topics</label>
+          <div className="topics-input-container">
+            <input
+              type="text"
+              id="topics"
+              value={topicInput}
+              onChange={(e) => {
+                const input = e.target.value;
+                setTopicInput(input);
+                
+                // Filter suggestions
+                const filtered = TRAVEL_TOPICS.filter(
+                  topic => 
+                    topic.toLowerCase().includes(input.toLowerCase()) &&
+                    !formData.topics.includes(topic)
+                );
+                setTopicSuggestions(filtered);
+                setShowTopicSuggestions(input.length > 0);
+              }}
+              onFocus={() => {
+                if (topicInput) {
+                  setShowTopicSuggestions(true);
+                }
+              }}
+              onBlur={() => {
+                setTimeout(() => setShowTopicSuggestions(false), 200);
+              }}
+              placeholder="Type to search topics..."
+            />
+            {showTopicSuggestions && (
+              <ul className="topic-suggestions">
+                {topicSuggestions.map((topic) => (
+                  <li
+                    key={topic}
+                    onClick={() => {
+                      if (!formData.topics.includes(topic)) {
+                        setFormData(prev => ({
+                          ...prev,
+                          topics: [...prev.topics, topic]
+                        }));
+                      }
+                      setTopicInput('');
+                      setShowTopicSuggestions(false);
+                    }}
+                  >
+                    {topic}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+          <div className="selected-topics">
+            {formData.topics.map((topic: string) => (
+              <span key={topic} className="topic-tag">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setFormData(prev => ({
+                      ...prev,
+                      topics: prev.topics.filter(t => t !== topic)
+                    }));
+                  }}
+                  className="remove-topic"
+                >
+                  <FaTimes />
+                </button>
+                {topic}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        <div className="form-group">
           <label htmlFor="content">Content *</label>
           <Editor
             apiKey={process.env.TINIFY_API_KEY}
@@ -216,7 +293,6 @@ const CreateArticlePage: React.FC = () => {
             }}
           />
         </div>
-
         <button type="submit" disabled={isSubmitting}>
           {isSubmitting ? 'Creating...' : 'Create Article'}
         </button>

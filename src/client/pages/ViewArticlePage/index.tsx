@@ -12,7 +12,7 @@ import './styles.css';
 const ViewArticlePage: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { isAuthenticated, user } = useContext(AppContext);
+  const { isAuthenticated, user, setUser } = useContext(AppContext);
   const [article, setArticle] = useState<Article | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -25,7 +25,8 @@ const ViewArticlePage: React.FC = () => {
     }
 
     try {
-      const { liked } = await toggleArticleLike(article!._id);
+      const response = await toggleArticleLike(article!._id);
+      const { liked, favoriteTopics } = response;
       setArticle(prev => prev ? {
         ...prev,
         stats: {
@@ -34,6 +35,11 @@ const ViewArticlePage: React.FC = () => {
         }
       } : null);
       setIsLiked(liked);
+
+      setUser({
+        ...user!,
+        favoriteTopics
+      });
     } catch (err) {
       if (err instanceof Error && err.message === 'UNAUTHORIZED') {
         navigate('/login');

@@ -67,7 +67,7 @@ export const getArticles = async (req: Request, res: Response) => {
 
     const articles = await Article.find(filter)
       .populate('author', 'firstName lastName profilePicture')
-      .select('-__v')
+      .select('-__v -content')
       .sort({ date: -1 })
       .skip(skip)
       .limit(limit);
@@ -85,7 +85,7 @@ export const getArticles = async (req: Request, res: Response) => {
     });
     
     res.json({
-      articles, //MOCK_ARTICLES, // Replace with articles when using real data
+      articles,
       pagination: {
         currentPage: page,
         totalPages,
@@ -131,19 +131,14 @@ export const createArticle = async (req: Request | any, res: Response | any) => 
       });
     }
 
-    const randomTopics = [
-      'Hotels and Accommodation',
-      'Travel Tips',
-    ];
-
     const newArticle = new Article({
       title,
       subtitle,
       content,
       headerImageUrl,
       author: req.user.userId,
-      country: 'USA',
-      topics: randomTopics || [],
+      countryCode: country || 'Unknown',
+      topics,
       date: new Date(),
       stats: {
         likes: 0,
@@ -193,18 +188,41 @@ export const toggleArticleLike = async (req: Request | any, res: Response | any)
     const hasLiked = user?.likedArticles?.includes(articleId);
 
     if (hasLiked) {
+      // Remove like and remove article topics from user's favoriteTopics
       await Promise.all([
         Article.findByIdAndUpdate(articleId, { $inc: { 'stats.likes': -1 } }),
-        User.findByIdAndUpdate(userId, { $pull: { likedArticles: articleId } })
+        User.findByIdAndUpdate(userId, {
+          $pull: { likedArticles: articleId },
+          // Remove only topics that came from this article
+          $pullAll: { favoriteTopics: article.topics }
+        })
       ]);
     } else {
+      // Add like and add article topics to user's favoriteTopics
       await Promise.all([
         Article.findByIdAndUpdate(articleId, { $inc: { 'stats.likes': 1 } }),
-        User.findByIdAndUpdate(userId, { $push: { likedArticles: articleId } })
+        User.findByIdAndUpdate(userId, {
+          $push: { likedArticles: articleId },
+          // Add topics only if they don't already exist
+          $addToSet: { favoriteTopics: { $each: article.topics } }
+        })
       ]);
     }
 
-    res.json({ liked: !hasLiked });
+    // Fetch updated user to return current favorite topics
+    const updatedUser = await User.findById(userId).select('favoriteTopics');
+
+    console.log('[ articleController ] Article like toggled:', { 
+      articleId,
+      userId,
+      action: hasLiked ? 'unliked' : 'liked',
+      topicsAffected: article.topics
+    });
+
+    res.json({ 
+      liked: !hasLiked,
+      favoriteTopics: updatedUser?.favoriteTopics || []
+    });
   } catch (error) {
     console.error('[ articleController ] Error toggling article like:', error);
     res.status(500).json({ error: 'Failed to toggle article like' });

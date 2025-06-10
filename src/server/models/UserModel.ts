@@ -59,7 +59,7 @@ const userSchema = new Schema({
     default: null
   },
   bio: { type: String },
-  favoriteTopics: [{ type: String }],
+  favoriteTopics: { type: [String], default: []},
   likedArticles: [{ type: Schema.Types.ObjectId, ref: 'ArticleModel' }],
   savedArticles: [{ type: Schema.Types.ObjectId, ref: 'ArticleModel' }],
   favorites: [{ type: Schema.Types.ObjectId, ref: 'ArticleModel' }],

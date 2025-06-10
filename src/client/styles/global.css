@@ -6,7 +6,7 @@
 }
 
 body {
-  background-color: var(--bg-color);
+  background-color: #000;
   color: var(--text-color);
   margin: 0;
   padding: 0;
@@ -36,7 +36,7 @@ header h3 {
 }
 
 main {
-  padding: 1rem;
+  background-color: #000;
 }
 
 .map-container {
