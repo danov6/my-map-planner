@@ -29,10 +29,6 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({ user, onLogout, isOpen }) => 
       <Link to="/articles/create" className="profile-dropdown-item">
         <FaRegEdit /> Create Article
       </Link>
-      {/* <Link to="/premium" className="profile-dropdown-item">
-        <i className="fas fa-crown"></i>
-        Upgrade to Premium
-      </Link> */}
       <button onClick={onLogout} className="profile-dropdown-item">
         <FaDoorOpen /> Sign out
       </button>

@@ -15,6 +15,7 @@ export interface UserProfile {
   countries?: string[];
   likedArticles?: Article[];
   savedArticles?: Article[];
+  favoriteTopics?: string[];
 }
 
 export interface ArticleStats {

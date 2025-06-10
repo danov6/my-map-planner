@@ -12,26 +12,26 @@
   margin-bottom: 1.5rem;
 }
 
-.form-group label {
+.edit-article-page .form-group label {
   display: block;
   margin-bottom: 0.5rem;
   font-weight: 500;
 }
 
-.form-group input,
-.form-group textarea {
+.edit-article-page .form-group input,
+.edit-article-page .form-group textarea {
   width: 100%;
   padding: 0.5rem;
   border: 1px solid #ddd;
   border-radius: 4px;
 }
 
-.form-group textarea {
+.edit-article-page .form-group textarea {
   min-height: 300px;
   resize: vertical;
 }
 
-.submit-button {
+.edit-article-page .submit-button {
   background: #0066cc;
   color: white;
   border: none;
@@ -41,7 +41,7 @@
   font-size: 1rem;
 }
 
-.submit-button:disabled {
+.edit-article-page .submit-button:disabled {
   background: #ccc;
   cursor: not-allowed;
 }

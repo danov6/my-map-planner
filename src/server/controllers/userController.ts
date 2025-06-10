@@ -36,6 +36,7 @@ export const getProfile = async (
       bio: user.bio,
       favorites: user.favorites,
       createdArticles: user.createdArticles,
+      favoriteTopics: user.favoriteTopics,
     });
   } catch (error) {
     console.log("Profile fetch error:", error);
@@ -81,6 +82,7 @@ export const updateProfile = async (
         profilePicture: user.profilePicture,
         bio: user.bio,
         favorites: user.favorites,
+        favoriteTopics: user.favoriteTopics,
         createdArticles: user.createdArticles,
     });
   } catch (error) {

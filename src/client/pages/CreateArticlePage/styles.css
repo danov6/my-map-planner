@@ -114,3 +114,48 @@ button[type="submit"]:disabled {
   border-radius: 4px;
   width: 100%;
 }
+
+.edit-button {
+  background: #1a73e8;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+.edit-button:hover {
+  background: #155ab6;
+}
+
+.country-input-container {
+  position: relative;
+  width: 100%;
+}
+
+.country-suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  max-height: 200px;
+  overflow-y: auto;
+  background-color: #5b5b5b;
+  border: 1px solid #ddd;
+  border-top: none;
+  border-radius: 0 0 4px 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.country-suggestions li {
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.country-suggestions li:hover {
+  background-color: #ddd;
+}

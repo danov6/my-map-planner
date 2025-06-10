@@ -78,7 +78,7 @@ export const toggleArticleLike = async (articleId: string): Promise<{ liked: boo
 
 export const updateArticle = async (articleId: string, formData: any): Promise<Article> => {
   const token = localStorage.getItem('token');
-  const response = await fetch(`${API_URL}/api/articles/${articleId}`, {
+  const response = await fetch(`${API_URL}/api/articles/article/${articleId}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -94,4 +94,16 @@ export const updateArticle = async (articleId: string, formData: any): Promise<A
   }
 
   return response.json();
+};
+
+export const fetchUniqueCountries = async (): Promise<string[]> => {
+  const response = await fetch(`${API_URL}/api/articles/countries`);
+  
+  if (!response.ok) {
+    throw new Error('Failed to fetch countries');
+  }
+
+  const data = await response.json();
+  console.log('Fetched countries:', data.countries);
+  return data.countries;
 };

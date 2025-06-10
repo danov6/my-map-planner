@@ -4,7 +4,7 @@ import './styles.css';
 import MapComponent from './MapComponent';
 import Spinner from '../../components/Spinner';
 import HomePageArticles from './HomePageArticles';
-import HomePageRightNavbar from './HomePageRightNavbar';
+import RightNavbar from '../../components/RightNavbar';
 import { fetchArticles } from '../../services/articles';
 
 const MOCK_STAFF_PICKS: any = [
@@ -55,7 +55,10 @@ const HomePage: React.FC = () => {
         </div>
         <HomePageArticles/>
       </div>
-      <HomePageRightNavbar staffPicks={MOCK_STAFF_PICKS} />
+      <RightNavbar 
+        variant="home" 
+        staffPicks={MOCK_STAFF_PICKS}
+      />
     </div>
   );
 };

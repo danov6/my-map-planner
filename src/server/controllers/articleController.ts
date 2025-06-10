@@ -249,3 +249,22 @@ export const updateArticle = async (req: Request | any, res: Response | any) => 
     });
   }
 };
+
+export const getUniqueCountries = async (req: Request, res: Response) => {
+  try {
+    const countries = await Article.distinct('countryCode');
+    
+    console.log('[ articleController ] Unique countries fetched:', { 
+      count: countries.length,
+      countries 
+    });
+
+    res.json({ countries });
+  } catch (error) {
+    console.error('[ articleController ] Error fetching unique countries:', error);
+    res.status(500).json({ 
+      error: 'Failed to fetch countries',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+};

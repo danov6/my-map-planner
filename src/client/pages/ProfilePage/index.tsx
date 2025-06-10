@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
 import { AppContext } from '../../context/AppContext';
 import EditProfileModal from './EditProfileModal';
+import RightNavbar from '../../components/RightNavbar';
 import { 
   updateUserProfile, 
   uploadProfilePicture, 
@@ -65,7 +66,8 @@ const ProfilePage: React.FC = () => {
   };
 
   return (
-    <div className="profile-container">
+    <div className="home-container">
+      <div className="main-content">
       <div className="profile-header-card">
         <div className="profile-main-info">
           <div 
@@ -122,15 +124,20 @@ const ProfilePage: React.FC = () => {
           <div className="profile-stats">
             <div className="stat-item">
               <span className="stat-label">Blog Posts</span>
-              <span className="stat-value">{user.blogs?.length || 0}</span>
+              <span className="stat-value">0</span>
             </div>
             <div className="stat-item">
               <span className="stat-label">Favorites</span>
-              <span className="stat-value">{user.favorites?.length || 0}</span>
+              <span className="stat-value">{user.favoriteTopics?.length || 0}</span>
             </div>
           </div>
         </div>
       </div>
+      </div>
+      <RightNavbar 
+        variant="profile"
+        favoriteTopics={user.favoriteTopics || []}
+      />
       <EditProfileModal
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}

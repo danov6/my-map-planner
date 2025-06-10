@@ -7,6 +7,7 @@ import 'leaflet/dist/leaflet.css';
 import countriesGeoJSON from './../../../../public/assets/countries.geo.json';
 import { GeoJsonObject } from 'geojson';
 import { COUNTRY_BLACKLIST, COUNTRY_COLORS } from '../../constants';
+import { fetchUniqueCountries } from '../../services/articles';
 
 interface TooltipState {
   name: string;
@@ -31,8 +32,10 @@ const MapComponent: React.FC = () => {
   const [tooltip, setTooltip] = useState<TooltipState | null>(null);
   const [hoveredCountry, setHoveredCountry] = useState<string | null>(null);
   const [selectedBounds, setSelectedBounds] = useState<number[][]>();
+  const [highlightedCountries, setHighlightedCountries] = useState<string[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Memoize styles to prevent unnecessary recalculations
   const baseCountryStyle = useMemo(() => ({
     fillColor: '#4a90e2',
     weight: 1,
@@ -47,7 +50,6 @@ const MapComponent: React.FC = () => {
     pane: 'overlayPane'
   }), []);
 
-  // Memoize map configuration
   const mapConfig = useMemo(() => ({
     center: [20, 0] as [number, number],
     zoom: 2,
@@ -76,7 +78,7 @@ const MapComponent: React.FC = () => {
   // Memoize style generator function
   const getCountryStyle = useCallback((feature: Feature<Geometry, any> | undefined) => {
   const countryCode = feature?.properties['ISO3166-1-Alpha-3'];
-  const isHighlighted = COUNTRY_BLACKLIST.includes(countryCode);
+  const isHighlighted = !highlightedCountries.includes(countryCode);
   
   return {
     ...baseCountryStyle,
@@ -96,7 +98,7 @@ const MapComponent: React.FC = () => {
     const countryCode = event.target.feature.properties['ISO3166-1-Alpha-3'];
     const layer = event.target;
 
-    if(COUNTRY_BLACKLIST.includes(countryCode)) {
+    if(highlightedCountries.includes(countryCode)) {
       return;
     }
 
@@ -133,6 +135,23 @@ const MapComponent: React.FC = () => {
         }
       });
     }, [handleCountryClick]);
+
+  useEffect(() => {
+    const loadCountries = async () => {
+      try {
+        const countries = await fetchUniqueCountries();
+        console.log('Loaded countries:', countries);
+        setHighlightedCountries(countries);
+      } catch (err) {
+        setError('Failed to load country data');
+        console.error('Error loading countries:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadCountries();
+  }, []);
 
   const geoJsonData = useMemo(() => countriesGeoJSON as GeoJsonObject, []);
 

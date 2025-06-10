@@ -5,6 +5,7 @@ import { AppContext } from '../../context/AppContext';
 import './styles.css';
 import { createArticle } from '../../services/articles';
 import { uploadImage } from '../../services/media';
+import { COUNTRY_LIST } from '../../constants';
 
 const CreateArticlePage: React.FC = () => {
   const editorRef = useRef<any>(null);
@@ -19,9 +20,13 @@ const CreateArticlePage: React.FC = () => {
     subtitle: '',
     headerImageUrl: '',
     content: '',
-    topics: []
+    topics: [],
+    country: ''
   });
 
+  // Add new state for autocomplete suggestions
+  const [countrySuggestions, setCountrySuggestions] = useState<Array<{ name: string; countryCode: string }>>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -40,7 +45,7 @@ const CreateArticlePage: React.FC = () => {
     
     try {
       const data = await createArticle(formData, content);
-      navigate(`/article?id=${data._id}`);
+      navigate(`/articles/${data._id}`)
     } catch (err) {
       if (err instanceof Error && err.message === 'UNAUTHORIZED') {
         navigate('/');
@@ -108,6 +113,53 @@ const CreateArticlePage: React.FC = () => {
             value={formData.subtitle}
             onChange={e => setFormData(prev => ({ ...prev, subtitle: e.target.value }))}
           />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="country">Country *</label>
+          <div className="country-input-container">
+            <input
+              type="text"
+              id="country"
+              value={formData.country}
+              onChange={e => {
+                const input = e.target.value;
+                setFormData(prev => ({ ...prev, country: input }));
+                
+                // Filter country suggestions
+                const filtered = COUNTRY_LIST.filter(country =>
+                  country.name.toLowerCase().includes(input.toLowerCase())
+                );
+                setCountrySuggestions(filtered);
+                setShowSuggestions(input.length > 0);
+              }}
+              onFocus={() => {
+                if (formData.country) {
+                  setShowSuggestions(true);
+                }
+              }}
+              onBlur={() => {
+                // Delay hiding suggestions to allow clicking them
+                setTimeout(() => setShowSuggestions(false), 200);
+              }}
+              required
+            />
+            {showSuggestions && (
+              <ul className="country-suggestions">
+                {countrySuggestions.map(country => (
+                  <li
+                    key={country.countryCode}
+                    onClick={() => {
+                      setFormData(prev => ({ ...prev, country: country.countryCode }));
+                      setShowSuggestions(false);
+                    }}
+                  >
+                    {country.name}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
         </div>
 
         <div className="form-group">
