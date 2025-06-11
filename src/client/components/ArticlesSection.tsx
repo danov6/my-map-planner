@@ -1,18 +1,22 @@
 import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { format } from 'timeago.js';
-import { AppContext } from '../../context/AppContext';
+import { AppContext } from '../context/AppContext';
 import { FaRegBookmark, FaRegThumbsUp, FaRegEye } from 'react-icons/fa';
+import { Article } from '../../shared/types';
+// import './styles.css';
 
-const HomePageArticles: React.FC<any> = () => {
-  const { articles } = useContext(AppContext);
+interface ArticlesSectionProps {
+  articles: Article[];
+}
+
+const ArticlesSection: React.FC<ArticlesSectionProps> = ({ articles }) => {
   const navigate = useNavigate();
 
   const handleArticleClick = (articleId: string) => {
     navigate(`/articles/${articleId}`);
   };
 
-  console.log('Articles:', articles);
   return (
     <div className="articles-section">
       {(articles || []).map(article => (
@@ -31,9 +35,9 @@ const HomePageArticles: React.FC<any> = () => {
             </div>
             <div className="article-footer">
               <div className="article-topics">
-                {article.topics.slice(0, 5).map((topic, index) => (
+                {article.topics.slice(0, 5).map((topic: string, index: number) => (
                   <button key={index} className="topic-tag topic-tag-small">
-                    {topic}
+                  {topic}
                   </button>
                 ))}
               </div>
@@ -56,4 +60,4 @@ const HomePageArticles: React.FC<any> = () => {
   );
 };
 
-export default HomePageArticles;
+export default ArticlesSection;

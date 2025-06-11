@@ -107,3 +107,33 @@ export const fetchUniqueCountries = async (): Promise<string[]> => {
   console.log('Fetched countries:', data.countries);
   return data.countries;
 };
+
+export const fetchArticlesByCountry = async (countryCode: string, page: number = 1): Promise<any> => {
+  const response = await fetch(
+    `${API_URL}/api/articles/countries/${countryCode}?page=${page}`
+  );
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch country articles');
+  }
+
+  return response.json();
+};
+
+export const fetchMostViewedArticles = async (country?: string) => {
+  const params = new URLSearchParams({
+    sortBy: 'views',
+    timeRange: '24h',
+    viewsOnly: 'true'
+  });
+  
+  if (country) {
+    params.append('country', country);
+  }
+
+  const response = await fetch(`${API_URL}/api/articles?${params}`);
+  if (!response.ok) {
+    throw new Error('Failed to fetch most viewed articles');
+  }
+  return response.json();
+};

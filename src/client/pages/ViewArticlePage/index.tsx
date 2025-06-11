@@ -4,7 +4,7 @@ import { format } from 'timeago.js';
 import { AppContext } from '../../context/AppContext';
 import { Article } from '../../../shared/types';
 import Spinner from '../../components/Spinner';
-import { FaRegBookmark, FaRegEye, FaRegThumbsUp, FaThumbsUp } from 'react-icons/fa';
+import { FaRegBookmark, FaRegEye, FaRegThumbsUp, FaThumbsUp, FaArrowLeft } from 'react-icons/fa';
 import { fetchArticle, toggleArticleLike } from '../../services/articles';
 import DOMPurify from 'dompurify';
 import './styles.css';
@@ -48,6 +48,13 @@ const ViewArticlePage: React.FC = () => {
       setError('Failed to update article like');
     }
   };
+
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  }, []);
 
   useEffect(() => {
     if (user && article) {

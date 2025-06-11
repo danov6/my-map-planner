@@ -28,6 +28,8 @@ interface AppContextType {
   logout: () => void;
   articles: Article[] | null;
   setArticles: (articles: Article[]) => void;
+  highlightedMapCountries: string[] | null;
+  setHighlightedMapCountries: (countries: string[]) => void;
 }
 
 export const AppContext = createContext<AppContextType>({} as AppContextType);
@@ -40,6 +42,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [selectedOptions, setSelectedOptions] = useState<TravelOption[]>([]);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [user, setUser] = useState<UserProfile | null>(null);
+  const [highlightedMapCountries, setHighlightedMapCountries] = useState<string[] | null>([]);
 
   const logout = () => {
     localStorage.removeItem('token');
@@ -64,6 +67,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       logout,
       articles,
       setArticles,
+      highlightedMapCountries,
+      setHighlightedMapCountries
     }}>
       {children}
     </AppContext.Provider>

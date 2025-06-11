@@ -32,6 +32,8 @@ export const login = async (req: Request | any, res: Response | any) => {
       profilePicture: user.profilePicture,
       bio: user.bio,
       favorites: user.favorites,
+      createdArticles: user.createdArticles,
+      favoriteTopics: user.favoriteTopics,
     } });
   } catch (error) {
     console.log('[ authController ] Login error:', error);

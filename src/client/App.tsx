@@ -18,6 +18,7 @@ import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ViewArticlePage from './pages/ViewArticlePage';
 import CreateArticlePage from './pages/CreateArticlePage';
 import EditArticlePage from './pages/EditArticlePage';
+import CountryPage from './pages/CountryPage';
 
 const App: React.FC = () => {
   const [selectedCountry, setSelectedCountry] = useState<{ countryCode: string, name: string } | null>(null);
@@ -25,7 +26,8 @@ const App: React.FC = () => {
   const [selectedOptions, setSelectedOptions] = useState<TravelOption[]>([]);
   const [guide, setGuide] = useState<{ header: string, content: string }[] | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [articles, setArticles] = useState<Article[]>([]); // Adjust type as needed
+  const [articles, setArticles] = useState<Article[]>([]);
+  const [highlightedMapCountries, setHighlightedMapCountries] = useState<string[] | null>([]);
   const [user, setUser] = useState<{
     _id: string;
     email: string;
@@ -65,7 +67,9 @@ const App: React.FC = () => {
         articles,
         user,
         setUser,
-        logout
+        logout,
+        highlightedMapCountries,
+        setHighlightedMapCountries
       }}>
         <div className="app-container">
           <Navbar />
@@ -83,6 +87,7 @@ const App: React.FC = () => {
                 <Route path=":id" element={<ViewArticlePage />} />
                 <Route path=":id/edit" element={<EditArticlePage />} />
               </Route>
+              <Route path="/countries/:id" element={<CountryPage />} />
               {/* <Route path="*" element={<Navigate to="/" replace />} /> */}
             </Routes>
           </main>

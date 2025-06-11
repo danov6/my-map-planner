@@ -7,6 +7,7 @@ export interface CountryData {
 export interface UserProfile {
   _id: string;
   email: string;
+  role?: string;
   firstName?: string;
   lastName?: string;
   bio?: string;
@@ -35,4 +36,14 @@ export interface Article {
   topics: string[];
   content: string;
   countryCode?: string;
+}
+
+export interface Country {
+  _id: string;
+  countryCode: string;
+  countryName: string;
+  continent: string;
+  cities: string[];
+  mostPopularArticles: Article[];
+  mostPopularTopics: string[];
 }

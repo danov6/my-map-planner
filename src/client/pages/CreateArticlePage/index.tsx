@@ -73,7 +73,7 @@ const CreateArticlePage: React.FC = () => {
       formData.append('image', file);
 
       const { imageUrl } = await uploadImage(formData);
-      setFormData(prev => ({ ...prev, headerImageUrl: imageUrl }));
+      setFormData((prev: any) => ({ ...prev, headerImageUrl: imageUrl }));
     } catch (err) {
       setError('Failed to upload image');
     } finally {
@@ -101,7 +101,7 @@ const CreateArticlePage: React.FC = () => {
             type="text"
             id="title"
             value={formData.title}
-            onChange={e => setFormData(prev => ({ ...prev, title: e.target.value }))}
+            onChange={e => setFormData((prev: any) => ({ ...prev, title: e.target.value }))}
             required
           />
         </div>
@@ -112,7 +112,7 @@ const CreateArticlePage: React.FC = () => {
             type="text"
             id="subtitle"
             value={formData.subtitle}
-            onChange={e => setFormData(prev => ({ ...prev, subtitle: e.target.value }))}
+            onChange={e => setFormData((prev: any) => ({ ...prev, subtitle: e.target.value }))}
           />
         </div>
 
@@ -125,7 +125,7 @@ const CreateArticlePage: React.FC = () => {
               value={formData.displayCountry}
               onChange={e => {
                 const input = e.target.value;
-                setFormData(prev => ({ ...prev, displayCountry: input, country: '' }));
+                setFormData((prev: any) => ({ ...prev, displayCountry: input, country: '' }));
                 
                 // Filter country suggestions
                 const filtered = COUNTRY_LIST.filter(country =>
@@ -150,7 +150,7 @@ const CreateArticlePage: React.FC = () => {
                   <li
                     key={country.countryCode}
                     onClick={() => {
-                      setFormData(prev => ({ 
+                      setFormData((prev: any) => ({ 
                         ...prev, 
                         country: country.countryCode,
                         displayCountry: country.name 
@@ -186,7 +186,7 @@ const CreateArticlePage: React.FC = () => {
                 className="remove-image"
                 onClick={() => {
                   setImagePreview(null);
-                  setFormData(prev => ({ ...prev, headerImageUrl: '' }));
+                  setFormData((prev: any) => ({ ...prev, headerImageUrl: '' }));
                 }}
               >
                 Remove Image
@@ -232,7 +232,7 @@ const CreateArticlePage: React.FC = () => {
                     key={topic}
                     onClick={() => {
                       if (!formData.topics.includes(topic)) {
-                        setFormData(prev => ({
+                        setFormData((prev: any) => ({
                           ...prev,
                           topics: [...prev.topics, topic]
                         }));
@@ -253,9 +253,9 @@ const CreateArticlePage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => {
-                    setFormData(prev => ({
+                    setFormData((prev: any) => ({
                       ...prev,
-                      topics: prev.topics.filter(t => t !== topic)
+                      topics: prev.topics.filter((t: any) => t !== topic)
                     }));
                   }}
                   className="remove-topic"

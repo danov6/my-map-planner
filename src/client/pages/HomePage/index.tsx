@@ -3,27 +3,12 @@ import { AppContext } from '../../context/AppContext';
 import './styles.css';
 import MapComponent from './MapComponent';
 import Spinner from '../../components/Spinner';
-import HomePageArticles from './HomePageArticles';
+import ArticlesSection from '../../components/ArticlesSection';
 import RightNavbar from '../../components/RightNavbar';
 import { fetchArticles } from '../../services/articles';
 
-const MOCK_STAFF_PICKS: any = [
-  {
-    id: '1',
-    author: 'Scott Lamb',
-    title: 'Want to just start writing? Join the "Write with Medium" June micro-challenge',
-    date: '2d ago'
-  },
-  {
-    id: '2',
-    author: 'Dayna A. Ellis',
-    title: 'Pride Didn\'t Ask Permission, Disruption Is Not Violence',
-    date: '5d ago'
-  }
-];
-
 const HomePage: React.FC = () => {
-  const { articles, setArticles, selectedCountry } = useContext(AppContext);
+  const { articles, setArticles, selectedCountry, user } = useContext(AppContext);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -32,15 +17,18 @@ const HomePage: React.FC = () => {
       try {
         const countryCode = selectedCountry?.countryCode || null;
         const response = await fetchArticles(1, countryCode);
-        setArticles(response.articles as any);
+        setArticles(response.articles);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load articles');
       } finally {
         setIsLoading(false);
       }
     };
-
-    loadArticles();
+    if (!articles || articles.length === 0) {
+      loadArticles();
+    } else {
+      setIsLoading(false);
+    }
   }, [setArticles, selectedCountry]);
 
   if (isLoading) return <Spinner />;
@@ -53,11 +41,12 @@ const HomePage: React.FC = () => {
           <h1>{selectedCountry?.name || 'Travel Guides 4 U'}</h1>
           <MapComponent />
         </div>
-        <HomePageArticles/>
+        <h2 className="articles-header">For you</h2>
+        <ArticlesSection articles={articles ?? []} />
       </div>
       <RightNavbar 
         variant="home" 
-        staffPicks={MOCK_STAFF_PICKS}
+        favoriteTopics={user?.favoriteTopics}
       />
     </div>
   );

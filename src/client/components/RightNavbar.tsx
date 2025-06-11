@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { TRAVEL_TOPICS } from 'client/constants';
+import { fetchMostViewedArticles } from '../services/articles';
 
 interface StaffPick {
   id: string;
@@ -11,65 +12,59 @@ interface StaffPick {
 
 interface RightNavbarProps {
   variant: 'home' | 'profile';
-  staffPicks?: StaffPick[];
+  country?: string;
   favoriteTopics?: string[];
 }
 
 const RightNavbar: React.FC<RightNavbarProps> = ({ 
   variant, 
-  staffPicks = [], 
-  favoriteTopics = [] 
+  country,
+  favoriteTopics
 }) => {
+  const [mostViewed, setMostViewed] = useState<StaffPick[]>([]);
   const topics = TRAVEL_TOPICS?.splice(0, 10) || [];
+
+  useEffect(() => {
+    const loadMostViewed = async () => {
+      const data = await fetchMostViewedArticles(country);
+      setMostViewed(data.articles);
+    };
+    
+    if (variant === 'home') {
+      loadMostViewed();
+    }
+  }, [variant, country]);
+
   return (
     <aside className="right-navbar">
       <div className="right-navbar-content">
-        {variant === 'home' && (
-          <>
-            <section className="staff-picks">
-              <h2>Gio's Picks</h2>
-              {staffPicks.map((pick) => (
-                <div key={pick.id} className="staff-pick-item">
-                  <div className="author-info">
-                    <img 
-                      src={pick.authorImage || '/default-avatar.png'} 
-                      alt={pick.author}
-                      className="author-image"
-                    />
-                    <span>by {pick.author}</span>
-                  </div>
-                  <h3>{pick.title}</h3>
-                  <span className="date">{pick.date}</span>
-                </div>
-              ))}
-              <button className="see-full-list">See the full list</button>
-            </section>
-
-            <section className="recommended-topics">
-              <h2>Recommended topics</h2>
-              <div className="topics-list">
-                {topics.map((topic, index) => (
-                  <button key={index} className="topic-tag">
-                    {topic}
-                  </button>
-                ))}
+        <section className="staff-picks">
+          <h2>Most Viewed Today</h2>
+          {mostViewed.map((pick) => (
+            <div key={pick.id} className="staff-pick-item">
+              <div className="author-info">
+                <img 
+                  src={pick.authorImage || '/default-avatar.png'} 
+                  alt={pick.author}
+                  className="author-image"
+                />
+                <span>by {pick.author}</span>
               </div>
-              <button className="see-more-topics">See more topics</button>
-            </section>
-          </>
-        )}
-        {variant === 'profile' && (
-          <section className="favorite-topics">
-            <h2>Favorite Topics</h2>
-            <div className="topics-list">
-              {favoriteTopics.map((topic, index) => (
-                <button key={index} className="topic-tag">
-                  {topic}
-                </button>
-              ))}
+              <h3>{pick.title}</h3>
+              <span className="date">{pick.date}</span>
             </div>
-          </section>
-        )}
+          ))}
+        </section>
+        <section className="favorite-topics">
+          <h2>Favorite Topics</h2>
+          <div className="topics-list">
+            {(favoriteTopics || topics).map((topic, index) => (
+              <button key={index} className="topic-tag">
+                {topic}
+              </button>
+            ))}
+          </div>
+        </section>
       </div>
     </aside>
   );

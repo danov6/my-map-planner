@@ -8,6 +8,7 @@ import countriesGeoJSON from './../../../../public/assets/countries.geo.json';
 import { GeoJsonObject } from 'geojson';
 import { COUNTRY_BLACKLIST, COUNTRY_COLORS } from '../../constants';
 import { fetchUniqueCountries } from '../../services/articles';
+import { useNavigate } from 'react-router-dom';
 
 interface TooltipState {
   name: string;
@@ -28,13 +29,13 @@ const MapController: React.FC<{ bounds?: number[][] }> = ({ bounds }) => {
 };
 
 const MapComponent: React.FC = () => {
-  const { selectedCountry, setSelectedCountry, isModalOpen, setIsModalOpen } = useContext(AppContext);
+  const { selectedCountry, setSelectedCountry, isModalOpen, setIsModalOpen, highlightedMapCountries, setHighlightedMapCountries } = useContext(AppContext);
   const [tooltip, setTooltip] = useState<TooltipState | null>(null);
   const [hoveredCountry, setHoveredCountry] = useState<string | null>(null);
   const [selectedBounds, setSelectedBounds] = useState<number[][]>();
-  const [highlightedCountries, setHighlightedCountries] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
 
   const baseCountryStyle = useMemo(() => ({
     fillColor: '#4a90e2',
@@ -77,20 +78,20 @@ const MapComponent: React.FC = () => {
 
   // Memoize style generator function
   const getCountryStyle = useCallback((feature: Feature<Geometry, any> | undefined) => {
-  const countryCode = feature?.properties['ISO3166-1-Alpha-3'];
-  const isHighlighted = !highlightedCountries.includes(countryCode);
-  
-  return {
-    ...baseCountryStyle,
-    fillColor: isHighlighted ? COUNTRY_COLORS.BLACKLIST : COUNTRY_COLORS.WHITELIST,
-    fillOpacity: hoveredCountry === feature?.properties?.name 
-      ? 0.7 
-      : isHighlighted 
-        ? 0.4 
-        : 0.3,
-    weight: hoveredCountry === feature?.properties?.name ? 2 : 1
-  };
-}, [hoveredCountry, baseCountryStyle]);
+    const countryCode = feature?.properties['ISO3166-1-Alpha-3'];
+    const isHighlighted = highlightedMapCountries?.includes(countryCode);
+    
+    return {
+      ...baseCountryStyle,
+      fillColor: isHighlighted ? COUNTRY_COLORS.WHITELIST : COUNTRY_COLORS.BLACKLIST,
+      fillOpacity: hoveredCountry === feature?.properties?.name 
+        ? 0.7 
+        : isHighlighted 
+          ? 0.6 
+          : 0.3,
+      weight: hoveredCountry === feature?.properties?.name ? 2 : 1
+    };
+  }, [hoveredCountry, baseCountryStyle, highlightedMapCountries]); // Add highlightedCountries to dependencies
 
   // Memoize click handler
   const handleCountryClick = useCallback((event: any) => {
@@ -98,23 +99,17 @@ const MapComponent: React.FC = () => {
     const countryCode = event.target.feature.properties['ISO3166-1-Alpha-3'];
     const layer = event.target;
 
-    if(highlightedCountries.includes(countryCode)) {
-      return;
-    }
-
     if (countryName && countryCode) {
       setSelectedCountry({
         name: countryName,
         countryCode
       });
-
-      // Get bounds of the clicked country and adjust zoom
-      const bounds = layer.getBounds();
-      const adjustedBounds = bounds.pad(0.1);
-      setSelectedBounds(adjustedBounds);
-      //setIsModalOpen(true);
+      if (highlightedMapCountries?.includes(countryCode)) {
+        navigate(`/countries/${countryCode}`);
+        return;
+      }
     }
-  }, [setSelectedCountry]);
+  }, [navigate, setSelectedCountry, highlightedMapCountries]);
 
   // Memoize feature handler
   const onEachFeature = useCallback((feature: Feature<Geometry, any>, layer: any) => {
@@ -137,11 +132,11 @@ const MapComponent: React.FC = () => {
     }, [handleCountryClick]);
 
   useEffect(() => {
-    const loadCountries = async () => {
+    const loadHighlightedCountries = async () => {
       try {
         const countries = await fetchUniqueCountries();
         console.log('Loaded countries:', countries);
-        setHighlightedCountries(countries);
+        setHighlightedMapCountries(countries);
       } catch (err) {
         setError('Failed to load country data');
         console.error('Error loading countries:', err);
@@ -149,30 +144,33 @@ const MapComponent: React.FC = () => {
         setIsLoading(false);
       }
     };
-
-    loadCountries();
-  }, []);
+    loadHighlightedCountries();
+  }, [setHighlightedMapCountries]);
 
   const geoJsonData = useMemo(() => countriesGeoJSON as GeoJsonObject, []);
 
   return (
     <div className="map-container">
-      <MapContainer {...mapConfig}>
-        {selectedBounds && <MapController bounds={selectedBounds} />}
-        <TileLayer
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          tileSize={256}
-          updateWhenIdle={true}
-          updateWhenZooming={false}
-          keepBuffer={2}
-        />
-        <GeoJSON
-          data={geoJsonData}
-          style={getCountryStyle}
-          onEachFeature={onEachFeature}
-        />
-      </MapContainer>
+      {isLoading ? (
+        <div className="map-loading">Loading map data...</div>
+      ) : (
+        <MapContainer {...mapConfig}>
+          {selectedBounds && <MapController bounds={selectedBounds} />}
+          <TileLayer
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            tileSize={256}
+            updateWhenIdle={true}
+            updateWhenZooming={false}
+            keepBuffer={2}
+          />
+          <GeoJSON
+            data={geoJsonData}
+            style={getCountryStyle}
+            onEachFeature={onEachFeature}
+          />
+        </MapContainer>
+      )}
       {tooltip && (
         <div className="country-tooltip" style={tooltipStyle}>
           {tooltip.name}

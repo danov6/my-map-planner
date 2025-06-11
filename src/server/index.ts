@@ -8,6 +8,7 @@ import authRoutes from './routes/authRoutes';
 import articleRoutes from './routes/articleRoutes';
 import userRoutes from './routes/userRoutes';
 import mediaRoutes from './routes/mediaRoutes';
+import countryRoutes from './routes/countryRoutes';
 
 // Configure environment variables
 dotenv.config();
@@ -57,6 +58,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/articles', articleRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/media', mediaRoutes);
+app.use('/api/countries', countryRoutes);
 
 // Health Check Routes
 app.get('/health', (req: Request, res: Response) => {

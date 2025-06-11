@@ -44,19 +44,21 @@ export const getArticle = async (req: Request | any, res: Response | any) => {
   }
 };
 
-export const getArticles = async (req: Request, res: Response) => {
+export const getArticles = async (req: Request | any, res: Response | any) => {
   try {
-    const page = parseInt(req.query.page as string) || 1;
-    const limit = 10;
-    const skip = (page - 1) * limit;
-    
-    const country = req.query.country as string;
-    const topics = Array.isArray(req.query.topic) 
-      ? req.query.topic
-      : req.query.topic 
-        ? [req.query.topic]
-        : [];
+    const {
+      page = 1,
+      limit = 10,
+      country,
+      topics = [],
+      sortBy = 'date',
+      timeRange,
+      viewsOnly = false
+    } = req.query;
 
+    const skip = (Number(page) - 1) * Number(limit);
+    
+    // Build filter
     const filter: any = {};
     if (country) {
       filter.country = country;
@@ -64,46 +66,46 @@ export const getArticles = async (req: Request, res: Response) => {
     if (topics.length > 0) {
       filter.topics = { $in: topics };
     }
+    if (timeRange === '24h') {
+      filter.date = {
+        $gte: new Date(Date.now() - 24 * 60 * 60 * 1000)
+      };
+    }
+
+    // Build sort configuration
+    const sortConfig: any = {};
+    if (sortBy === 'views') {
+      sortConfig['stats.views'] = -1;
+    } else {
+      sortConfig.date = -1;
+    }
+
+    // If viewsOnly is true, limit to 3 most viewed
+    const queryLimit = viewsOnly ? 3 : Number(limit);
 
     const articles = await Article.find(filter)
       .populate('author', 'firstName lastName profilePicture')
-      .select('-__v -content')
-      .sort({ date: -1 })
-      .skip(skip)
-      .limit(limit);
+      .select(viewsOnly ? 'title author date stats headerImageUrl' : '-content')
+      .sort(sortConfig)
+      .skip(viewsOnly ? 0 : skip)
+      .limit(queryLimit);
 
     const totalArticles = await Article.countDocuments(filter);
-    const totalPages = Math.ceil(totalArticles / limit);
+    const totalPages = Math.ceil(totalArticles / Number(limit));
 
-    console.log('[ articleController ] Articles fetched successfully:', { 
-      page, 
-      totalPages,
-      filters: {
-        country,
-        topics
-      }
-    });
-    
     res.json({
       articles,
-      pagination: {
-        currentPage: page,
+      pagination: viewsOnly ? undefined : {
+        currentPage: Number(page),
         totalPages,
         totalArticles,
-        hasNextPage: page < totalPages,
-        hasPreviousPage: page > 1
-      },
-      filters: {
-        country,
-        topics
+        hasNextPage: Number(page) < totalPages,
+        hasPreviousPage: Number(page) > 1
       }
     });
   } catch (error) {
-    console.error('[ articleController ] Error fetching articles:', error);
-    res.status(500).json({ 
-      error: 'Failed to fetch articles',
-      details: error instanceof Error ? error.message : 'Unknown error'
-    });
+    console.error('Error fetching articles:', error);
+    res.status(500).json({ error: 'Failed to fetch articles' });
   }
 };
 
@@ -270,7 +272,8 @@ export const updateArticle = async (req: Request | any, res: Response | any) => 
 
 export const getUniqueCountries = async (req: Request, res: Response) => {
   try {
-    const countries = await Article.distinct('countryCode');
+    //const countries = await Article.distinct('countryCode');
+    const countries = ['USA', 'HRV'];
     
     console.log('[ articleController ] Unique countries fetched:', { 
       count: countries.length,
@@ -282,6 +285,57 @@ export const getUniqueCountries = async (req: Request, res: Response) => {
     console.error('[ articleController ] Error fetching unique countries:', error);
     res.status(500).json({ 
       error: 'Failed to fetch countries',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+};
+
+export const getArticlesByCountry = async (req: Request | any, res: Response | any) => {
+  try {
+    const { countryCode } = req.params;
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+    const skip = (page - 1) * limit;
+
+    if (!countryCode || countryCode.length !== 3) {
+      console.error('[ articleController ] Invalid country code:', { countryCode });
+      return res.status(400).json({ error: 'Invalid country code' });
+    }
+
+    const filter = { countryCode: countryCode.toUpperCase() };
+
+    const [articles, totalArticles] = await Promise.all([
+      Article.find(filter)
+        .populate('author', 'firstName lastName profilePicture')
+        .select('-__v -content')
+        .sort({ date: -1 })
+        .skip(skip)
+        .limit(limit),
+      Article.countDocuments(filter)
+    ]);
+
+    const totalPages = Math.ceil(totalArticles / limit);
+
+    console.log('[ articleController ] Articles fetched by country:', { 
+      countryCode,
+      page,
+      totalArticles
+    });
+
+    res.json({
+      articles,
+      pagination: {
+        currentPage: page,
+        totalPages,
+        totalArticles,
+        hasNextPage: page < totalPages,
+        hasPreviousPage: page > 1
+      }
+    });
+  } catch (error) {
+    console.error('[ articleController ] Error fetching articles by country:', error);
+    res.status(500).json({ 
+      error: 'Failed to fetch articles',
       details: error instanceof Error ? error.message : 'Unknown error'
     });
   }
