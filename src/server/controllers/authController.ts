@@ -31,7 +31,7 @@ export const login = async (req: Request | any, res: Response | any) => {
       lastName: user.lastName,
       profilePicture: user.profilePicture,
       bio: user.bio,
-      favorites: user.favorites,
+      favorites: user.savedArticles,
       createdArticles: user.createdArticles,
       favoriteTopics: user.favoriteTopics,
     } });
@@ -147,7 +147,7 @@ export const getProfile = async (req: AuthRequest | any, res: Response | any) =>
       lastName: user.lastName,
       profilePicture: user.profilePicture,
       bio: user.bio,
-      favorites: user.favorites,
+      favorites: user.savedArticles,
       createdArticles: user.createdArticles,
     });
   } catch (error) {

@@ -34,7 +34,7 @@ export const getProfile = async (
       lastName: user.lastName,
       profilePicture: user.profilePicture,
       bio: user.bio,
-      favorites: user.favorites,
+      favorites: user.savedArticles,
       createdArticles: user.createdArticles,
       favoriteTopics: user.favoriteTopics,
     });
@@ -81,7 +81,7 @@ export const updateProfile = async (
         lastName: user.lastName,
         profilePicture: user.profilePicture,
         bio: user.bio,
-        favorites: user.favorites,
+        favorites: user.savedArticles,
         favoriteTopics: user.favoriteTopics,
         createdArticles: user.createdArticles,
     });

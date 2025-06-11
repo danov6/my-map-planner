@@ -137,3 +137,20 @@ export const fetchMostViewedArticles = async (country?: string) => {
   }
   return response.json();
 };
+
+export const toggleArticleBookmark = async (articleId: string): Promise<any> => {
+  const response = await fetch(`${API_URL}/api/articles/article/bookmark`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${localStorage.getItem('token')}`
+    },
+    body: JSON.stringify({ articleId })
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to toggle bookmark');
+  }
+
+  return response.json();
+};

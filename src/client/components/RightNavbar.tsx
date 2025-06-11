@@ -1,14 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { TRAVEL_TOPICS } from 'client/constants';
 import { fetchMostViewedArticles } from '../services/articles';
-
-interface StaffPick {
-  id: string;
-  author: string;
-  title: string;
-  date: string;
-  authorImage?: string;
-}
+import { UserProfile, Article } from '../../shared/types';
+import { COUNTRY_LIST } from 'client/constants';
 
 interface RightNavbarProps {
   variant: 'home' | 'profile';
@@ -21,8 +15,15 @@ const RightNavbar: React.FC<RightNavbarProps> = ({
   country,
   favoriteTopics
 }) => {
-  const [mostViewed, setMostViewed] = useState<StaffPick[]>([]);
+  const [mostViewed, setMostViewed] = useState<Article[]>([]);
   const topics = TRAVEL_TOPICS?.splice(0, 10) || [];
+
+  const getCountryNameByCode = (countryCode: string | undefined): string => {
+    const country = COUNTRY_LIST.find(
+      country => country.countryCode === countryCode?.toUpperCase()
+    );
+    return country?.name || '';
+  };
 
   useEffect(() => {
     const loadMostViewed = async () => {
@@ -40,18 +41,18 @@ const RightNavbar: React.FC<RightNavbarProps> = ({
       <div className="right-navbar-content">
         <section className="staff-picks">
           <h2>Most Viewed Today</h2>
-          {mostViewed.map((pick) => (
-            <div key={pick.id} className="staff-pick-item">
+          {mostViewed.map((pick, key) => (
+            <div key={pick._id} className="staff-pick-item">
+              <h3>{(key + 1) + ". " + pick.title}</h3>
+              <div className="country-name">{getCountryNameByCode(pick.countryCode)}</div>
               <div className="author-info">
                 <img 
-                  src={pick.authorImage || '/default-avatar.png'} 
-                  alt={pick.author}
+                  src={pick.author.profilePicture || '/default-avatar.png'} 
+                  alt={pick.author.firstName}
                   className="author-image"
                 />
-                <span>by {pick.author}</span>
+                <span>{pick.author.firstName}</span>
               </div>
-              <h3>{pick.title}</h3>
-              <span className="date">{pick.date}</span>
             </div>
           ))}
         </section>

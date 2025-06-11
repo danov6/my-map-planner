@@ -4,8 +4,14 @@ import { format } from 'timeago.js';
 import { AppContext } from '../../context/AppContext';
 import { Article } from '../../../shared/types';
 import Spinner from '../../components/Spinner';
-import { FaRegBookmark, FaRegEye, FaRegThumbsUp, FaThumbsUp, FaArrowLeft } from 'react-icons/fa';
-import { fetchArticle, toggleArticleLike } from '../../services/articles';
+import { 
+  FaRegBookmark, 
+  FaRegEye, 
+  FaRegThumbsUp, 
+  FaThumbsUp, 
+  FaShareAlt 
+} from 'react-icons/fa';
+import { fetchArticle, toggleArticleLike, toggleArticleBookmark } from '../../services/articles';
 import DOMPurify from 'dompurify';
 import './styles.css';
 
@@ -17,6 +23,7 @@ const ViewArticlePage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isLiked, setIsLiked] = useState<boolean>(false);
+  const [isBookmarked, setIsBookmarked] = useState<boolean>(false);
 
   const handleLike = async () => {
     if (!isAuthenticated) {
@@ -49,6 +56,45 @@ const ViewArticlePage: React.FC = () => {
     }
   };
 
+  const handleBookmark = async () => {
+    if (!isAuthenticated) {
+      navigate('/login');
+      return;
+    }
+
+    try {
+      const { bookmarked, saves } = await toggleArticleBookmark(article!._id);
+      setArticle(prev => prev ? {
+        ...prev,
+        stats: {
+          ...prev.stats,
+          saves: saves
+        }
+      } : null);
+      setIsBookmarked(bookmarked);
+    } catch (err) {
+      if (err instanceof Error && err.message === 'UNAUTHORIZED') {
+        navigate('/login');
+        return;
+      }
+      setError('Failed to update article bookmark');
+    }
+  };
+
+  const handleShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: article?.title,
+          text: article?.subtitle,
+          url: window.location.href,
+        });
+      } catch (err) {
+        console.error('Error sharing:', err);
+      }
+    }
+  };
+
   useEffect(() => {
     window.scrollTo({
       top: 0,
@@ -59,6 +105,7 @@ const ViewArticlePage: React.FC = () => {
   useEffect(() => {
     if (user && article) {
       setIsLiked(user.likedArticles?.includes(article._id as any) || false);
+      setIsBookmarked(user.savedArticles?.includes(article._id as any) || false);
     }
   }, [user, article]);
 
@@ -98,6 +145,15 @@ const ViewArticlePage: React.FC = () => {
   return (
     <div className="article-page">
       <article className="article-container">
+        <div className="article-actions">
+          <button className="action-button" onClick={handleBookmark}>
+            <FaRegBookmark className={`icon ${isBookmarked ? 'filled' : ''}`} />
+          </button>
+          <button className="action-button" onClick={handleShare}>
+            <FaShareAlt className="icon" />
+          </button>
+        </div>
+
         <h1 className="article-title">{article.title}</h1>
         <p className="article-subtitle">{article.subtitle}</p>
         
@@ -129,7 +185,6 @@ const ViewArticlePage: React.FC = () => {
               <span>{article.stats.likes}</span>
             </button>
             <FaRegEye /> <span>{article.stats.views}</span>
-            <FaRegBookmark />
           </div>
 
           {user?._id === article.author._id && (
@@ -141,7 +196,15 @@ const ViewArticlePage: React.FC = () => {
             </button>
           )}
         </div>
-        
+
+        <div className="article-topics">
+          {article.topics.map((topic, index) => (
+            <span key={index} className="topic-tag">
+              {topic}
+            </span>
+          ))}
+        </div>
+
         {article.headerImageUrl && (
           <div className="article-hero-image">
             <img src={article.headerImageUrl} alt={article.title} />

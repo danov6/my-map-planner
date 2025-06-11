@@ -85,7 +85,7 @@ export const getArticles = async (req: Request | any, res: Response | any) => {
 
     const articles = await Article.find(filter)
       .populate('author', 'firstName lastName profilePicture')
-      .select(viewsOnly ? 'title author date stats headerImageUrl' : '-content')
+      .select(viewsOnly ? 'title author date stats headerImageUrl countryCode' : '-content')
       .sort(sortConfig)
       .skip(viewsOnly ? 0 : skip)
       .limit(queryLimit);
@@ -273,7 +273,7 @@ export const updateArticle = async (req: Request | any, res: Response | any) => 
 export const getUniqueCountries = async (req: Request, res: Response) => {
   try {
     //const countries = await Article.distinct('countryCode');
-    const countries = ['USA', 'HRV'];
+    const countries = ['USA', 'HRV', 'CHE'];
     
     console.log('[ articleController ] Unique countries fetched:', { 
       count: countries.length,
@@ -338,5 +338,58 @@ export const getArticlesByCountry = async (req: Request | any, res: Response | a
       error: 'Failed to fetch articles',
       details: error instanceof Error ? error.message : 'Unknown error'
     });
+  }
+};
+
+export const toggleArticleBookmark = async (req: Request | any, res: Response | any) => {
+  try {
+    const { articleId } = req.body;
+    const userId = req.user?.userId;
+
+    if (!userId) {
+      console.error('[ articleController ] User not authenticated');
+      return res.status(401).json({ error: 'Authentication required' });
+    }
+
+    const article = await Article.findById(articleId);
+    if (!article) {
+      console.error('[ articleController ] Article not found:', { articleId });
+      return res.status(404).json({ error: 'Article not found' });
+    }
+
+    const user = await User.findById(userId);
+    const hasBookmarked = user?.savedArticles?.includes(articleId);
+
+    if (hasBookmarked) {
+      // Remove bookmark
+      await Promise.all([
+        Article.findByIdAndUpdate(articleId, { $inc: { 'stats.saves': -1 } }),
+        User.findByIdAndUpdate(userId, {
+          $pull: { savedArticles: articleId }
+        })
+      ]);
+    } else {
+      // Add bookmark
+      await Promise.all([
+        Article.findByIdAndUpdate(articleId, { $inc: { 'stats.saves': 1 } }),
+        User.findByIdAndUpdate(userId, {
+          $addToSet: { savedArticles: articleId }
+        })
+      ]);
+    }
+
+    console.log('[ articleController ] Article bookmark toggled:', { 
+      articleId,
+      userId,
+      action: hasBookmarked ? 'unbookmarked' : 'bookmarked'
+    });
+
+    res.json({ 
+      bookmarked: !hasBookmarked,
+      saves: hasBookmarked ? article.stats.saves - 1 : article.stats.saves + 1
+    });
+  } catch (error) {
+    console.error('[ articleController ] Error toggling article bookmark:', error);
+    res.status(500).json({ error: 'Failed to toggle bookmark' });
   }
 };

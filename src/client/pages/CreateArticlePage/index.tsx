@@ -75,6 +75,7 @@ const CreateArticlePage: React.FC = () => {
       const { imageUrl } = await uploadImage(formData);
       setFormData((prev: any) => ({ ...prev, headerImageUrl: imageUrl }));
     } catch (err) {
+        console.error('Error uploading image:', err);
       setError('Failed to upload image');
     } finally {
       setIsUploading(false);

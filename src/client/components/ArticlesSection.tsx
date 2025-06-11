@@ -1,7 +1,6 @@
 import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { format } from 'timeago.js';
-import { AppContext } from '../context/AppContext';
 import { FaRegBookmark, FaRegThumbsUp, FaRegEye } from 'react-icons/fa';
 import { Article } from '../../shared/types';
 // import './styles.css';
@@ -16,6 +15,8 @@ const ArticlesSection: React.FC<ArticlesSectionProps> = ({ articles }) => {
   const handleArticleClick = (articleId: string) => {
     navigate(`/articles/${articleId}`);
   };
+
+  console
 
   return (
     <div className="articles-section">

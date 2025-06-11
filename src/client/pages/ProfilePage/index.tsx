@@ -2,10 +2,7 @@ import React, { useState, useEffect, useContext, useRef } from 'react';
 import { AppContext } from '../../context/AppContext';
 import EditProfileModal from './EditProfileModal';
 import RightNavbar from '../../components/RightNavbar';
-import { 
-  updateUserProfile, 
-  uploadProfilePicture, 
-} from '../../services/users';
+import { updateUserProfile, uploadProfilePicture } from '../../services/users';
 import { FaPen } from 'react-icons/fa';
 import './styles.css';
 
@@ -65,6 +62,7 @@ const ProfilePage: React.FC = () => {
     }
   };
 
+  console.log('User profile:', user);
   return (
     <div className="home-container">
       <div className="main-content">
@@ -103,7 +101,6 @@ const ProfilePage: React.FC = () => {
             <p className="profile-email">{user.email}</p>
           </div>
         </div>
-        
         <button 
           onClick={() => setIsEditModalOpen(true)}
           className="edit-profile-btn"

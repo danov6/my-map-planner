@@ -34,6 +34,8 @@ const HomePage: React.FC = () => {
   if (isLoading) return <Spinner />;
   if (error) return <div className="error-message">{error}</div>;
 
+  console.log('Selected country:', user);
+
   return (
     <div className="home-container">
       <div className="main-content">

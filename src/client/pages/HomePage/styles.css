@@ -180,12 +180,6 @@
   margin-bottom: 1rem;
 }
 
-.topic-tag-small {
-  padding: 0.25em 0.75em;
-  font-size: 0.75rem;
-  white-space: nowrap;
-}
-
 .home-container .article-stats {
   display: flex;
   align-items: center;

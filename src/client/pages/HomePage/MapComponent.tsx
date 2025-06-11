@@ -135,7 +135,6 @@ const MapComponent: React.FC = () => {
     const loadHighlightedCountries = async () => {
       try {
         const countries = await fetchUniqueCountries();
-        console.log('Loaded countries:', countries);
         setHighlightedMapCountries(countries);
       } catch (err) {
         setError('Failed to load country data');

@@ -60,10 +60,9 @@ const userSchema = new Schema({
   },
   bio: { type: String },
   favoriteTopics: { type: [String], default: []},
-  likedArticles: [{ type: Schema.Types.ObjectId, ref: 'ArticleModel' }],
-  savedArticles: [{ type: Schema.Types.ObjectId, ref: 'ArticleModel' }],
-  favorites: [{ type: Schema.Types.ObjectId, ref: 'ArticleModel' }],
-  createdArticles: [{ type: Schema.Types.ObjectId, ref: 'ArticleModel' }],
+  likedArticles: [{ type: Schema.Types.ObjectId, ref: 'Article' }],
+  savedArticles: [{ type: Schema.Types.ObjectId, ref: 'Article' }],
+  createdArticles: [{ type: Schema.Types.ObjectId, ref: 'Article' }],
 }, {
   timestamps: true,
   toJSON: {

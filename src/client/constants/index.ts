@@ -86,7 +86,8 @@ export const TRAVEL_TOPICS = [
   'Traveling with Kids',
   'Solo Travel',
   'Group Travel',
-  'Business Travel'
+  'Business Travel',
+  'Hiking'
 ];
 
 export const COUNTRY_LIST = [
