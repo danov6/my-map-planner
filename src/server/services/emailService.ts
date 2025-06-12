@@ -11,8 +11,8 @@ const transporter = nodemailer.createTransport({
   secure: false,
   requireTLS: true,
   auth: {
-    user: 'travelguides4u.email@gmail.com',
-    pass: 'bkdm mdox sstc thzh'
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_APP_PASSWORD
   },
   debug: true
 });
@@ -34,7 +34,7 @@ export const sendResetEmail = async (email: string, resetToken: string): Promise
     const htmlContent = await loadTemplate('reset-password', { resetLink });
 
     const mailOptions = {
-      from: 'Travel Guides 4 U ' + `<travelguides4u.email@gmail.com}>`, // Sender address
+      from: 'Travel Guides 4 U ' + `<${process.env.EMAIL_USER}>`, // Sender address
       to: email,
       subject: 'Reset Your Password',
       html: htmlContent
