@@ -272,3 +272,14 @@
 .like-button.liked span {
   color: #0066cc;
 }
+
+.article-page .action-button:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.article-page .action-button.bookmark:hover .icon {
+  color: #4CAF50;
+}
+.article-page .action-button.share:hover .icon {
+  color: #5039fd;
+}

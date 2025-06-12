@@ -19,6 +19,7 @@ import ViewArticlePage from './pages/ViewArticlePage';
 import CreateArticlePage from './pages/CreateArticlePage';
 import EditArticlePage from './pages/EditArticlePage';
 import CountryPage from './pages/CountryPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
 
 const App: React.FC = () => {
   const [selectedCountry, setSelectedCountry] = useState<{ countryCode: string, name: string } | null>(null);
@@ -80,6 +81,7 @@ const App: React.FC = () => {
               <Route path="/login" element={<LoginPage />} />
               <Route path="/signup" element={<SignupPage />} />
               <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+              <Route path="/reset-password" element={<ResetPasswordPage />} />
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/articles">
                 <Route index element={<HomePage />} />

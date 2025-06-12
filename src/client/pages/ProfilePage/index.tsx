@@ -4,6 +4,7 @@ import EditProfileModal from './EditProfileModal';
 import RightNavbar from '../../components/RightNavbar';
 import { updateUserProfile, uploadProfilePicture } from '../../services/users';
 import { FaPen } from 'react-icons/fa';
+import ArticlesSection from '../../components/ArticlesSection';
 import './styles.css';
 
 const ProfilePage: React.FC = () => {
@@ -128,6 +129,10 @@ const ProfilePage: React.FC = () => {
               <span className="stat-value">{user.favoriteTopics?.length || 0}</span>
             </div>
           </div>
+        </div>
+        <div className="profile-section">
+          <h2>Saved Articles</h2>
+          <ArticlesSection articles={user.savedArticles ?? []} />
         </div>
       </div>
       </div>

@@ -1,45 +1,35 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { requestPasswordReset } from '../services/auth';
+import { validateEmail } from '../utils/validation';
+import Spinner from '../components/Spinner';
 import '../styles/login.css';
 
 const ForgotPasswordPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
   const [isEmailSent, setIsEmailSent] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-
-  const validateEmail = (email: string) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setIsLoading(true);
 
     if (!validateEmail(email)) {
       setError('Please enter a valid email address');
+      setIsLoading(false);
       return;
     }
 
     try {
-      const response = await fetch('http://localhost:53195/api/auth/forgot-password', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({ email }),
-      });
-
-      if (response.ok) {
-        setIsEmailSent(true);
-      } else {
-        const data = await response.json();
-        setError(data.error || 'Password reset request failed');
-      }
+      await requestPasswordReset(email);
+      setIsEmailSent(true);
     } catch (error) {
-      setError('An error occurred while processing your request');
+      setError(error instanceof Error ? error.message : 'An error occurred while processing your request');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -78,6 +68,7 @@ const ForgotPasswordPage: React.FC = () => {
               placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              disabled={isLoading}
               required
             />
           </div>
@@ -86,14 +77,16 @@ const ForgotPasswordPage: React.FC = () => {
               type="button" 
               className="auth-button secondary"
               onClick={() => navigate('/login')}
+              disabled={isLoading}
             >
               Back to Login
             </button>
             <button 
               type="submit" 
               className="auth-button primary"
+              disabled={isLoading}
             >
-              Reset Password
+              {isLoading ? <Spinner /> : 'Reset Password'}
             </button>
           </div>
         </form>

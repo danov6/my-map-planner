@@ -36,7 +36,7 @@ const ArticlesSection: React.FC<ArticlesSectionProps> = ({ articles }) => {
             </div>
             <div className="article-footer">
               <div className="article-topics">
-                {article.topics.slice(0, 5).map((topic: string, index: number) => (
+                {(article?.topics?.slice(0, 5) || []).map((topic: string, index: number) => (
                   <button key={index} className="topic-tag topic-tag-small">
                   {topic}
                   </button>

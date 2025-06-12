@@ -5,7 +5,8 @@ import { AppContext } from '../../context/AppContext';
 import { Article } from '../../../shared/types';
 import Spinner from '../../components/Spinner';
 import { 
-  FaRegBookmark, 
+  FaRegBookmark,
+  FaBookmark,
   FaRegEye, 
   FaRegThumbsUp, 
   FaThumbsUp, 
@@ -90,7 +91,7 @@ const ViewArticlePage: React.FC = () => {
           url: window.location.href,
         });
       } catch (err) {
-        console.error('Error sharing:', err);
+        console.log('Error sharing:', err);
       }
     }
   };
@@ -146,10 +147,14 @@ const ViewArticlePage: React.FC = () => {
     <div className="article-page">
       <article className="article-container">
         <div className="article-actions">
-          <button className="action-button" onClick={handleBookmark}>
-            <FaRegBookmark className={`icon ${isBookmarked ? 'filled' : ''}`} />
+          <button className="action-button bookmark" onClick={handleBookmark}>
+            {isBookmarked ? (
+              <FaBookmark className="icon filled" />
+            ) : (
+              <FaRegBookmark className="icon" />
+            )}
           </button>
-          <button className="action-button" onClick={handleShare}>
+          <button className="action-button share" onClick={handleShare}>
             <FaShareAlt className="icon" />
           </button>
         </div>

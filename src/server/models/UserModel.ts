@@ -12,7 +12,6 @@ export interface IUser extends Document {
   lastName?: string;
   profilePicture?: string;
   bio?: string;
-  favorites?: string[];
   favoriteTopics?: string[];
   createdArticles?: mongoose.Types.ObjectId[];
   likedArticles?: mongoose.Types.ObjectId[];

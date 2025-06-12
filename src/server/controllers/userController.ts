@@ -18,9 +18,16 @@ export const getProfile = async (
       return res.status(401).json({ error: "User ID not found in token" });
     }
 
-    const user = await User.findById(userId).select(
-      "-password -resetToken -resetTokenExpiry"
-    );
+    const user = await User.findById(userId)
+      .select("-password -resetToken -resetTokenExpiry")
+      .populate({
+        path: 'savedArticles',
+        select: 'title subtitle headerImageUrl date stats topics countryCode',
+        populate: {
+          path: 'author',
+          select: 'firstName lastName profilePicture'
+        }
+    });
 
     if (!user) {
       return res.status(404).json({ error: "User not found" });
@@ -34,7 +41,7 @@ export const getProfile = async (
       lastName: user.lastName,
       profilePicture: user.profilePicture,
       bio: user.bio,
-      favorites: user.savedArticles,
+      savedArticles: user.savedArticles,
       createdArticles: user.createdArticles,
       favoriteTopics: user.favoriteTopics,
     });
@@ -81,7 +88,7 @@ export const updateProfile = async (
         lastName: user.lastName,
         profilePicture: user.profilePicture,
         bio: user.bio,
-        favorites: user.savedArticles,
+        savedArticles: user.savedArticles,
         favoriteTopics: user.favoriteTopics,
         createdArticles: user.createdArticles,
     });
