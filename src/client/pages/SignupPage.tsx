@@ -45,7 +45,6 @@ const SignupPage: React.FC = () => {
     try {
       const data = await registerUser({ email, password });
       
-      // Defer token storage and navigation to next tick
       setTimeout(() => {
         localStorage.setItem('token', data.token);
         setIsAuthenticated(true);

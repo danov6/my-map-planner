@@ -41,6 +41,7 @@ export const getProfile = async (
       lastName: user.lastName,
       profilePicture: user.profilePicture,
       bio: user.bio,
+      likedArticles: user.likedArticles,
       savedArticles: user.savedArticles,
       createdArticles: user.createdArticles,
       favoriteTopics: user.favoriteTopics,

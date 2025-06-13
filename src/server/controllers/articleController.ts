@@ -149,7 +149,29 @@ export const createArticle = async (req: Request | any, res: Response | any) => 
       }
     });
 
-    await newArticle.save();
+    const session = await Article.startSession();
+    session.startTransaction();
+
+    try {
+      await newArticle.save({ session });
+      
+      await User.findByIdAndUpdate(
+        req.user.userId,
+        { 
+          $push: { 
+            createdArticles: newArticle._id 
+          }
+        },
+        { session }
+      );
+
+      await session.commitTransaction();
+    } catch (error) {
+      await session.abortTransaction();
+      throw error;
+    } finally {
+      session.endSession();
+    }
 
     const populatedArticle = await Article.findById(newArticle._id)
       .populate('author', 'firstName lastName profilePicture')
@@ -272,8 +294,8 @@ export const updateArticle = async (req: Request | any, res: Response | any) => 
 
 export const getUniqueCountries = async (req: Request, res: Response) => {
   try {
-    //const countries = await Article.distinct('countryCode');
-    const countries = ['USA', 'HRV', 'CHE'];
+    const countries = await Article.distinct('countryCode');
+    //const countries = ['USA', 'HRV', 'CHE'];
     
     console.log('[ articleController ] Unique countries fetched:', { 
       count: countries.length,

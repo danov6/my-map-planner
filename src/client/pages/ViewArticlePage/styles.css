@@ -283,3 +283,7 @@
 .article-page .action-button.share:hover .icon {
   color: #5039fd;
 }
+
+.article-page .action-button.bookmark.bookmarked .icon{
+    color: #4caf50;
+}

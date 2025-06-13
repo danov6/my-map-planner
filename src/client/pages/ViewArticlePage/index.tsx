@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { format } from 'timeago.js';
 import { AppContext } from '../../context/AppContext';
-import { Article } from '../../../shared/types';
+import { Article, UserProfile } from '../../../shared/types';
 import Spinner from '../../components/Spinner';
 import { 
   FaRegBookmark,
@@ -19,34 +19,79 @@ import './styles.css';
 const ViewArticlePage: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { isAuthenticated, user, setUser } = useContext(AppContext);
+  const { isAuthenticated, user, setUser, setArticles } = useContext(AppContext);
   const [article, setArticle] = useState<Article | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isLiked, setIsLiked] = useState<boolean>(false);
   const [isBookmarked, setIsBookmarked] = useState<boolean>(false);
 
+  // Add initial check for liked status
+  useEffect(() => {
+    if (user && article) {
+      const hasLiked = !!user.likedArticles?.includes(article._id);
+      setIsLiked(hasLiked);
+      
+      console.log('Like status check:', {
+        articleId: article._id,
+        likedArticles: user.likedArticles,
+        isLiked: hasLiked
+      });
+    }
+  }, [user?.likedArticles, article?._id]);
+
   const handleLike = async () => {
-    if (!isAuthenticated) {
+    if (!isAuthenticated || !article) {
       navigate('/login');
       return;
     }
 
     try {
-      const response = await toggleArticleLike(article!._id);
-      const { liked, favoriteTopics } = response;
+      const { liked, favoriteTopics } = await toggleArticleLike(article._id);
+      const newLikes = article.stats.likes + (liked ? 1 : -1);
+      
+      // Update local state
       setArticle(prev => prev ? {
         ...prev,
         stats: {
           ...prev.stats,
-          likes: prev.stats.likes + (liked ? 1 : -1)
+          likes: newLikes
         }
       } : null);
+
+      // Update articles in context
+      setArticles((prevArticles: Article[])  => 
+        prevArticles.map((a: Article) => 
+          a._id === article._id
+        ? {
+            ...a,
+            stats: {
+          ...a.stats,
+          likes: newLikes
+            }
+          }
+        : a
+        )
+      );
+
       setIsLiked(liked);
 
-      setUser({
-        ...user!,
-        favoriteTopics
+      setUser((prev) => {
+        if (!prev) return prev;
+        
+        return {
+          ...prev,
+          favoriteTopics,
+          likedArticles: liked 
+            ? [...(prev.likedArticles || []), article._id]
+            : prev.likedArticles?.filter((id: string) => id !== article._id)
+        };
+      });
+
+      console.log('Like updated:', {
+        liked,
+        articleId: article._id,
+        newLikes: article.stats.likes + (liked ? 1 : -1)
       });
     } catch (err) {
       if (err instanceof Error && err.message === 'UNAUTHORIZED') {
@@ -58,21 +103,58 @@ const ViewArticlePage: React.FC = () => {
   };
 
   const handleBookmark = async () => {
-    if (!isAuthenticated) {
+    if (!isAuthenticated || !article) {
       navigate('/login');
       return;
     }
 
     try {
-      const { bookmarked, saves } = await toggleArticleBookmark(article!._id);
+      const { bookmarked, saves } = await toggleArticleBookmark(article._id);
+      
       setArticle(prev => prev ? {
         ...prev,
         stats: {
           ...prev.stats,
-          saves: saves
+          saves
         }
       } : null);
+
+      setArticles((prevArticles) => 
+        prevArticles.map(a => 
+          a._id === article._id
+            ? {
+                ...a,
+                stats: {
+                  ...a.stats,
+                  saves
+                }
+              }
+            : a
+        )
+      );
+
       setIsBookmarked(bookmarked);
+      
+      setUser((prev: UserProfile) => {
+        if (!prev) return prev;
+        
+        return {
+          ...prev,
+          savedArticles: bookmarked 
+            ? [...(prev.savedArticles || []), article]
+            : prev.savedArticles?.filter((saved: any) => 
+                typeof saved === 'string' 
+                  ? saved !== article._id 
+                  : saved._id !== article._id
+              )
+        };
+      });
+
+      console.log('Bookmark updated:', {
+        bookmarked,
+        saves,
+        articleId: article._id
+      });
     } catch (err) {
       if (err instanceof Error && err.message === 'UNAUTHORIZED') {
         navigate('/login');
@@ -105,10 +187,23 @@ const ViewArticlePage: React.FC = () => {
 
   useEffect(() => {
     if (user && article) {
-      setIsLiked(user.likedArticles?.includes(article._id as any) || false);
-      setIsBookmarked(user.savedArticles?.includes(article._id as any) || false);
+      const isArticleInArray = (array: any[] = [], articleId: string): boolean => {
+        return array.some(item => {
+          const itemId = typeof item === 'string' ? item : item._id;
+          return itemId === articleId;
+        });
+      };
+
+      const newIsBookmarked = isArticleInArray(user.savedArticles, article._id);
+      console.log('Updating bookmark state:', {
+        articleId: article._id,
+        savedArticles: user.savedArticles,
+        newIsBookmarked
+      });
+      
+      setIsBookmarked(newIsBookmarked);
     }
-  }, [user, article]);
+  }, [user?.savedArticles, article?._id]);
 
   useEffect(() => {
     if (!id) {
@@ -140,14 +235,11 @@ const ViewArticlePage: React.FC = () => {
 
   const sanitizedContent = DOMPurify.sanitize(article.content);
 
-  // console.log('is liked:', isLiked);
-  console.log('User ID:', user);
-  console.log('Article Author ID:', article.author._id);
   return (
     <div className="article-page">
       <article className="article-container">
         <div className="article-actions">
-          <button className="action-button bookmark" onClick={handleBookmark}>
+          <button className={`action-button bookmark ${isBookmarked ? 'bookmarked' : ''}`} onClick={handleBookmark}>
             {isBookmarked ? (
               <FaBookmark className="icon filled" />
             ) : (
@@ -183,9 +275,9 @@ const ViewArticlePage: React.FC = () => {
               className={`like-button ${isLiked ? 'liked' : ''}`}
             >
               {isLiked ? (
-                <FaRegThumbsUp className="icon filled" />
+                <FaThumbsUp className="icon filled" />
               ) : (
-                <FaThumbsUp className="icon" />
+                <FaRegThumbsUp className="icon" />
               )}
               <span>{article.stats.likes}</span>
             </button>

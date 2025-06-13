@@ -48,6 +48,8 @@ main {
     -webkit-transform: translateZ(0);
     -moz-transform: translateZ(0);
     transform: translateZ(0);
+    border: 1px solid #5e5e5e;
+    border-radius: .5rem;
   }
   
 .leaflet-container {

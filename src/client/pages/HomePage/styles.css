@@ -41,7 +41,7 @@
   height: 100vh;
 }
 .right-navbar {
-  border-left: 1px solid #e0e0e0;
+  border-left: 1px solid #5e5e5e;
   width: clamp(16rem, 20vw, 20rem);
   padding-bottom: 2rem;
   padding-left: clamp(1rem, 2vw, 2rem);

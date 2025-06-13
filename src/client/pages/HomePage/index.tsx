@@ -40,7 +40,7 @@ const HomePage: React.FC = () => {
     <div className="home-container">
       <div className="main-content">
         <div className="map-section">
-          <h1>{selectedCountry?.name || 'Travel Guides 4 U'}</h1>
+          <h1>Travel Guides 4 U</h1>
           <MapComponent />
         </div>
         <h2 className="articles-header">For you</h2>
