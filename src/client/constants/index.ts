@@ -39,6 +39,8 @@ export const COUNTRY_COLORS = {
 };
 
 export const TRAVEL_TOPICS = [
+  'Day Trips',
+  'Weekend Getaways',
   'Travel Hacks',
   'Cultural Experiences',
   'Adventure Travel',
@@ -51,9 +53,9 @@ export const TRAVEL_TOPICS = [
   'Shopping',
   'Budget Travel',
   'Luxury Travel',
+  'Travel Tips',
   'Travel Photography',
   'Travel Safety',
-  'Travel Tips',
   'Travel Guides',
   'Travel Destinations',
   'Travel Stories',
@@ -87,7 +89,8 @@ export const TRAVEL_TOPICS = [
   'Solo Travel',
   'Group Travel',
   'Business Travel',
-  'Hiking'
+  'Hiking',
+  'Restaurants and Dining',
 ];
 
 export const COUNTRY_LIST = [
@@ -116,7 +119,7 @@ export const COUNTRY_LIST = [
   { name: 'Philippines', countryCode: 'PHL' },
   { name: 'New Zealand', countryCode: 'NZL' },
   { name: 'Sweden', countryCode: 'SWE' },
-  { name: 'Norway', countryCode: 'NOR' },
+  { name: 'Norway', countryCode: 'NOK' },
   { name: 'Finland', countryCode: 'FIN' },
   { name: 'Denmark', countryCode: 'DNK' },
   { name: 'Netherlands', countryCode: 'NLD' },

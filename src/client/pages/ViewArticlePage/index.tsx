@@ -14,6 +14,7 @@ import {
 } from 'react-icons/fa';
 import { fetchArticle, toggleArticleLike, toggleArticleBookmark } from '../../services/articles';
 import DOMPurify from 'dompurify';
+import { useTopicNavigation } from '../../hooks/useTopicNavigation';
 import './styles.css';
 
 const ViewArticlePage: React.FC = () => {
@@ -76,7 +77,7 @@ const ViewArticlePage: React.FC = () => {
 
       setIsLiked(liked);
 
-      setUser((prev) => {
+      setUser((prev: any) => {
         if (!prev) return prev;
         
         return {
@@ -177,6 +178,8 @@ const ViewArticlePage: React.FC = () => {
       }
     }
   };
+
+  const handleTopicClick = useTopicNavigation();
 
   useEffect(() => {
     window.scrollTo({
@@ -295,10 +298,14 @@ const ViewArticlePage: React.FC = () => {
         </div>
 
         <div className="article-topics">
-          {article.topics.map((topic, index) => (
-            <span key={index} className="topic-tag">
+          {(article?.topics || []).map((topic, index) => (
+            <button
+              key={index}
+              className="topic-tag"
+              onClick={(e) => handleTopicClick(e, topic)}
+            >
               {topic}
-            </span>
+            </button>
           ))}
         </div>
 

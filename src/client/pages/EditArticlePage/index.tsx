@@ -4,9 +4,11 @@ import { Editor } from '@tinymce/tinymce-react';
 import { AppContext } from '../../context/AppContext';
 import { Article } from '../../../shared/types';
 import { fetchArticle, updateArticle } from '../../services/articles';
+import { TRAVEL_TOPICS } from '../../constants';
 import Spinner from '../../components/Spinner';
 import DOMPurify from 'dompurify';
 import './styles.css';
+import { FaTimes } from 'react-icons/fa';
 
 const EditArticlePage: React.FC = () => {
   const editorRef = useRef<any>(null);
@@ -21,10 +23,15 @@ const EditArticlePage: React.FC = () => {
     headerImageUrl: '',
     topics: [] as string[]
   });
+  const [selectedTopics, setSelectedTopics] = useState<{ value: string; label: string; }[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [topicInput, setTopicInput] = useState('');
+  const [topicSuggestions, setTopicSuggestions] = useState<string[]>([]);
+  const [showTopicSuggestions, setShowTopicSuggestions] = useState(false);
 
+  
   useEffect(() => {
     if (!id) {
       navigate('/');
@@ -46,6 +53,13 @@ const EditArticlePage: React.FC = () => {
           headerImageUrl: data.headerImageUrl || '',
           topics: data.topics || []
         });
+
+        setSelectedTopics(
+          data.topics.map((topic: string) => ({
+            value: topic,
+            label: topic
+          }))
+        );
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load article');
       } finally {
@@ -67,11 +81,12 @@ const EditArticlePage: React.FC = () => {
     setIsSubmitting(true);
     setError(null);
 
+    console.log('Topics before sanitization:', formData.topics);
     try {
       const content = editorRef.current.getContent();
       const sanitizedData = {
         ...formData,
-        content: DOMPurify.sanitize(content)
+        content: DOMPurify.sanitize(content),
       };
       await updateArticle(article._id, sanitizedData);
       navigate(`/articles/${article._id}`);
@@ -139,6 +154,79 @@ const EditArticlePage: React.FC = () => {
             }}
           />
         </div>
+
+        <div className="form-group">
+                  <label htmlFor="topics">Topics</label>
+                  <div className="topics-input-container">
+                    <input
+                      type="text"
+                      id="topics"
+                      value={topicInput}
+                      onChange={(e) => {
+                        const input = e.target.value;
+                        setTopicInput(input);
+                        
+                        // Filter suggestions
+                        const filtered = TRAVEL_TOPICS.filter(
+                          topic => 
+                            topic.toLowerCase().includes(input.toLowerCase()) &&
+                            !formData.topics.includes(topic)
+                        );
+                        setTopicSuggestions(filtered);
+                        setShowTopicSuggestions(input.length > 0);
+                      }}
+                      onFocus={() => {
+                        if (topicInput) {
+                          setShowTopicSuggestions(true);
+                        }
+                      }}
+                      onBlur={() => {
+                        setTimeout(() => setShowTopicSuggestions(false), 200);
+                      }}
+                      placeholder="Type to search topics..."
+                    />
+                    {showTopicSuggestions && (
+                      <ul className="topic-suggestions">
+                        {topicSuggestions.map((topic) => (
+                          <li
+                            key={topic}
+                            onClick={() => {
+                              if (!formData.topics.includes(topic)) {
+                                setFormData((prev: any) => ({
+                                  ...prev,
+                                  topics: [...prev.topics, topic]
+                                }));
+                              }
+                              setTopicInput('');
+                              setShowTopicSuggestions(false);
+                            }}
+                          >
+                            {topic}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                  <div className="selected-topics">
+                    {formData.topics.map((topic: string) => (
+                      <span key={topic} className="topic-tag">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setFormData((prev: any) => ({
+                              ...prev,
+                              topics: prev.topics.filter((t: any) => t !== topic)
+                            }));
+                          }}
+                          className="remove-topic"
+                        >
+                          <FaTimes />
+                        </button>
+                        {topic}
+                      </span>
+                    ))}
+                  </div>
+                </div>
 
         <button type="submit" disabled={isSubmitting}>
           {isSubmitting ? 'Updating...' : 'Update Article'}

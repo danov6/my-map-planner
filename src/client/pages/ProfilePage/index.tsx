@@ -121,8 +121,8 @@ const ProfilePage: React.FC = () => {
           <h2>My Activity</h2>
           <div className="profile-stats">
             <div className="stat-item">
-              <span className="stat-label">Blog Posts</span>
-              <span className="stat-value">0</span>
+              <span className="stat-label">Blog Posts Written</span>
+              <span className="stat-value">{user.createdArticles?.length || 0}</span>
             </div>
             <div className="stat-item">
               <span className="stat-label">Favorites</span>

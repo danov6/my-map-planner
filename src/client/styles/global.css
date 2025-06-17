@@ -48,7 +48,7 @@ main {
     -webkit-transform: translateZ(0);
     -moz-transform: translateZ(0);
     transform: translateZ(0);
-    border: 1px solid #5e5e5e;
+    border: 1px solid #e0e0e0;
     border-radius: .5rem;
   }
   
@@ -105,3 +105,45 @@ main {
   .map-reset-button:active {
     transform: scale(0.95);
   }
+
+  .pagination {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 2rem;
+  padding: 1rem 0;
+}
+
+.pagination-button {
+  min-width: 40px;
+  height: 40px;
+  border: 2px solid #e0e0e0;
+  background: white;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.pagination-button:hover:not(:disabled) {
+  border-color: #6200EE;
+  color: #6200EE;
+}
+
+.pagination-button.active {
+  background: #6200EE;
+  color: white;
+  border-color: #6200EE;
+}
+
+.pagination-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.pagination-loading {
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

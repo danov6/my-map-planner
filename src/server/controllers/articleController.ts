@@ -46,42 +46,36 @@ export const getArticle = async (req: Request | any, res: Response | any) => {
 
 export const getArticles = async (req: Request | any, res: Response | any) => {
   try {
-    const {
-      page = 1,
-      limit = 10,
-      country,
-      topics = [],
-      sortBy = 'date',
-      timeRange,
-      viewsOnly = false
-    } = req.query;
-
+    const { page = 1, limit = 10, viewsOnly = false, topic } = req.query;
     const skip = (Number(page) - 1) * Number(limit);
-    
-    // Build filter
-    const filter: any = {};
-    if (country) {
-      filter.country = country;
-    }
-    if (topics.length > 0) {
-      filter.topics = { $in: topics };
-    }
-    if (timeRange === '24h') {
-      filter.date = {
-        $gte: new Date(Date.now() - 24 * 60 * 60 * 1000)
-      };
-    }
-
-    // Build sort configuration
-    const sortConfig: any = {};
-    if (sortBy === 'views') {
-      sortConfig['stats.views'] = -1;
-    } else {
-      sortConfig.date = -1;
-    }
-
-    // If viewsOnly is true, limit to 3 most viewed
     const queryLimit = viewsOnly ? 3 : Number(limit);
+
+    let filter: any = {};
+    let formattedTopic: string | undefined;
+
+    // Handle topic filter with proper formatting
+    if (topic) {
+      formattedTopic = topic
+        .split('-')
+        .map((word: string) => {
+          // Special case for 'and' to convert back to '&'
+          if (word.toLowerCase() === 'and') return '&';
+          // Capitalize first letter of each word
+          return word.charAt(0).toUpperCase() + word.slice(1);
+        })
+        .join(' ');
+
+      console.log('[ articleController ] Formatted topic:', {
+        original: topic,
+        formatted: formattedTopic
+      });
+
+      filter.topics = formattedTopic;
+    }
+
+    const sortConfig: Record<string, 1 | -1> = viewsOnly 
+      ? { 'stats.views': -1 } 
+      : { date: -1 };
 
     const articles = await Article.find(filter)
       .populate('author', 'firstName lastName profilePicture')
@@ -92,6 +86,12 @@ export const getArticles = async (req: Request | any, res: Response | any) => {
 
     const totalArticles = await Article.countDocuments(filter);
     const totalPages = Math.ceil(totalArticles / Number(limit));
+
+    console.log('[ articleController ] Articles found:', {
+      topic: topic ? formattedTopic : 'none',
+      count: articles.length,
+      total: totalArticles
+    });
 
     res.json({
       articles,
@@ -104,7 +104,7 @@ export const getArticles = async (req: Request | any, res: Response | any) => {
       }
     });
   } catch (error) {
-    console.error('Error fetching articles:', error);
+    console.error('[ articleController ] Error fetching articles:', error);
     res.status(500).json({ error: 'Failed to fetch articles' });
   }
 };

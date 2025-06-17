@@ -13,8 +13,6 @@ export interface Guide {
 }
 
 interface AppContextType {
-  guide: Guide[] | null;
-  setGuide: (guide: Guide[] | null) => void;
   selectedCountry: { name: string, countryCode: string } | null;
   setSelectedCountry: (country: { name: string; countryCode: string }) => void;
   isModalOpen: boolean;
@@ -35,7 +33,6 @@ interface AppContextType {
 export const AppContext = createContext<AppContextType>({} as AppContextType);
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [guide, setGuide] = useState<Guide[] | null>(null);
   const [selectedCountry, setSelectedCountry] = useState<{ name: string, countryCode: string } | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [articles, setArticles] = useState<Article[]>([]);
@@ -52,8 +49,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   return (
     <AppContext.Provider value={{
-      guide,
-      setGuide,
       selectedCountry,
       setSelectedCountry,
       isModalOpen,

@@ -104,7 +104,7 @@ export const fetchUniqueCountries = async (): Promise<string[]> => {
   }
 
   const data = await response.json();
-  console.log('Fetched countries:', data.countries);
+  console.log('Map highlighted countries:', data.countries);
   return data.countries;
 };
 
@@ -153,4 +153,15 @@ export const toggleArticleBookmark = async (articleId: string): Promise<any> => 
   }
 
   return response.json();
+};
+
+export const fetchArticlesByTopic = async (topic: string): Promise<Article[]> => {
+  const response = await fetch(`${API_URL}/api/articles?topic=${topic}`);
+  
+  if (!response.ok) {
+    throw new Error('Failed to fetch topic articles');
+  }
+
+  const data = await response.json();
+  return data.articles;
 };

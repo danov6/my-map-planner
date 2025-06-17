@@ -14,6 +14,7 @@ export interface UserProfile {
   profilePicture?: string;
   categories?: string[];
   countries?: string[];
+  createdArticles?: string[];
   likedArticles?: string[];
   savedArticles?: Article[];
   favoriteTopics?: string[];

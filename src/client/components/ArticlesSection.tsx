@@ -1,22 +1,42 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { format } from 'timeago.js';
 import { FaRegBookmark, FaRegThumbsUp, FaRegEye } from 'react-icons/fa';
 import { Article } from '../../shared/types';
+import { useTopicNavigation } from '../hooks/useTopicNavigation';
+import { fetchArticles } from '../services/articles';
+import Spinner from './Spinner';
 // import './styles.css';
 
 interface ArticlesSectionProps {
   articles: Article[];
+  pagination?: {
+    currentPage: number;
+    totalPages: number;
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+  };
+  onPageChange: (page: number) => Promise<void>;
 }
 
-const ArticlesSection: React.FC<ArticlesSectionProps> = ({ articles }) => {
+const ArticlesSection: React.FC<ArticlesSectionProps> = ({ 
+  articles, 
+  pagination,
+  onPageChange 
+}) => {
   const navigate = useNavigate();
+  const handleTopicClick = useTopicNavigation();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleArticleClick = (articleId: string) => {
     navigate(`/articles/${articleId}`);
   };
 
-  console
+  const handlePageClick = async (page: number) => {
+    setIsLoading(true);
+    await onPageChange(page);
+    setIsLoading(false);
+  };
 
   return (
     <div className="articles-section">
@@ -36,9 +56,13 @@ const ArticlesSection: React.FC<ArticlesSectionProps> = ({ articles }) => {
             </div>
             <div className="article-footer">
               <div className="article-topics">
-                {(article?.topics?.slice(0, 5) || []).map((topic: string, index: number) => (
-                  <button key={index} className="topic-tag topic-tag-small">
-                  {topic}
+                {(article?.topics || []).map((topic: string, index: number) => (
+                  <button
+                    key={index}
+                    className="topic-tag topic-tag-small"
+                    onClick={(e) => handleTopicClick(e, topic)}
+                  >
+                    {topic}
                   </button>
                 ))}
               </div>
@@ -57,6 +81,27 @@ const ArticlesSection: React.FC<ArticlesSectionProps> = ({ articles }) => {
           </div>
         </article>
       ))}
+      
+      {pagination && (
+        <div className="pagination">
+          {isLoading ? (
+            <div className="pagination-loading">
+              <Spinner size="small" />
+            </div>
+          ) : (
+            Array.from({ length: pagination.totalPages }, (_, i) => i + 1).map((page) => (
+              <button
+                key={page}
+                className={`pagination-button ${page === pagination.currentPage ? 'active' : ''}`}
+                onClick={() => handlePageClick(page)}
+                disabled={page === pagination.currentPage || isLoading}
+              >
+                {page}
+              </button>
+            ))
+          )}
+        </div>
+      )}
     </div>
   );
 };

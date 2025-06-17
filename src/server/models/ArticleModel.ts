@@ -63,7 +63,6 @@ const articleSchema = new Schema<Article>({
 });
 
 // Add indexes for better query performance
-articleSchema.index({ countryCode: 1 });
 articleSchema.index({ createdAt: -1 });
 articleSchema.index({ votes: -1 }); // Add index for votes
 

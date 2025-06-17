@@ -10,7 +10,6 @@ import ProfilePage from './pages/ProfilePage';
 import { Article } from 'shared/types';
 
 //Pages
-import GuidePage from './pages/GuidePage';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
@@ -20,12 +19,12 @@ import CreateArticlePage from './pages/CreateArticlePage';
 import EditArticlePage from './pages/EditArticlePage';
 import CountryPage from './pages/CountryPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
+import TopicPage from './pages/TopicPage';
 
 const App: React.FC = () => {
   const [selectedCountry, setSelectedCountry] = useState<{ countryCode: string, name: string } | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedOptions, setSelectedOptions] = useState<TravelOption[]>([]);
-  const [guide, setGuide] = useState<{ header: string, content: string }[] | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [articles, setArticles] = useState<Article[]>([]);
   const [highlightedMapCountries, setHighlightedMapCountries] = useState<string[] | null>([]);
@@ -54,8 +53,6 @@ const App: React.FC = () => {
   return (
     <Router>
       <AppContext.Provider value={{ 
-        guide,
-        setGuide,
         selectedCountry, 
         setSelectedCountry,
         isModalOpen,
@@ -77,7 +74,6 @@ const App: React.FC = () => {
           <main>
             <Routes>
               <Route path="/" element={<HomePage />} />
-              <Route path="/guide" element={<GuidePage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/signup" element={<SignupPage />} />
               <Route path="/forgot-password" element={<ForgotPasswordPage />} />
@@ -90,6 +86,7 @@ const App: React.FC = () => {
                 <Route path=":id/edit" element={<EditArticlePage />} />
               </Route>
               <Route path="/countries/:id" element={<CountryPage />} />
+              <Route path="/topics/:topic" element={<TopicPage />} />
               {/* <Route path="*" element={<Navigate to="/" replace />} /> */}
             </Routes>
           </main>
