@@ -4,8 +4,11 @@ import { fetchArticlesByCountry } from '../../services/articles';
 import RightNavbar from '../../components/RightNavbar';
 import ArticlesSection from '../../components/ArticlesSection';
 import Spinner from '../../components/Spinner';
+import CountryMapComponent from '../../components/CountryMapComponent';
 import { COUNTRY_LIST } from '../../constants';
-import './styles.css';
+import { Country } from '../../../shared/types';
+import '../../styles/countrypage.css';
+// import { GeoJSON } from 'react-leaflet';
 
 const CountryPage: React.FC = () => {
   const { id: countryCode } = useParams<{ id: string }>();
@@ -13,9 +16,11 @@ const CountryPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const countryName = COUNTRY_LIST.find(
+  const country = COUNTRY_LIST.find(
     country => country.countryCode === countryCode
-  )?.name || countryCode;
+  );
+
+  const countryName = country?.name || countryCode;
 
   useEffect(() => {
     const loadCountryArticles = async () => {
@@ -34,6 +39,7 @@ const CountryPage: React.FC = () => {
     }
   }, [countryCode]);
 
+
   if (isLoading) return <Spinner />;
   if (error) return <div className="error-message">{error}</div>;
 
@@ -41,6 +47,10 @@ const CountryPage: React.FC = () => {
     <div className="country-page">
       <div className="main-content">
         <h1>{countryName} Travel Guides</h1>
+        {/* <CountryMapComponent
+          countryBounds={countryBounds}
+          cities={country?.cities}
+        /> */}
         <ArticlesSection articles={articles} />
       </div>
       <RightNavbar variant="home" />

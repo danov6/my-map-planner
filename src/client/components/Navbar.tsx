@@ -4,6 +4,7 @@ import ProfileMenu from './ProfileMenu';
 import '../styles/navbar.css';
 import { AppContext } from '../context/AppContext';
 import { fetchUserProfile } from '../services/users';
+import { DEFAULT_AVATAR_URL } from 'client/constants';
 
 const Navbar: React.FC = () => {
   const { isAuthenticated, user, setUser, logout } = useContext(AppContext);
@@ -76,7 +77,7 @@ const Navbar: React.FC = () => {
                     <div className="profile-loading-spinner" />
                   ) : (
                     <img 
-                      src={user?.profilePicture || '/default-avatar.png'} 
+                      src={user?.profilePicture || DEFAULT_AVATAR_URL} 
                       alt="Profile" 
                       className="profile-avatar"
                     />

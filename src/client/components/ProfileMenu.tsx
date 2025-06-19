@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { FaPencilAlt, FaPersonBooth, FaDoorOpen, FaUsers, FaRegEdit, FaRegUser } from 'react-icons/fa';
 import { UserProfile } from '../../shared/types';
+import { DEFAULT_AVATAR_URL } from '../constants';
 
 interface ProfileMenuProps {
   user: UserProfile;
@@ -16,7 +17,7 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({ user, onLogout, isOpen }) => 
     <div className="profile-dropdown">
       <div className="profile-dropdown-header">
         <img 
-          src={user?.profilePicture || '/assets/default-avatar.png'}
+          src={user?.profilePicture || DEFAULT_AVATAR_URL}
           alt="Profile" 
           className="profile-dropdown-avatar"
         />

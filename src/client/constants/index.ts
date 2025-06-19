@@ -1,3 +1,5 @@
+export const DEFAULT_AVATAR_URL = 'https://travelblogassets.s3.us-east-2.amazonaws.com/default-avatar.png';
+
 export const recommendationOptions = [
   { id: 'tourist', text: 'Top Tourist Attractions' },
   { id: 'cities', text: 'Best cities to visit' },

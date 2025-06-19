@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { verifyResetToken, resetPassword } from '../services/auth';
-import { validateEmail, validatePassword } from '../utils/validation';
+import { validateEmail, validatePassword } from '../utils';
 import '../styles/login.css';
 
 const ResetPasswordPage: React.FC = () => {

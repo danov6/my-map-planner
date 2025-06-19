@@ -7,22 +7,15 @@ import { fetchArticle, updateArticle } from '../../services/articles';
 import { TRAVEL_TOPICS } from '../../constants';
 import Spinner from '../../components/Spinner';
 import DOMPurify from 'dompurify';
-import './styles.css';
 import { FaTimes } from 'react-icons/fa';
+import '../../styles/editarticlepage.css';
 
 const EditArticlePage: React.FC = () => {
+  const navigate = useNavigate();
   const editorRef = useRef<any>(null);
   const { id } = useParams();
-  const navigate = useNavigate();
   const { user, isAuthenticated } = useContext(AppContext);
   const [article, setArticle] = useState<Article | null>(null);
-  const [formData, setFormData] = useState({
-    title: '',
-    subtitle: '',
-    content: '',
-    headerImageUrl: '',
-    topics: [] as string[]
-  });
   const [selectedTopics, setSelectedTopics] = useState<{ value: string; label: string; }[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -30,10 +23,18 @@ const EditArticlePage: React.FC = () => {
   const [topicInput, setTopicInput] = useState('');
   const [topicSuggestions, setTopicSuggestions] = useState<string[]>([]);
   const [showTopicSuggestions, setShowTopicSuggestions] = useState(false);
+    const [formData, setFormData] = useState({
+    title: '',
+    subtitle: '',
+    content: '',
+    headerImageUrl: '',
+    topics: [] as string[]
+  });
 
   
   useEffect(() => {
     if (!id) {
+      console.log('No article ID provided. Redirecting to home.');
       navigate('/');
       return;
     }
@@ -42,6 +43,7 @@ const EditArticlePage: React.FC = () => {
       try {
         const data = await fetchArticle(id);
         if (data.author._id !== user?._id) {
+          console.log('Unauthorized access to edit article:', id);
           navigate(`/articles/${id}`);
           return;
         }

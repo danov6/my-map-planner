@@ -4,7 +4,7 @@ import { Editor } from '@tinymce/tinymce-react';
 import { AppContext } from '../../context/AppContext';
 import { COUNTRY_LIST, TRAVEL_TOPICS } from '../../constants';
 import { FaTimes } from 'react-icons/fa';
-import './styles.css';
+import '../../styles/createarticlepage.css';
 import { createArticle } from '../../services/articles';
 import { uploadImage } from '../../services/media';
 
@@ -207,7 +207,6 @@ const CreateArticlePage: React.FC = () => {
                 const input = e.target.value;
                 setTopicInput(input);
                 
-                // Filter suggestions
                 const filtered = TRAVEL_TOPICS.filter(
                   topic => 
                     topic.toLowerCase().includes(input.toLowerCase()) &&

@@ -1,0 +1,289 @@
+.article-page {
+  background: #1a1a1a;
+  border-radius: 6px;
+  max-width: 800px;
+  margin: 64px auto;
+  padding: 3% 2%;
+}
+
+.article-page .article-container {
+  background: #1a1a1a;
+  border-radius: .5rem;
+  box-shadow: 0 1px 3px #0000001a;
+}
+
+.article-page .article-header {
+  padding: 2rem 2rem 1rem;
+}
+
+.article-page .article-title {
+  font-size: 40px;
+  line-height: 48px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: #fff;
+}
+
+.article-page .article-subtitle {
+  font-size: 24px;
+  line-height: 32px;
+  color: #b1b1b1;
+  margin-bottom: 32px;
+  
+}
+
+.article-page .article-header-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.article-page .author-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.article-page .author-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.article-page .author-avatar {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.article-page .author-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.article-page .author-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.article-page .author-name {
+  font-weight: 500;
+  color: #b1b1b1;
+}
+
+.author-name {
+  font-weight: 500;
+  color: rgb(41, 41, 41);
+}
+
+.article-page .article-date {
+  color: #6b6b6b;
+  font-size: 0.875rem;
+}
+
+.read-time-info {
+  color: #666;
+  font-size: 0.9rem;
+  margin-top: 0.25rem;
+}
+
+.read-time-info span {
+  margin-right: 1rem;
+}
+
+.separator {
+  margin: 0 4px;
+}
+
+.article-stats {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: rgb(117, 117, 117);
+}
+
+.article-page .article-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+}
+
+.article-page .action-button {
+  background: none;
+  border: none;
+  padding: 0.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #6b6b6b;
+}
+
+.article-page .article-hero-image {
+  width: 100%;
+  max-height: 30rem;
+  overflow: hidden;
+  margin: 1rem 0;
+}
+
+.article-page .article-hero-image {
+  margin: 32px 0;
+  width: 100%;
+}
+
+.article-page .article-hero-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.article-page .article-hero-image img {
+  width: 100%;
+  max-height: 460px;
+  object-fit: cover;
+}
+
+.article-page .image-credit {
+  display: block;
+  color: rgb(117, 117, 117);
+  font-size: 14px;
+  text-align: center;
+  margin-top: 8px;
+}
+
+.article-page .article-page .article-content {
+  padding: 2rem;
+  line-height: 1.8;
+  font-size: 1.125rem;
+}
+
+.article-page .article-content {
+  font-size: 20px;
+  line-height: 32px;
+  color: #fdfdfd
+}
+
+.article-page .article-content p {
+  margin-bottom: 32px;
+}
+
+.article-page .article-footer {
+  padding: 2rem;
+  border-top: 1px solid #e0e0e0;
+}
+
+.article-page .article-topics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 1rem 0;
+}
+
+.article-page .topic-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  background: #e8f0fe;
+  border-radius: 16px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.topic-tag:hover {
+  background: #d2e3fc;
+  transform: translateY(-1px);
+}
+
+.article-page .article-content {
+  max-width: 800px;
+  margin: 2rem auto;
+  line-height: 1.6;
+}
+
+.article-page .article-content h1,
+.article-page .article-content h2,
+.article-page .article-content h3 {
+  margin: 1.5rem 0 1rem;
+}
+
+.article-page .article-content p {
+  margin-bottom: 1rem;
+}
+
+.article-page .article-content img {
+  max-width: 100%;
+  height: auto;
+  margin: 1.5rem 0;
+  border-radius: 4px;
+}
+
+.article-page .article-content a {
+  color: #0066cc;
+  text-decoration: none;
+}
+
+.article-page .article-content a:hover {
+  text-decoration: underline;
+}
+
+.like-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.like-button:hover {
+  background-color: rgba(0, 102, 204, 0.1);
+}
+
+.like-button .icon {
+  color: #666;
+  transition: all 0.2s ease;
+}
+
+.like-button:hover .icon {
+  color: #0066cc;
+  transform: scale(1.1);
+}
+
+.like-button.liked .icon {
+  color: #0066cc;
+}
+
+.like-button.liked .icon.filled {
+  color: #0066cc;
+}
+
+.like-button span {
+  color: #666;
+}
+
+.like-button.liked span {
+  color: #0066cc;
+}
+
+.article-page .action-button:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.article-page .action-button.bookmark:hover .icon {
+  color: #4CAF50;
+}
+.article-page .action-button.share:hover .icon {
+  color: #5039fd;
+}
+
+.article-page .action-button.bookmark.bookmarked .icon{
+    color: #4caf50;
+}

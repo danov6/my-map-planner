@@ -415,3 +415,34 @@ export const toggleArticleBookmark = async (req: Request | any, res: Response | 
     res.status(500).json({ error: 'Failed to toggle bookmark' });
   }
 };
+
+export const getTopics = async (req: Request, res: Response) => {
+  try {
+    const { country, topic, likedBy } = req.query;
+    let filter: any = {};
+
+    if (country) filter.countryCode = country;
+    if (topic) filter.topics = topic;
+    if (likedBy) {
+      const likedByStr = Array.isArray(likedBy) ? likedBy[0] : likedBy;
+      if (typeof likedByStr === 'string') {
+        filter._id = { $in: await getLikedArticleIds(likedByStr) };
+      }
+    }
+
+    const articles = await Article.find(filter).select('topics');
+    const topicsSet = new Set<string>();
+    articles.forEach(a => a.topics.forEach((t: string) => topicsSet.add(t)));
+
+    if (topic) topicsSet.delete(topic as string);
+
+    res.json({ topics: Array.from(topicsSet) });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch topics' });
+  }
+};
+
+export const getLikedArticleIds = async (userId: string) => {
+  const user = await User.findById(userId).select('likedArticles');
+  return user?.likedArticles || [];
+}

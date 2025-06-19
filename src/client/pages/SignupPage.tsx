@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useContext } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { registerUser } from '../services/auth';
-import { validateEmail, validatePassword } from '../utils/validation';
+import { useNavigate } from 'react-router-dom';
+import { createProfile } from '../services/users';
+import { validateEmail, validatePassword } from '../utils';
 import { AppContext } from '../context/AppContext';
 import '../styles/login.css';
 
@@ -43,7 +43,7 @@ const SignupPage: React.FC = () => {
     setIsLoading(true);
 
     try {
-      const data = await registerUser({ email, password });
+      const data = await createProfile({ email, password });
       
       setTimeout(() => {
         localStorage.setItem('token', data.token);

@@ -5,7 +5,7 @@ import ArticlesSection from '../../components/ArticlesSection';
 import RightNavbar from '../../components/RightNavbar';
 import { fetchArticlesByTopic } from '../../services/articles';
 import { Article } from '../../../shared/types';
-import './styles.css';
+import '../../styles/topicpage.css';
 
 const TopicPage: React.FC = () => {
   const { topic } = useParams();

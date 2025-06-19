@@ -7,7 +7,7 @@ export interface CountryData {
 export interface UserProfile {
   _id: string;
   email: string;
-  role?: string;
+  role: string;
   firstName?: string;
   lastName?: string;
   bio?: string;
@@ -44,7 +44,20 @@ export interface Country {
   countryCode: string;
   countryName: string;
   continent: string;
-  cities: string[];
-  mostPopularArticles: Article[];
-  mostPopularTopics: string[];
+  cities: City[];
+  bounds: {
+    north: number;
+    south: number;
+    east: number;
+    west: number;
+  };
+}
+
+export interface City {
+  name: string;
+  coordinates: {
+    lat: number;
+    lng: number;
+  };
+  countryCode: string;
 }

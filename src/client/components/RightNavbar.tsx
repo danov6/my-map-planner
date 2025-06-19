@@ -1,79 +1,50 @@
-import React, { useEffect, useState } from 'react';
-import { TRAVEL_TOPICS } from 'client/constants';
-import { fetchMostViewedArticles } from '../services/articles';
-import { UserProfile, Article } from '../../shared/types';
-import { COUNTRY_LIST } from 'client/constants';
-import { useTopicNavigation } from '../hooks/useTopicNavigation';
+import { useLocation } from 'react-router-dom';
+import { useEffect, useState, useContext, use } from 'react';
+import { fetchTopics } from '../services/articles';
+import { AppContext } from '../context/AppContext';
+import { useTopicNavigation } from 'client/hooks/useTopicNavigation';
 
-interface RightNavbarProps {
-  variant: 'home' | 'profile';
-  country?: string;
-  favoriteTopics?: string[];
-}
-
-const RightNavbar: React.FC<RightNavbarProps> = ({ 
-  variant, 
-  country,
-  favoriteTopics
-}) => {
-  const [mostViewed, setMostViewed] = useState<Article[]>([]);
-  const topics = TRAVEL_TOPICS?.splice(0, 10) || [];
+const RightNavbar: React.FC<any> = ({ variant }) => {
+  const location = useLocation();
+  const { user } = useContext(AppContext);
+  const [topics, setTopics] = useState<string[]>([]);
   const handleTopicClick = useTopicNavigation();
 
-  const getCountryNameByCode = (countryCode: string | undefined): string => {
-    const country = COUNTRY_LIST.find(
-      country => country.countryCode === countryCode?.toUpperCase()
-    );
-    return country?.name || '';
-  };
+  useEffect(() => {
+    const loadTopics = async () => {
+      try {
+        let params: Record<string, string> = {};
+        const countryMatch = location.pathname.match(/^\/countries\/([A-Z]{3})$/i);
 
-  // useEffect(() => {
-  //   const loadMostViewed = async () => {
-  //     const data = await fetchMostViewedArticles(country);
-  //     setMostViewed(data.articles);
-  //   };
-    
-  //   if (variant === 'home') {
-  //     loadMostViewed();
-  //   }
-  // }, [variant, country]);
+        if (variant === 'country' && countryMatch) {
+          params.country = countryMatch[1].toUpperCase();
+        } else if (location.pathname.startsWith('/topics/')) {
+          const topicSlug = location.pathname.replace('/topics/', '');
+          params.topic = topicSlug
+            .replace(/-/g, ' ')
+            .replace(/\b\w/g, l => l.toUpperCase());
+        } else if (location.pathname.startsWith('/profile') && user) {
+          params.likedBy = user._id;
+        }
+
+        const fetchedTopics = await fetchTopics(params);
+        setTopics(fetchedTopics);
+      } catch (err) {
+        setTopics([]);
+      }
+    };
+    loadTopics();
+  }, [location.pathname, user]);
 
   return (
-    <aside className="right-navbar">
-      <div className="right-navbar-content">
-        {/* <section className="staff-picks">
-          <h2>Most Viewed Today</h2>
-          {mostViewed.map((pick, key) => (
-            <div key={pick._id} className="staff-pick-item">
-              <h3>{(key + 1) + ". " + pick.title}</h3>
-              <div className="country-name">{getCountryNameByCode(pick.countryCode)}</div>
-              <div className="author-info">
-                <img 
-                  src={pick.author.profilePicture || '/default-avatar.png'} 
-                  alt={pick.author.firstName}
-                  className="author-image"
-                />
-                <span>{pick.author.firstName}</span>
-              </div>
-            </div>
-          ))}
-        </section> */}
-        <section className="favorite-topics">
-          <h2>Favorite Topics</h2>
-          <div className="topics-list">
-            {(favoriteTopics || topics).map((topic, index) => (
-              <button
-                key={index}
-                className="topic-tag"
-                onClick={(e) => handleTopicClick(e, topic)}
-              >
-                {topic}
-              </button>
-            ))}
-          </div>
-        </section>
+    <div className="right-navbar">
+      <h3>Topics</h3>
+      <div className="topics-list">
+        {topics.map(topic => (
+          <button className="topic-tag" key={topic} onClick={(e) => handleTopicClick(e, topic)}>{topic}</button>
+        ))}
       </div>
-    </aside>
+    </div>
   );
 };
 

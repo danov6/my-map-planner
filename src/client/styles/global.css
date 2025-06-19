@@ -147,3 +147,17 @@ main {
   align-items: center;
   justify-content: center;
 }
+
+.country-tooltip {
+  background-color: rgba(0, 0, 0, 0.8) !important;
+  border: none !important;
+  border-radius: 4px !important;
+  padding: 8px 12px !important;
+  font-size: 14px !important;
+  color: white !important;
+  white-space: nowrap !important;
+}
+
+.country-tooltip::before {
+  display: none !important;
+}

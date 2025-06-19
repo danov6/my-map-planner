@@ -165,3 +165,10 @@ export const fetchArticlesByTopic = async (topic: string): Promise<Article[]> =>
   const data = await response.json();
   return data.articles;
 };
+
+export const fetchTopics = async (params: Record<string, string>) => {
+  const query = new URLSearchParams(params).toString();
+  const res = await fetch(`${API_URL}/api/articles/topics?${query}`);
+  if (!res.ok) throw new Error('Failed to fetch topics');
+  return (await res.json()).topics;
+};

@@ -15,7 +15,8 @@ import {
 import { fetchArticle, toggleArticleLike, toggleArticleBookmark } from '../../services/articles';
 import DOMPurify from 'dompurify';
 import { useTopicNavigation } from '../../hooks/useTopicNavigation';
-import './styles.css';
+import { DEFAULT_AVATAR_URL } from '../../constants';
+import '../../styles/viewarticlepage.css';
 
 const ViewArticlePage: React.FC = () => {
   const { id } = useParams();
@@ -260,7 +261,7 @@ const ViewArticlePage: React.FC = () => {
         <div className="article-header-meta">
           <div className="author-info">
             <img 
-              src={article?.author?.profilePicture || '/default-avatar.png'} 
+              src={article?.author?.profilePicture || DEFAULT_AVATAR_URL} 
               alt={article?.author?.firstName || 'Author'}
               className="author-avatar"
             />

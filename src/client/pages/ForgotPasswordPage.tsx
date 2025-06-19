@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { requestPasswordReset } from '../services/auth';
-import { validateEmail } from '../utils/validation';
+import { validateEmail } from '../utils';
 import Spinner from '../components/Spinner';
 import '../styles/login.css';
 

@@ -19,25 +19,6 @@ export const loginUser = async (credentials: any) => {
   return data;
 };
 
-export const registerUser = async (credentials: any) => {
-  const response = await fetch(`${API_URL}/api/auth/signup`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    credentials: 'include',
-    body: JSON.stringify(credentials),
-  });
-
-  const data = await response.json();
-
-  if (!response.ok) {
-    throw new Error(data.error || 'Registration failed');
-  }
-
-  return data;
-};
-
 export const requestPasswordReset = async (email: string): Promise<void> => {
   const response = await fetch(`${API_URL}/api/auth/forgot-password`, {
     method: 'POST',

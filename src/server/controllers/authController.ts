@@ -47,51 +47,6 @@ export const login = async (req: Request | any, res: Response | any) => {
   }
 };
 
-export const signup = async (req: Request | any, res: Response | any) => {
-  try {
-    const { email, password } = req.body;
-
-    if (!email || !password) {
-      console.log('[ authController ] Signup validation error:', { email });
-      return res.status(400).json({ error: 'Email and password are required' });
-    }
-
-    const existingUser = await User.findOne({ email: email.toLowerCase() });
-    if (existingUser) {
-      console.log('[ authController ] Signup error: Email already registered:', { email });
-      return res.status(400).json({ error: 'Email already registered' });
-    }
-
-    const newUser = new User({
-      email: email.toLowerCase(),
-      password,
-    });
-
-    await newUser.save();
-
-    const token = jwt.sign(
-      { userId: newUser._id },
-      process.env.JWT_SECRET as string,
-      { expiresIn: '24h' }
-    );
-
-    console.log('[ authController ] User registered successfully:', { email });
-    res.status(201).json({
-      token,
-      message: 'Registration successful',
-      user: {
-        email: newUser.email,
-        firstName: newUser.firstName,
-        lastName: newUser.lastName,
-        profilePicture: newUser.profilePicture,
-      },
-    });
-  } catch (error) {
-    console.log('[ authController ] Registration error:', error);
-    res.status(500).json({ error: 'Registration failed' });
-  }
-};
-
 export const forgotPassword = async (req: Request | any, res: Response | any) => {
   try {
     const { email } = req.body;

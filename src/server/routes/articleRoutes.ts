@@ -1,5 +1,5 @@
 import express from 'express';
-import { getArticle, getArticles, createArticle, toggleArticleLike, updateArticle, getUniqueCountries, getArticlesByCountry, toggleArticleBookmark } from '../controllers/articleController';
+import { getArticle, getArticles, createArticle, toggleArticleLike, updateArticle, getUniqueCountries, getArticlesByCountry, toggleArticleBookmark, getTopics } from '../controllers/articleController';
 import { verifyToken } from '../middleware/authMiddleware';
 
 const router = express.Router();
@@ -12,5 +12,6 @@ router.post('/article/bookmark', verifyToken, toggleArticleBookmark);
 router.post('/article/:id', verifyToken, updateArticle);
 router.get('/countries', getUniqueCountries);
 router.get('/countries/:countryCode', getArticlesByCountry);
+router.get('/topics', getTopics);
 
 export default router;

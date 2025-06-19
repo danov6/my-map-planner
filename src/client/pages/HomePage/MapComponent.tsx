@@ -1,5 +1,5 @@
 import React, { useContext, useState, useCallback, useMemo, useEffect } from 'react';
-import { MapContainer, TileLayer, GeoJSON, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, GeoJSON, useMap, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import { Feature, Geometry } from 'geojson';
 import { AppContext } from './../../context/AppContext';
@@ -20,11 +20,47 @@ const MapController: React.FC<{ bounds?: number[][] }> = ({ bounds }) => {
   const map = useMap();
   
   useEffect(() => {
+    console.log('MapController bounds:', bounds);
     if (bounds) {
       map.fitBounds(bounds as [number, number][]);
     }
   }, [bounds, map]);
 
+  return null;
+};
+
+const MapEventHandler = () => {
+  const map = useMapEvents({
+    zoomend: () => {
+      const bounds = map.getBounds();
+      console.log('Map bounds after zoom:', {
+        north: bounds.getNorth().toFixed(6),
+        south: bounds.getSouth().toFixed(6),
+        east: bounds.getEast().toFixed(6),
+        west: bounds.getWest().toFixed(6),
+        zoom: map.getZoom()
+      });
+    },
+    moveend: () => {
+      const bounds = map.getBounds();
+      const center = map.getCenter();
+      
+      console.log('Map bounds after drag:', {
+        center: {
+          lat: center.lat.toFixed(6),
+          lng: center.lng.toFixed(6)
+        },
+        bounds: {
+          north: bounds.getNorth().toFixed(6),
+          south: bounds.getSouth().toFixed(6),
+          east: bounds.getEast().toFixed(6),
+          west: bounds.getWest().toFixed(6)
+        },
+        zoom: map.getZoom()
+      });
+    }
+  });
+  
   return null;
 };
 
@@ -97,7 +133,6 @@ const MapComponent: React.FC = () => {
   const handleCountryClick = useCallback((event: any) => {
     const countryName = event.target.feature.properties['name'];
     const countryCode = event.target.feature.properties['ISO3166-1-Alpha-3'];
-    const layer = event.target;
 
     if (countryName && countryCode) {
       setSelectedCountry({
@@ -129,6 +164,16 @@ const MapComponent: React.FC = () => {
           setTooltip(null);
         }
       });
+      layer.bindTooltip(
+        feature.properties.name,
+        {
+          permanent: false,
+          direction: 'center',
+          className: 'country-tooltip',
+          offset: [-20, -30],
+          opacity: 0.9
+        }
+      );
     }, [handleCountryClick]);
 
   useEffect(() => {
@@ -168,6 +213,7 @@ const MapComponent: React.FC = () => {
             style={getCountryStyle}
             onEachFeature={onEachFeature}
           />
+          <MapEventHandler />
         </MapContainer>
       )}
       {tooltip && (

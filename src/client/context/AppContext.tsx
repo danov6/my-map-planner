@@ -14,7 +14,7 @@ export interface Guide {
 
 interface AppContextType {
   selectedCountry: { name: string, countryCode: string } | null;
-  setSelectedCountry: (country: { name: string; countryCode: string }) => void;
+  setSelectedCountry: (country: { name: string; countryCode: string}) => void;
   isModalOpen: boolean;
   setIsModalOpen: (isOpen: boolean) => void;
   selectedOptions: TravelOption[];

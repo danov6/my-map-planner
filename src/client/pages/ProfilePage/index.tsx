@@ -5,7 +5,8 @@ import RightNavbar from '../../components/RightNavbar';
 import { updateUserProfile, uploadProfilePicture } from '../../services/users';
 import { FaPen } from 'react-icons/fa';
 import ArticlesSection from '../../components/ArticlesSection';
-import './styles.css';
+import { DEFAULT_AVATAR_URL } from '../../constants';
+import '../../styles/profilepage.css';
 
 const ProfilePage: React.FC = () => {
   const { user, setUser } = useContext(AppContext);
@@ -31,7 +32,7 @@ const ProfilePage: React.FC = () => {
       const result = await uploadProfilePicture(file);
       setUser((prev) => ({
         ...prev!,
-        profilePicture: result.headerImageUrl as string
+        profilePicture: result.profilePicture as string
       }));
     } catch (error) {
       console.log('Error uploading profile picture:', error);
@@ -79,7 +80,7 @@ const ProfilePage: React.FC = () => {
               </div>
             ) : (
               <img 
-                src={user?.profilePicture || '/default-avatar.png'} 
+                src={user?.profilePicture || DEFAULT_AVATAR_URL} 
                 alt="Profile" 
                 className="profile-picture"
               />

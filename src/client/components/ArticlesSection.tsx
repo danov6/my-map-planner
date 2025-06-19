@@ -16,7 +16,7 @@ interface ArticlesSectionProps {
     hasNextPage: boolean;
     hasPreviousPage: boolean;
   };
-  onPageChange: (page: number) => Promise<void>;
+  onPageChange?: (page: number) => Promise<void>;
 }
 
 const ArticlesSection: React.FC<ArticlesSectionProps> = ({ 
@@ -34,7 +34,9 @@ const ArticlesSection: React.FC<ArticlesSectionProps> = ({
 
   const handlePageClick = async (page: number) => {
     setIsLoading(true);
-    await onPageChange(page);
+    if (onPageChange) {
+      await onPageChange(page || 1);
+    }
     setIsLoading(false);
   };
 
@@ -86,7 +88,7 @@ const ArticlesSection: React.FC<ArticlesSectionProps> = ({
         <div className="pagination">
           {isLoading ? (
             <div className="pagination-loading">
-              <Spinner size="small" />
+              <Spinner />
             </div>
           ) : (
             Array.from({ length: pagination.totalPages }, (_, i) => i + 1).map((page) => (

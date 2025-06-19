@@ -74,3 +74,22 @@ export const uploadProfilePicture = async (file: File): Promise<any> => {
 
   return response.json();
 };
+
+export const createProfile = async (credentials: any): Promise<any> => {
+  const response = await fetch(`${API_URL}/api/users/signup`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+    body: JSON.stringify(credentials),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.error || 'Registration failed');
+  }
+
+  return data;
+};

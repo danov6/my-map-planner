@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { AppContext } from '../../context/AppContext';
-import './styles.css';
+import '../../styles/homepage.css';
 import MapComponent from './MapComponent';
 import Spinner from '../../components/Spinner';
 import ArticlesSection from '../../components/ArticlesSection';

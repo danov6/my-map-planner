@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import User from "../models/UserModel";
 import { uploadToS3 } from '../services/s3Service';
 import sharp from 'sharp';
+import jwt from 'jsonwebtoken';
 
 interface AuthRequest extends Request {
   user?: { userId: string };
@@ -99,6 +100,51 @@ export const updateProfile = async (
   }
 };
 
+export const createProfile = async (req: Request | any, res: Response | any) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      console.log('[ userController ] Signup validation error:', { email });
+      return res.status(400).json({ error: 'Email and password are required' });
+    }
+
+    const existingUser = await User.findOne({ email: email.toLowerCase() });
+    if (existingUser) {
+      console.log('[ userController ] Signup error: Email already registered:', { email });
+      return res.status(400).json({ error: 'Email already registered' });
+    }
+
+    const newUser = new User({
+      email: email.toLowerCase(),
+      password,
+    });
+
+    await newUser.save();
+
+    const token = jwt.sign(
+      { userId: newUser._id },
+      process.env.JWT_SECRET as string,
+      { expiresIn: '24h' }
+    );
+
+    console.log('[ userController ] User registered successfully:', { email });
+    res.status(201).json({
+      token,
+      message: 'Registration successful',
+      user: {
+        email: newUser.email,
+        firstName: newUser.firstName,
+        lastName: newUser.lastName,
+        profilePicture: newUser.profilePicture,
+      },
+    });
+  } catch (error) {
+    console.log('[ userController ] Registration error:', error);
+    res.status(500).json({ error: 'Registration failed' });
+  }
+};
+
 export const uploadProfilePicture = async (req: Request | any, res: Response | any) => {
   try {
     if (!req.file) {
@@ -170,7 +216,7 @@ export const uploadProfilePicture = async (req: Request | any, res: Response | a
 
     res.json({ 
       message: 'Profile picture updated successfully',
-      imageUrl: imageUrlWithCache,
+      profilePicture: imageUrlWithCache,
       user: user.toObject()
     });
   } catch (error) {
