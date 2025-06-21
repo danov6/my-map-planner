@@ -16,7 +16,7 @@ interface ArticlesSectionProps {
     hasNextPage: boolean;
     hasPreviousPage: boolean;
   };
-  onPageChange?: (page: number) => Promise<void>;
+  onPageChange: (page: number) => void;
 }
 
 const ArticlesSection: React.FC<ArticlesSectionProps> = ({ 
@@ -39,7 +39,6 @@ const ArticlesSection: React.FC<ArticlesSectionProps> = ({
     }
     setIsLoading(false);
   };
-
   return (
     <div className="articles-section">
       {(articles || []).map(article => (

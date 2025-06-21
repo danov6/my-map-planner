@@ -117,6 +117,7 @@ export const createProfile = async (req: Request | any, res: Response | any) => 
 
     const newUser = new User({
       email: email.toLowerCase(),
+      username: 'user' + (new Date()).getTime(),
       password,
     });
 
@@ -133,6 +134,7 @@ export const createProfile = async (req: Request | any, res: Response | any) => 
       token,
       message: 'Registration successful',
       user: {
+        username: newUser.username,
         email: newUser.email,
         firstName: newUser.firstName,
         lastName: newUser.lastName,

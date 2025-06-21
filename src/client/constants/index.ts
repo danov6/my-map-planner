@@ -1,4 +1,6 @@
-export const DEFAULT_AVATAR_URL = 'https://travelblogassets.s3.us-east-2.amazonaws.com/default-avatar.png';
+export const AWS_DOMAIN = 'https://travelblogassets.s3.us-east-2.amazonaws.com';
+
+export const DEFAULT_AVATAR_URL = AWS_DOMAIN + '/default-avatar.png';
 
 export const recommendationOptions = [
   { id: 'tourist', text: 'Top Tourist Attractions' },
@@ -12,12 +14,6 @@ export const recommendationOptions = [
 { id: 'nature', text: 'Nature and Outdoor Activities' },
 { id: 'shopping', text: 'Shopping Destinations' }
 ];
-// export const recommendationOptions = [
-//   { id: 'tourist', text: 'Tourist Attractions' },
-//   { id: 'food', text: 'Food/Beverage Ideas' },
-//   { id: 'adventure', text: 'Adventure Activities' },
-//   { id: 'budget', text: 'Budget Friendly Options' }
-// ];
 
 export const COUNTRY_BLACKLIST = [
   'ATA', // Antarctica
@@ -39,6 +35,11 @@ export const COUNTRY_COLORS = {
   BLACKLIST: '#7a848d', // Lighter blue for blacklisted countries
   WHITELIST: '#4a90e2' // Default color for other countries
 };
+
+export const FLIGHT_LIST_URLS = [
+  { name: 'Google Flights', url: 'https://www.google.com/travel/flights', imageUrl: 'https://www.skyscanner.com/favicon.ico'},
+  { name: 'Skyscanner', url: 'https://www.skyscanner.com/', imageUrl: 'https://www.gstatic.com/images/branding/product/2x/travel_flights_48dp.png'},
+];
 
 export const TRAVEL_TOPICS = [
   'Day Trips',
@@ -103,14 +104,14 @@ export const COUNTRY_LIST = [
   { name: 'France', countryCode: 'FRA' },
   { name: 'Germany', countryCode: 'DEU' },
   { name: 'Italy', countryCode: 'ITA' },
-  { name: 'Spain', countryCode: 'ESP' },
+  { name: 'Spain', countryCode: 'ESP', headerImageUrl: '/countries/spain-header.png' },
   { name: 'Australia', countryCode: 'AUS' },
   { name: 'Japan', countryCode: 'JPN' },
   { name: 'South Korea', countryCode: 'KOR' },
   { name: 'China', countryCode: 'CHN' },
   { name: 'India', countryCode: 'IND' },
-  { name: 'Brazil', countryCode: 'BRA' },
-  { name: 'Argentina', countryCode: 'ARG' },
+  { name: 'Brazil', countryCode: 'BRA', headerImageUrl: '/countries/brazil-header.png' },
+  { name: 'Argentina', countryCode: 'ARG'},
   { name: 'South Africa', countryCode: 'ZAF' },
   { name: 'Russia', countryCode: 'RUS' },
   { name: 'Turkey', countryCode: 'TUR' },
@@ -297,7 +298,7 @@ export const COUNTRY_LIST = [
   { name: 'Sao Tome and Principe', countryCode: 'STP' },
   { name: 'Israel', countryCode: 'ISR' },
   { name: 'Palestine', countryCode: 'PSE' },
-  { name: 'Chile', countryCode: 'CHL' },
+  { name: 'Chile', countryCode: 'CHL', headerImageUrl: '/countries/chile-header.png' },
   { name: 'Peru', countryCode: 'PER' },
   { name: 'Colombia', countryCode: 'COL' },
   { name: 'Venezuela', countryCode: 'VEN' },

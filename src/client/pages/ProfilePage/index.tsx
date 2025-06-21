@@ -31,7 +31,7 @@ const ProfilePage: React.FC = () => {
       setIsLoading(true);
       const result = await uploadProfilePicture(file);
       setUser((prev) => ({
-        ...prev!,
+        ...prev,
         profilePicture: result.profilePicture as string
       }));
     } catch (error) {

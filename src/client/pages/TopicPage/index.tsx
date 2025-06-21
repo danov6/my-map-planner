@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { AppContext } from '../../context/AppContext';
 import ArticlesSection from '../../components/ArticlesSection';
 import RightNavbar from '../../components/RightNavbar';
+import Spinner from '../../components/Spinner';
 import { fetchArticlesByTopic } from '../../services/articles';
 import { Article } from '../../../shared/types';
 import '../../styles/topicpage.css';
@@ -48,21 +49,22 @@ const TopicPage: React.FC = () => {
     loadTopicArticles();
   }, [topic, setArticles]);
 
-  if (isLoading) {
-    return <div className="loading">Loading...</div>;
-  }
-
   if (error) {
     return <div className="error">{error}</div>;
   }
 
   return (
     <div className="topic-page">
-      <div className="topic-content">
-        <h1>{displayTopic}</h1>
-        <p>{topicArticles.length} articles</p>
-        <ArticlesSection articles={topicArticles} />
-      </div>
+       <div className="topic-content">
+      {isLoading ? <Spinner /> : 
+        <>
+            <h1>{displayTopic}</h1>
+            <p>{topicArticles.length} articles</p>
+            <ArticlesSection articles={topicArticles} />
+        </>
+      }
+        </div>
+
       <RightNavbar variant="home" />
     </div>
   );

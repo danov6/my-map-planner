@@ -3,6 +3,7 @@ import { useEffect, useState, useContext, use } from 'react';
 import { fetchTopics } from '../services/articles';
 import { AppContext } from '../context/AppContext';
 import { useTopicNavigation } from 'client/hooks/useTopicNavigation';
+import FlightsSection from './FlightsSection';
 
 const RightNavbar: React.FC<any> = ({ variant }) => {
   const location = useLocation();
@@ -15,7 +16,6 @@ const RightNavbar: React.FC<any> = ({ variant }) => {
       try {
         let params: Record<string, string> = {};
         const countryMatch = location.pathname.match(/^\/countries\/([A-Z]{3})$/i);
-
         if (variant === 'country' && countryMatch) {
           params.country = countryMatch[1].toUpperCase();
         } else if (location.pathname.startsWith('/topics/')) {
@@ -34,7 +34,7 @@ const RightNavbar: React.FC<any> = ({ variant }) => {
       }
     };
     loadTopics();
-  }, [location.pathname, user]);
+  }, []);
 
   return (
     <div className="right-navbar">
@@ -44,6 +44,7 @@ const RightNavbar: React.FC<any> = ({ variant }) => {
           <button className="topic-tag" key={topic} onClick={(e) => handleTopicClick(e, topic)}>{topic}</button>
         ))}
       </div>
+      <FlightsSection />
     </div>
   );
 };

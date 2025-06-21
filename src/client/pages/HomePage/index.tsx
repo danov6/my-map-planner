@@ -12,21 +12,8 @@ const HomePage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
-
-  useEffect(() => {
-    const loadArticles = async () => {
-      try {
-        const countryCode = selectedCountry?.countryCode || null;
-        const response = await fetchArticles(1, countryCode);
-        setArticles(response.articles);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load articles');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    loadArticles();
-  }, [setArticles, selectedCountry]);
+  const [pagination, setPagination] = useState<any>(null);
+  const [isArticlesLoading, setIsArticlesLoading] = useState(true);
 
   const filteredArticles = articles?.filter(article => {
     const searchLower = searchTerm.toLowerCase();
@@ -37,6 +24,29 @@ const HomePage: React.FC = () => {
       )
     );
   });
+
+  const onPageChange = (page: number) => {
+    setIsArticlesLoading(true);
+    loadArticles(page);
+  };
+
+  const loadArticles = async (page: number) => {
+      try {
+        const countryCode = selectedCountry?.countryCode || null;
+        const response = await fetchArticles(page, countryCode);
+        setArticles(response.articles);
+        setPagination(response?.pagination);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to load articles');
+      } finally {
+        setIsLoading(false);
+        setIsArticlesLoading(false);
+      }
+  };
+
+  useEffect(() => {
+    loadArticles(1);
+  }, [setArticles, selectedCountry]);
 
   if (isLoading) return <Spinner />;
   if (error) return <div className="error-message">{error}</div>;
@@ -61,7 +71,7 @@ const HomePage: React.FC = () => {
               />
             </div>
           </div>
-          <ArticlesSection articles={filteredArticles || []} />
+          {isArticlesLoading ? <Spinner /> : <ArticlesSection articles={filteredArticles || []} pagination={pagination || null} onPageChange={onPageChange}/>}
         </div>
       </div>
       <RightNavbar 
