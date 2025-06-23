@@ -1,5 +1,5 @@
 .article-page {
-  background: #1a1a1a;
+  background: var(--widget-bg-bolor);
   border-radius: 6px;
   max-width: 800px;
   margin: 64px auto;
@@ -7,7 +7,7 @@
 }
 
 .article-page .article-container {
-  background: #1a1a1a;
+  background: var(--widget-bg-bolor);
   border-radius: .5rem;
   box-shadow: 0 1px 3px #0000001a;
 }
@@ -21,7 +21,7 @@
   line-height: 48px;
   font-weight: 700;
   margin-bottom: 8px;
-  color: #fff;
+  color: var(--text-color);
 }
 
 .article-page .article-subtitle {

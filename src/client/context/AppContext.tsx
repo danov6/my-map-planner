@@ -28,44 +28,8 @@ interface AppContextType {
   setArticles: (articles: Article[]) => void;
   highlightedMapCountries: string[] | null;
   setHighlightedMapCountries: (countries: string[]) => void;
+  isFlightsSectionClosed: boolean;
+  setIsFlightsSectionClosed: (isFlightsSectionClosed: boolean) => void;
 }
 
 export const AppContext = createContext<AppContextType>({} as AppContextType);
-
-export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [selectedCountry, setSelectedCountry] = useState<{ name: string, countryCode: string } | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [articles, setArticles] = useState<Article[]>([]);
-  const [selectedOptions, setSelectedOptions] = useState<TravelOption[]>([]);
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [user, setUser] = useState<UserProfile | null>(null);
-  const [highlightedMapCountries, setHighlightedMapCountries] = useState<string[] | null>([]);
-
-  const logout = () => {
-    localStorage.removeItem('token');
-    setIsAuthenticated(false);
-    setUser(null);
-  };
-
-  return (
-    <AppContext.Provider value={{
-      selectedCountry,
-      setSelectedCountry,
-      isModalOpen,
-      setIsModalOpen,
-      selectedOptions,
-      setSelectedOptions,
-      isAuthenticated,
-      setIsAuthenticated,
-      user,
-      setUser,
-      logout,
-      articles,
-      setArticles,
-      highlightedMapCountries,
-      setHighlightedMapCountries
-    }}>
-      {children}
-    </AppContext.Provider>
-  );
-};

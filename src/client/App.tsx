@@ -28,6 +28,7 @@ const App: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [articles, setArticles] = useState<Article[]>([]);
   const [highlightedMapCountries, setHighlightedMapCountries] = useState<string[] | null>([]);
+  const [isFlightsSectionClosed, setIsFlightsSectionClosed] = useState(false);
   const [user, setUser] = useState<{
     _id: string;
     email: string;
@@ -67,7 +68,9 @@ const App: React.FC = () => {
         setUser,
         logout,
         highlightedMapCountries,
-        setHighlightedMapCountries
+        setHighlightedMapCountries,
+        isFlightsSectionClosed,
+        setIsFlightsSectionClosed
       }}>
         <div className="app-container">
           <Navbar />

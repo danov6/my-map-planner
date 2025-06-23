@@ -45,7 +45,8 @@ export interface Country {
   countryCode: string;
   countryName: string;
   continent: string;
-  cities: City[];
+  cities: string[];
+  headerImageUrl: string;
   bounds: {
     north: number;
     south: number;

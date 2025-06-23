@@ -37,7 +37,7 @@
   }
   
   .nav-link {
-    color: #ffffff;
+    color: var(--text-color);
     text-decoration: none;
     font-size: 16px;
     padding: 8px 12px;
@@ -58,7 +58,7 @@
   button.nav-link {
     background-color: transparent;
     border: none;
-    color: #ffffff;
+    color: var(--text-color);
     font-size: 16px;
     cursor: pointer;
   }
@@ -110,7 +110,7 @@
     height: 32px;
     border-radius: 50%;
     object-fit: cover;
-    border: 2px solid #fff;
+    border: 2px solid var(--text-color);
     transition: transform 0.2s;
   }
 
@@ -205,20 +205,36 @@
     flex-direction: column;
   }
 
+  .topics-list {
+  flex-wrap: wrap;
+  gap: .5rem;
+  margin: 1.5rem 0;
+  display: flex;
+}
+
+.topic-tag {
+  padding: 0.5em 1em;
+  border-radius: 100px;
+  background: #f2f2f2;
+  font-size: clamp(0.75rem, 1vw, 0.875rem);
+  border: none;
+  cursor: pointer;
+}
+
   .flights-action-button {
-cursor: pointer;
+    cursor: pointer;
     text-align: center;
     background-color: var(--bg-color);
     border: 1px solid #5e5e5e;
     border-radius: 2.5rem;
-    place-content: center space-evenly;
+    justify-content: flex-start;
     align-items: center;
-    margin-bottom: 1rem;
-    padding: .4rem;
+    margin-bottom: 1em;
+    padding: .4rem 0 .4rem 2em;
     display: flex;
   }
   .flights-action-button:hover {
-    background-color: #3333333f;
+    background-color: var(--widget-bg-bolor);
     transform: translateY(-1px);
     box-shadow: 0 2px 4px #0000000d;
   }
@@ -226,6 +242,18 @@ cursor: pointer;
   .flights-action-button-icon {
     border-radius: 2em;
     max-width: 35px;
+  }
+
+  .flights-action-button-text {
+    padding-left: 2em;
+  }
+
+  .flights-widget-close-button {
+    cursor: pointer;
+    justify-content: flex-end;
+    width: 100%;
+    display: flex;
+    height: 0;
   }
 
   @keyframes spin {

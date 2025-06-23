@@ -130,7 +130,7 @@ const CreateArticlePage: React.FC = () => {
                 
                 // Filter country suggestions
                 const filtered = COUNTRY_LIST.filter(country =>
-                  country.name.toLowerCase().includes(input.toLowerCase())
+                  country.countryName.toLowerCase().includes(input.toLowerCase())
                 );
                 setCountrySuggestions(filtered);
                 setShowSuggestions(input.length > 0);

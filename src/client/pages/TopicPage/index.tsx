@@ -60,7 +60,7 @@ const TopicPage: React.FC = () => {
         <>
             <h1>{displayTopic}</h1>
             <p>{topicArticles.length} articles</p>
-            <ArticlesSection articles={topicArticles} />
+            <ArticlesSection articles={topicArticles || []} />
         </>
       }
         </div>

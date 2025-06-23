@@ -46,7 +46,7 @@ const HomePage: React.FC = () => {
 
   useEffect(() => {
     loadArticles(1);
-  }, [setArticles, selectedCountry]);
+  }, [selectedCountry]);
 
   if (isLoading) return <Spinner />;
   if (error) return <div className="error-message">{error}</div>;
@@ -58,7 +58,7 @@ const HomePage: React.FC = () => {
           <h1>Travel Guides 4 You</h1>
           <MapComponent />
         </div>
-        <div className="content-section">
+        <div className="articles-list-section">
           <div className="section-header">
             <h2>For you</h2>
             <div className="search-container">
@@ -71,7 +71,7 @@ const HomePage: React.FC = () => {
               />
             </div>
           </div>
-          {isArticlesLoading ? <Spinner /> : <ArticlesSection articles={filteredArticles || []} pagination={pagination || null} onPageChange={onPageChange}/>}
+          {isArticlesLoading ? <Spinner /> : <ArticlesSection articles={filteredArticles || []} pagination={pagination} onPageChange={onPageChange}/>}
         </div>
       </div>
       <RightNavbar 

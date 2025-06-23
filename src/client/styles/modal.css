@@ -38,7 +38,7 @@
     border-radius: 8px;
     background-color: #1a1a1a;
     border: 1px solid #333;
-    color: #ffffff;
+    color: var(--text-color);
     cursor: pointer;
     transition: all 0.2s ease;
     width: 100%;
@@ -96,7 +96,7 @@
 
   .modal-close:hover {
     background-color: rgba(255, 255, 255, 0.1);
-    color: #fff;
+    color: var(--text-color);
   }
   
   .modal-content {
